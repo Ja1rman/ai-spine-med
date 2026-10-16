@@ -51,7 +51,37 @@ def _api() -> Any:
         ) from None
 
 
-def _service_error() -> DownloadError:
+def _service_error(exc: Exception) -> DownloadError:
+    """Translate only allowlisted error codes, never server text or signed URLs."""
+    response = getattr(exc, "response", None)
+    status = getattr(response, "status_code", None)
+    if status == 403:
+        try:
+            payload = response.json()
+            error = payload.get("error", {}) if isinstance(payload, dict) else {}
+            details = error.get("details", []) if isinstance(error, dict) else []
+            rules_required = isinstance(details, list) and any(
+                isinstance(detail, dict) and detail.get("reason") == "RulesAcceptanceRequired"
+                for detail in details
+            )
+        except Exception:
+            rules_required = False
+        if rules_required:
+            return DownloadError(
+                "Kaggle has not recorded acceptance of the RSNA competition rules. "
+                f"Open {RULES_URL}, accept the rules with the same account as the CLI, "
+                "check that competition membership persists, then retry. "
+                "If acceptance does not persist, contact Kaggle support."
+            )
+    if status == 401:
+        return DownloadError(
+            "Kaggle rejected authentication (HTTP 401). Refresh your own local credentials "
+            "with kaggle auth login, then retry."
+        )
+    if status == 429:
+        return DownloadError(
+            "Kaggle rate limit reached (HTTP 429). Wait before retrying; avoid repeated requests."
+        )
     return DownloadError(
         f"Kaggle could not provide the requested file/list. Check network access, local credentials, and accepted rules: {RULES_URL}. Server details are omitted to protect tokens."
     )
@@ -72,8 +102,8 @@ def _download_file(api: Any, name: str, data_root: Path, overwrite: bool = False
             api.competition_download_file(
                 COMPETITION, name, path=str(temporary), force=True, quiet=True
             )
-        except Exception:
-            raise _service_error() from None
+        except Exception as exc:
+            raise _service_error(exc) from None
         candidates = [
             path for path in temporary.rglob("*") if path.is_file() and path.name == relative.name
         ]
@@ -167,8 +197,8 @@ def _file_index(api: Any, data_root: Path, *, refresh: bool, max_pages: int = 20
     for page_number in range(max_pages):
         try:
             response = api.competition_list_files(COMPETITION, page_token=token, page_size=200)
-        except Exception:
-            raise _service_error() from None
+        except Exception as exc:
+            raise _service_error(exc) from None
         files = _attribute(response, "files", default=[])
         for item in files:
             name = _attribute(item, "name", "ref")
@@ -199,6 +229,147 @@ def _file_index(api: Any, data_root: Path, *, refresh: bool, max_pages: int = 20
     raise DownloadError(
         "Kaggle file listing exceeded its page limit; the incomplete index was not saved."
     )
+
+
+def _make_tree_request(directory: str, token: str | None) -> Any:
+    from kagglesdk.competitions.types.competition_api_service import ApiListDataTreeFilesRequest
+
+    request = ApiListDataTreeFilesRequest()
+    request.competition_name = COMPETITION
+    request.path = directory
+    request.page_size = 200
+    request.page_token = token or ""
+    return request
+
+
+def _series_file_index(
+    api: Any,
+    data_root: Path,
+    selected: list[tuple[str, str]],
+    *,
+    refresh: bool,
+    max_pages: int = 100,
+) -> list[str]:
+    """List only selected series through the official SDK directory endpoint.
+
+    Legacy clients can still use the complete cached/paginated file index. The
+    current SDK path needs a few directory requests instead of the entire dataset.
+    """
+    if not callable(getattr(api, "build_kaggle_client", None)):
+        return _file_index(api, data_root, refresh=refresh)
+    all_names: list[str] = []
+    pending: list[tuple[str, Path]] = []
+    for study, series in selected:
+        directory = f"train_images/{study}/{series}"
+        cache = data_root / "_download_cache" / f"series_{study}_{series}.json"
+        if cache.is_file() and not refresh:
+            try:
+                saved = json.loads(cache.read_text())
+                names = saved["files"]
+                total_files = saved["total_files"]
+                if (
+                    saved["competition"] == COMPETITION
+                    and saved["directory"] == directory
+                    and saved["complete"] is True
+                    and isinstance(names, list)
+                    and names
+                    and type(total_files) is int
+                    and total_files > 0
+                    and len(names) == total_files
+                    and len(names) == len(set(names))
+                    and all(
+                        isinstance(name, str)
+                        and _DICOM.fullmatch(name)
+                        and name.startswith(directory + "/")
+                        for name in names
+                    )
+                ):
+                    all_names.extend(names)
+                    continue
+            except (ValueError, KeyError, TypeError):
+                pass
+        pending.append((directory, cache))
+    if not pending:
+        return sorted(all_names)
+    try:
+        with api.build_kaggle_client() as client:
+            service = client.competitions.competition_api_client
+            for series_number, (directory, cache) in enumerate(pending, start=1):
+                names: set[str] = set()
+                seen_tokens: set[str] = set()
+                token = None
+                expected_total = None
+                for _ in range(max_pages):
+                    request = _make_tree_request(directory, token)
+                    response = service.list_data_tree_files(request)
+                    if _attribute(response, "directories", default=[]):
+                        raise DownloadError(
+                            "A selected series contains subdirectories; its completeness cannot be established."
+                        )
+                    total = _attribute(response, "total_files")
+                    if type(total) is not int or total < 1:
+                        raise DownloadError(
+                            "The official series listing does not provide a valid positive file count."
+                        )
+                    if expected_total is not None and total != expected_total:
+                        raise DownloadError(
+                            "The series file count changed during listing; retry with --refresh-index."
+                        )
+                    expected_total = total
+                    for item in _attribute(response, "files", default=[]) or []:
+                        name = _attribute(item, "name")
+                        if not isinstance(name, str) or not re.fullmatch(r"[0-9]+\.dcm", name):
+                            raise DownloadError(
+                                "The official series directory contains an unexpected file name."
+                            )
+                        names.add(f"{directory}/{name}")
+                    token = _attribute(response, "next_page_token", "nextPageToken")
+                    if not token:
+                        if not names or expected_total != len(names):
+                            raise DownloadError(
+                                "The official series listing is empty or incomplete; no images were downloaded."
+                            )
+                        result = sorted(names)
+                        cache.parent.mkdir(parents=True, exist_ok=True)
+                        staged = cache.with_suffix(".tmp")
+                        staged.write_text(
+                            json.dumps(
+                                {
+                                    "competition": COMPETITION,
+                                    "directory": directory,
+                                    "complete": True,
+                                    "total_files": expected_total,
+                                    "files": result,
+                                },
+                                indent=2,
+                            )
+                            + "\n"
+                        )
+                        staged.replace(cache)
+                        all_names.extend(result)
+                        print(
+                            f"Indexed sample series {series_number}/{len(pending)}: {len(result)} DICOM files (no images downloaded yet)",
+                            flush=True,
+                        )
+                        break
+                    if token in seen_tokens:
+                        raise DownloadError(
+                            "Kaggle repeated a series pagination token; the incomplete index was not saved."
+                        )
+                    seen_tokens.add(token)
+                else:
+                    raise DownloadError(
+                        "A series directory listing exceeded its page limit; no images were downloaded."
+                    )
+    except DownloadError:
+        raise
+    except ImportError:
+        raise DownloadError(
+            "Directory listing requires the current official SDK: pip install '.[data]' with kaggle>=2.2.4."
+        ) from None
+    except Exception as exc:
+        raise _service_error(exc) from None
+    return sorted(all_names)
 
 
 def _manifest_rows(path: Path) -> list[dict[str, str]]:
@@ -270,7 +441,7 @@ def download_sample(
     root = Path(data_root)
     selected = _training_series(Path(manifest_dir), count)
     client = api if api is not None else _api()
-    index = _file_index(client, root, refresh=refresh_index)
+    index = _series_file_index(client, root, selected, refresh=refresh_index)
     selected_set = set(selected)
     files_by_series: dict[tuple[str, str], list[str]] = {key: [] for key in selected}
     for name in index:
@@ -325,7 +496,7 @@ def main(argv: list[str] | None = None) -> int:
     metadata.add_argument("--overwrite", action="store_true")
     sample = commands.add_parser(
         "sample",
-        help="Download several complete training series; initially indexes the official file list.",
+        help="Download several complete training series using official per-directory listing.",
     )
     sample.add_argument("--data-root", type=Path, required=True)
     sample.add_argument("--manifest-dir", type=Path, required=True)

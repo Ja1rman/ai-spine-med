@@ -1,8 +1,10 @@
 """Official API protocol tests use fake files and never require credentials."""
 
 import csv
+import json
 import sys
 import zipfile
+from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -13,6 +15,7 @@ from ai_spine_med.kaggle_download import (
     DownloadError,
     _api,
     _file_index,
+    _series_file_index,
     download_metadata,
     download_sample,
 )
@@ -170,6 +173,44 @@ def test_service_error_does_not_echo_tokens(tmp_path):
     assert "rules" in str(error.value)
 
 
+@pytest.mark.parametrize("operation", ["metadata", "index"])
+def test_rules_acceptance_error_is_specific_without_echoing_private_details(tmp_path, operation):
+    class HTTPError(Exception):
+        response = SimpleNamespace(
+            status_code=403,
+            json=lambda: {
+                "error": {
+                    "message": "PRIVATE_SERVER_MESSAGE",
+                    "details": [
+                        {
+                            "reason": "RulesAcceptanceRequired",
+                            "metadata": {"signed_url": "https://private.example/?token=TOPSECRET"},
+                        }
+                    ],
+                }
+            },
+        )
+
+    class FailedApi:
+        def competition_download_file(self, *args, **kwargs):
+            raise HTTPError("PRIVATE_EXCEPTION_TEXT")
+
+        def competition_list_files(self, *args, **kwargs):
+            raise HTTPError("PRIVATE_EXCEPTION_TEXT")
+
+    with pytest.raises(DownloadError) as error:
+        if operation == "metadata":
+            download_metadata(tmp_path, api=FailedApi())
+        else:
+            _file_index(FailedApi(), tmp_path, refresh=True)
+    message = str(error.value)
+    assert "not recorded acceptance" in message
+    assert "rsna-2024-lumbar-spine-degenerative-classification/rules" in message
+    assert "same account" in message
+    assert "TOPSECRET" not in message
+    assert "PRIVATE_" not in message
+
+
 def test_modern_sdk_auth_systemexit_is_silent_and_actionable(monkeypatch, capsys):
     class UnauthenticatedApi:
         def authenticate(self):
@@ -204,3 +245,123 @@ def test_modern_sdk_file_response_supports_snake_case_fields(tmp_path):
             return SimpleNamespace(files=[SimpleNamespace(name="train.csv")], next_page_token="")
 
     assert _file_index(SdkApi(), tmp_path, refresh=False) == ["train.csv"]
+
+
+def test_sdk_directory_listing_selects_only_requested_series_and_handles_pages(
+    tmp_path, monkeypatch
+):
+    import ai_spine_med.kaggle_download as downloader
+
+    requests = []
+
+    class Service:
+        def list_data_tree_files(self, request):
+            requests.append(request)
+            return SimpleNamespace(
+                files=[SimpleNamespace(name="2.dcm" if request.page_token else "1.dcm")],
+                directories=[],
+                total_files=2,
+                next_page_token="" if request.page_token else "next",
+            )
+
+    class DirectoryApi:
+        def build_kaggle_client(self):
+            return nullcontext(
+                SimpleNamespace(competitions=SimpleNamespace(competition_api_client=Service()))
+            )
+
+        def competition_list_files(self, *args, **kwargs):
+            pytest.fail("The current SDK must not scan the complete competition index.")
+
+    monkeypatch.setattr(
+        downloader,
+        "_make_tree_request",
+        lambda directory, token: SimpleNamespace(path=directory, page_token=token or ""),
+    )
+    selected = [("100", "10"), ("101", "20")]
+    names = _series_file_index(DirectoryApi(), tmp_path, selected, refresh=False)
+    assert names == [
+        "train_images/100/10/1.dcm",
+        "train_images/100/10/2.dcm",
+        "train_images/101/20/1.dcm",
+        "train_images/101/20/2.dcm",
+    ]
+    assert [request.path for request in requests] == ["train_images/100/10"] * 2 + [
+        "train_images/101/20"
+    ] * 2
+    assert _series_file_index(DirectoryApi(), tmp_path, selected, refresh=False) == names
+    assert len(requests) == 4
+
+
+def test_sdk_directory_listing_rejects_incomplete_series_before_downloading(tmp_path, monkeypatch):
+    import ai_spine_med.kaggle_download as downloader
+
+    class Service:
+        def list_data_tree_files(self, request):
+            return SimpleNamespace(
+                files=[SimpleNamespace(name="1.dcm")],
+                directories=[],
+                total_files=18,
+                next_page_token="",
+            )
+
+    class DirectoryApi:
+        def build_kaggle_client(self):
+            return nullcontext(
+                SimpleNamespace(competitions=SimpleNamespace(competition_api_client=Service()))
+            )
+
+    monkeypatch.setattr(
+        downloader, "_make_tree_request", lambda directory, token: SimpleNamespace(path=directory)
+    )
+    with pytest.raises(DownloadError, match="incomplete"):
+        _series_file_index(DirectoryApi(), tmp_path, [("100", "10")], refresh=False)
+    assert not (tmp_path / "_download_cache" / "series_100_10.json").exists()
+
+
+@pytest.mark.parametrize(
+    "corruption", ["truncated", "missing_total", "boolean_total", "zero_total"]
+)
+def test_truncated_cache_forces_directory_relisting(tmp_path, monkeypatch, corruption):
+    import ai_spine_med.kaggle_download as downloader
+
+    calls = []
+
+    class Service:
+        def list_data_tree_files(self, request):
+            calls.append(request.path)
+            return SimpleNamespace(
+                files=[SimpleNamespace(name="1.dcm"), SimpleNamespace(name="2.dcm")],
+                directories=[],
+                total_files=2,
+                next_page_token="",
+            )
+
+    class DirectoryApi:
+        def build_kaggle_client(self):
+            return nullcontext(
+                SimpleNamespace(competitions=SimpleNamespace(competition_api_client=Service()))
+            )
+
+    monkeypatch.setattr(
+        downloader,
+        "_make_tree_request",
+        lambda directory, token: SimpleNamespace(path=directory),
+    )
+    selected = [("100", "10")]
+    expected = _series_file_index(DirectoryApi(), tmp_path, selected, refresh=False)
+    path = tmp_path / "_download_cache" / "series_100_10.json"
+    cached = json.loads(path.read_text())
+    assert cached["total_files"] == 2
+    if corruption == "truncated":
+        cached["files"] = cached["files"][:1]
+    elif corruption == "missing_total":
+        del cached["total_files"]
+    elif corruption == "boolean_total":
+        cached["total_files"] = True
+    else:
+        cached["total_files"] = 0
+    path.write_text(json.dumps(cached))
+    assert _series_file_index(DirectoryApi(), tmp_path, selected, refresh=False) == expected
+    assert len(calls) == 2
+    assert json.loads(path.read_text())["total_files"] == 2

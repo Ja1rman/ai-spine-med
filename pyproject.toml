@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ai-spine-med"
 version = "0.1.0"
 description = "Research preparation and SpineNet baseline for lumbar central canal stenosis"
-requires-python = ">=3.11,<3.14"
+requires-python = ">=3.11,<3.13"
 dependencies = [
   "numpy>=1.26,<2",
   "pandas>=2.2,<3",
@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-data = ["kaggle>=1.7,<3"]
+data = ["kaggle>=2.2.4,<3"]
 dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [project.scripts]
