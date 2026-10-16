@@ -1,0 +1,43 @@
+{
+  "upstream_commit": "5e96ac54b1c1845a37d12e40bfd16f647d40acd8",
+  "source": {
+    "url": "https://codeload.github.com/rwindsor1/SpineNet/zip/5e96ac54b1c1845a37d12e40bfd16f647d40acd8",
+    "bytes": 1944944,
+    "sha256": "8301ff3b57583b85937430831a91b0d4b03c32cf2c6f0d93b51a41d32f48f9eb"
+  },
+  "weights": {
+    "grading/ckpt1.pt": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/weights/grading/ckpt1.pt",
+      "bytes": 254001510,
+      "sha256": "b7259f0a32d438d30e58db0f36db0b401ae5e36cb58d3eddb650cd7a141778fb"
+    },
+    "appearance/ckpt187.pt": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/weights/appearance/ckpt187.pt",
+      "bytes": 7756623,
+      "sha256": "32ca6dd08fb7deae07d471594362bf53eb10a52ebabf87da653c0e14ba457b62"
+    },
+    "detect-vfr/ckpt435.pt": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/weights/detect-vfr/ckpt435.pt",
+      "bytes": 558044608,
+      "sha256": "7da94b16ee160764a1872350b10d15ad5e66a884791fc87e476dbec06c46be0a"
+    },
+    "context/ckpt16.pt": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/weights/context/ckpt16.pt",
+      "bytes": 2054446,
+      "sha256": "fd6d997584978519a1a93bff6ff2e6c877e0bd704659212ebd6d7a7d7a469bc6"
+    }
+  },
+  "examples": {
+    "t2_lumbar_scan_1": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/example_scans/t2_lumbar_scan_1.zip",
+      "bytes": 2399907,
+      "sha256": "77f24f37e9b6980000681b09d50c19b01eef16971c600e6d538534a7d1c76f04"
+    },
+    "t2_lumbar_scan_2": {
+      "url": "https://www.robots.ox.ac.uk/~vgg/research/spinenet/example_scans/t2_lumbar_scan_2.zip",
+      "bytes": 2585048,
+      "sha256": "17008ba8b26467ad0fea731104abd22147aaa2bb1663a72cefadc9240d7d8140"
+    }
+  },
+  "license": "SpineNet non-commercial research license; see upstream LICENCE.md"
+}
