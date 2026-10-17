@@ -41,7 +41,7 @@ def _save(fig: plt.Figure, destination: Path) -> None:
     plt.close(fig)
 
 
-def draw_cohort(manifest_dir: Path, out: Path) -> None:
+def draw_cohort(manifest_dir: Path, out: Path, *, test_evaluated: bool = False) -> None:
     _style()
     summary = json.loads((manifest_dir / "summary.json").read_text())
     fig, axes = plt.subplots(1, 2, figsize=(12.5, 4.7))
@@ -79,7 +79,9 @@ def draw_cohort(manifest_dir: Path, out: Path) -> None:
     fig.text(
         0.5,
         -0.015,
-        "Test оставлен для следующего этапа: его изображения и результаты здесь не используются.",
+        "Эпохи выбраны на validation; test использован после фиксации всех моделей."
+        if test_evaluated
+        else "Test оставлен для следующего этапа: его изображения и результаты здесь не используются.",
         ha="center",
         fontsize=10,
         color="#607a8c",
@@ -88,7 +90,9 @@ def draw_cohort(manifest_dir: Path, out: Path) -> None:
     _save(fig, out / "cohort.png")
 
 
-def draw_confusions(matrices: list[tuple[str, list[list[int]]]], out: Path) -> None:
+def draw_confusions(
+    matrices: list[tuple[str, list[list[int]]]], out: Path, filename: str = "confusion.png"
+) -> None:
     _style()
     columns = min(len(matrices), 2)
     rows = (len(matrices) + columns - 1) // columns
@@ -123,7 +127,7 @@ def draw_confusions(matrices: list[tuple[str, list[list[int]]]], out: Path) -> N
     for ax in list(axes.flat)[len(matrices) :]:
         ax.axis("off")
     fig.tight_layout(w_pad=2)
-    _save(fig, out / "confusion.png")
+    _save(fig, out / filename)
 
 
 def draw_experiment(

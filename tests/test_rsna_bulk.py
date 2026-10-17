@@ -12,8 +12,11 @@ from ai_spine_med.rsna_bulk import (
     COMPLETE_MARKER,
     ArchiveDownloadError,
     _archive_plan,
+    _selected_series,
+    download_test,
     download_train_validation,
     is_complete_series,
+    validate_test_selection,
 )
 
 
@@ -203,3 +206,115 @@ def test_bad_ready_marker_is_not_trusted(tmp_path):
         json.dumps({"complete": True, "expected_files": True, "files": ["1.dcm"]})
     )
     assert not is_complete_series(directory)
+
+
+def write_selection(manifests, directory):
+    """A synthetic completed six-run seal; contains no patient images."""
+    from ai_spine_med import rsna_bulk
+
+    directory.mkdir(exist_ok=True)
+    labels = manifests / "labels.csv"
+    if not labels.exists():
+        labels.write_text("study_id,split,level,label\n3,test,L4-L5,1\n")
+    summary = json.loads((manifests / "summary.json").read_text())
+    summary["output_sha256"]["labels.csv"] = hashlib.sha256(labels.read_bytes()).hexdigest()
+    (manifests / "summary.json").write_text(json.dumps(summary))
+    protocol = directory / "protocol.json"
+    protocol.write_text('{"locked":true}\n')
+    lock = json.loads(rsna_bulk.Path(rsna_bulk.__file__).with_name("assets.lock.json").read_text())
+    checkpoint_groups = {}
+    for variant in ("frozen_head", "fine_tuned"):
+        checkpoint_groups[variant] = []
+        for seed in (42, 2024, 3407):
+            path = directory / f"{variant}-{seed}.pt"
+            path.write_bytes(f"synthetic-{variant}-{seed}".encode())
+            checkpoint_groups[variant].append(
+                {
+                    "seed": seed,
+                    "path": path.name,
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                }
+            )
+    selection = {
+        "schema_version": 1,
+        "scope": "heldout_test",
+        "frozen": True,
+        "manifests_sha256": {
+            name: summary["output_sha256"][name]
+            for name in ("studies.csv", "series.csv", "labels.csv")
+        },
+        "protocol": {
+            "path": protocol.name,
+            "sha256": hashlib.sha256(protocol.read_bytes()).hexdigest(),
+        },
+        "original_weights_sha256": {name: item["sha256"] for name, item in lock["weights"].items()},
+        "checkpoints": checkpoint_groups,
+    }
+    path = directory / "selection.json"
+    path.write_text(json.dumps(selection, indent=2) + "\n")
+    return path
+
+
+def test_heldout_gate_precedes_network_and_root_creation(tmp_path, monkeypatch):
+    from ai_spine_med import rsna_bulk
+
+    manifests = tmp_path / "manifests"
+    make_manifests(manifests)
+    called = []
+    monkeypatch.setattr(rsna_bulk, "_open_official_archive", lambda: called.append(True))
+    with pytest.raises(ArchiveDownloadError, match="test is sealed"):
+        download_test(tmp_path / "raw", manifests, tmp_path / "missing-selection.json")
+    assert called == []
+    assert not (tmp_path / "raw").exists()
+
+
+def test_test_download_separate_status_same_manifest_and_existing_train_markers(tmp_path):
+    manifests = tmp_path / "manifests"
+    make_manifests(manifests)
+    selection = write_selection(manifests, tmp_path / "sealed")
+    root = tmp_path / "raw"
+    source = MemoryArchive(make_archive())
+    download_train_validation(root, manifests, source=source)
+    before = (root / "train_images/1/10" / COMPLETE_MARKER).read_bytes()
+    result = download_test(root, manifests, selection, source=source)
+    assert result["completed_series"] == 1
+    assert result["scope"] == "heldout_test"
+    assert result["selection_sha256"] == hashlib.sha256(selection.read_bytes()).hexdigest()
+    assert (root / "train_images/1/10" / COMPLETE_MARKER).read_bytes() == before
+    marker = json.loads((root / "train_images/3/10" / COMPLETE_MARKER).read_text())
+    assert marker["manifest_sha256"] == _selected_series(manifests)[1]
+    assert marker["selection_sha256"] == result["selection_sha256"]
+    assert marker["scope"] == "heldout_test"
+    assert is_complete_series(root / "train_images/3/10")
+    assert (root / "_download_cache/test_download.json").is_file()
+    assert (
+        json.loads((root / "_download_cache/train_validation_download.json").read_text())[
+            "total_series"
+        ]
+        == 2
+    )
+
+
+@pytest.mark.parametrize(
+    "changed", ["checkpoint", "protocol", "manifest", "seeds", "original", "incomplete"]
+)
+def test_changed_or_incomplete_selection_cannot_unlock_test(tmp_path, changed):
+    manifests = tmp_path / "manifests"
+    make_manifests(manifests)
+    path = write_selection(manifests, tmp_path / "sealed")
+    selection = json.loads(path.read_text())
+    if changed == "checkpoint":
+        (path.parent / selection["checkpoints"]["fine_tuned"][0]["path"]).write_bytes(b"changed")
+    elif changed == "protocol":
+        (path.parent / "protocol.json").write_text("changed")
+    elif changed == "manifest":
+        (manifests / "labels.csv").write_text("changed")
+    elif changed == "seeds":
+        selection["checkpoints"]["fine_tuned"][0]["seed"] = 99
+    elif changed == "original":
+        selection["original_weights_sha256"]["grading/ckpt1.pt"] = "0" * 64
+    else:
+        selection["checkpoints"]["frozen_head"].pop()
+    path.write_text(json.dumps(selection))
+    with pytest.raises(ArchiveDownloadError, match="test is sealed"):
+        validate_test_selection(manifests, path)

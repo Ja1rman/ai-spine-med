@@ -60,6 +60,81 @@ def main(argv: list[str] | None = None) -> int:
     qc.add_argument("--data-root", type=Path, default=Path("data/rsna"))
     qc.add_argument("--out", type=Path, required=True)
     qc.add_argument("--count", type=int, default=24)
+    activation = sub.add_parser(
+        "cache-last-block", help="Сохранить вход последнего блока для train/validation"
+    )
+    activation.add_argument("--features", type=Path, required=True)
+    activation.add_argument("--cache", type=Path, default=Path(".cache"))
+    activation.add_argument("--out", type=Path, required=True)
+    activation.add_argument("--device", default="auto")
+    activation.add_argument("--batch-size", type=int, default=4)
+    activation.add_argument("--limit", type=int)
+    fine = sub.add_parser("train-last-block", help="Дообучить layer4.2 и голову с тремя seed")
+    fine.add_argument("--features", type=Path, required=True)
+    fine.add_argument("--activations", type=Path, required=True)
+    fine.add_argument("--heads", type=Path, required=True)
+    fine.add_argument("--cache", type=Path, default=Path(".cache"))
+    fine.add_argument("--out", type=Path, required=True)
+    fine.add_argument("--device", default="cpu")
+    fine.add_argument("--threads", type=int, default=4)
+    fine.add_argument("--seeds", type=int, nargs="+", default=[42, 2024, 3407])
+    fine.add_argument("--max-epochs", type=int, default=10)
+    fine.add_argument("--patience", type=int, default=3)
+    fine.add_argument("--batch-size", type=int, default=16)
+    fine.add_argument("--protocol", type=Path, default=Path("configs/finetune-v1.json"))
+    seal = sub.add_parser(
+        "freeze-selection", help="Зафиксировать протокол и шесть checkpoint до открытия теста"
+    )
+    seal.add_argument("--protocol", type=Path, default=Path("configs/finetune-v1.json"))
+    seal.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
+    seal.add_argument("--features", type=Path, required=True)
+    seal.add_argument("--heads", type=Path, required=True)
+    seal.add_argument("--fine-tuned", type=Path, required=True)
+    seal.add_argument("--out", type=Path, required=True)
+    test_download = sub.add_parser(
+        "download-test", help="Скачать отложенный тест после фиксации моделей"
+    )
+    test_download.add_argument("--selection", type=Path, required=True)
+    test_download.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    test_download.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
+    test_download.add_argument("--workers", type=int, default=4)
+    test_extract = sub.add_parser(
+        "extract-test", help="Обработать только test неизменённым SpineNet"
+    )
+    test_extract.add_argument("--selection", type=Path, required=True)
+    test_extract.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    test_extract.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
+    test_extract.add_argument("--cache", type=Path, default=Path(".cache"))
+    test_extract.add_argument("--out", type=Path, required=True)
+    test_extract.add_argument("--device", default="auto")
+    test_extract.add_argument("--threads", type=int, default=4)
+    test_extract.add_argument("--limit", type=int)
+    test_extract.add_argument("--retry-failed", action="store_true")
+    test_evaluate = sub.add_parser(
+        "evaluate-test", help="Сравнить все семь фиксированных моделей на test"
+    )
+    test_evaluate.add_argument("--features", type=Path, required=True)
+    test_evaluate.add_argument("--selection", type=Path, required=True)
+    test_evaluate.add_argument("--heads", type=Path, required=True)
+    test_evaluate.add_argument("--fine-tuned", type=Path, required=True)
+    test_evaluate.add_argument("--activations", type=Path, required=True)
+    test_evaluate.add_argument("--cache", type=Path, default=Path(".cache"))
+    test_evaluate.add_argument("--out", type=Path, required=True)
+    test_evaluate.add_argument("--device", default="auto")
+    test_evaluate.add_argument("--batch-size", type=int, default=16)
+    test_evaluate.add_argument("--warmup", type=int, default=8)
+    test_evaluate.add_argument("--draws", type=int, default=32)
+    test_evaluate.add_argument("--skip-benchmark", action="store_true")
+    final_report = sub.add_parser(
+        "report-final", help="Построить графики итогового теста и дообучения"
+    )
+    final_report.add_argument("--heads", type=Path, required=True)
+    final_report.add_argument("--fine-tuned", type=Path, required=True)
+    final_report.add_argument("--test-results", type=Path, required=True)
+    final_report.add_argument("--out", type=Path, default=Path("docs/images"))
+    final_report.add_argument("--update-readme", type=Path)
+    final_report.add_argument("--protocol-doc", type=Path)
+    final_report.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -147,6 +222,101 @@ def main(argv: list[str] | None = None) -> int:
 
             generate_qc(args.features, args.data_root, args.out, count=args.count)
             print(f"Local training ROI images saved to {args.out}; do not redistribute RSNA images")
+        elif args.command == "cache-last-block":
+            from .finetuning import cache_last_block_activations
+
+            result = cache_last_block_activations(
+                args.features,
+                args.cache,
+                args.out,
+                device=args.device,
+                batch_size=args.batch_size,
+                limit=args.limit,
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "train-last-block":
+            from .finetuning import train_last_block
+
+            result = train_last_block(
+                args.features,
+                args.activations,
+                args.heads,
+                args.cache,
+                args.out,
+                device=args.device,
+                threads=args.threads,
+                seeds=tuple(args.seeds),
+                max_epochs=args.max_epochs,
+                patience=args.patience,
+                batch_size=args.batch_size,
+                protocol_path=args.protocol,
+            )
+            print(
+                f"Validation macro-F1={result['validation_macro_f1_mean']:.4f} ± {result['validation_macro_f1_std']:.4f}"
+            )
+        elif args.command == "freeze-selection":
+            from .evaluation import freeze_selection
+
+            freeze_selection(
+                args.protocol,
+                args.manifest_dir,
+                args.features,
+                args.heads,
+                args.fine_tuned,
+                args.out,
+            )
+            print(f"Selected model hashes fixed in {args.out}")
+        elif args.command == "download-test":
+            from .rsna_bulk import download_test
+
+            result = download_test(args.data_root, args.manifest_dir, args.selection, args.workers)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "extract-test":
+            from .heldout_features import extract_heldout_features
+
+            result = extract_heldout_features(
+                args.data_root,
+                args.manifest_dir,
+                args.cache,
+                args.out,
+                args.selection,
+                device=args.device,
+                threads=args.threads,
+                limit=args.limit,
+                retry_failed=args.retry_failed,
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "evaluate-test":
+            from .evaluation import evaluate_test
+
+            result = evaluate_test(
+                args.features,
+                args.selection,
+                args.heads,
+                args.fine_tuned,
+                args.activations,
+                args.out,
+                cache_dir=args.cache,
+                device=args.device,
+                batch_size=args.batch_size,
+                benchmark=not args.skip_benchmark,
+                warmup=args.warmup,
+                draws=args.draws,
+            )
+            print(json.dumps(result["variants"], ensure_ascii=False, indent=2))
+        elif args.command == "report-final":
+            from .comparison_report import draw_final_comparison
+
+            draw_final_comparison(
+                args.heads,
+                args.fine_tuned,
+                args.test_results,
+                args.out,
+                readme=args.update_readme,
+                protocol_doc=args.protocol_doc,
+                manifest_dir=args.manifest_dir,
+            )
+            print(f"Final figures saved to {args.out}")
     except (ValueError, FileNotFoundError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1

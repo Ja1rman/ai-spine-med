@@ -198,7 +198,9 @@ class SeriesPlan:
     metadata_sha256: str
 
 
-def _selected_series(manifest_dir: Path) -> tuple[set[str], str]:
+def _selected_series(
+    manifest_dir: Path, *, splits: tuple[str, ...] = ("train", "validation")
+) -> tuple[set[str], str]:
     try:
         summary = json.loads((manifest_dir / "summary.json").read_text())
         contents = {
@@ -221,10 +223,7 @@ def _selected_series(manifest_dir: Path) -> tuple[set[str], str]:
                 raise ArchiveDownloadError(
                     "Unsafe study or series identifier in the fixed manifest."
                 )
-            if (
-                row["split"] in ("train", "validation")
-                and row["series_description"] == "Sagittal T2/STIR"
-            ):
+            if row["split"] in splits and row["series_description"] == "Sagittal T2/STIR":
                 path = f"train_images/{study}/{number}"
                 if row["series_path"] != path or path in selected:
                     raise ArchiveDownloadError(
@@ -242,6 +241,95 @@ def _selected_series(manifest_dir: Path) -> tuple[set[str], str]:
     except (OSError, ValueError, KeyError):
         raise ArchiveDownloadError(
             "Prepare valid fixed study/series manifests before downloading."
+        ) from None
+
+
+def validate_test_selection(
+    manifest_dir: str | Path, selection_manifest: str | Path
+) -> tuple[dict[str, Any], str]:
+    """Verify the frozen six-checkpoint decision before accessing held-out MRI.
+
+    Relative protocol/checkpoint paths are resolved beside the selection file.
+    Extra audit fields from the evaluation seal are preserved, not discarded.
+    The returned digest covers the exact selection-file bytes.
+    """
+    manifest_dir, selection_manifest = Path(manifest_dir), Path(selection_manifest)
+    try:
+        content = selection_manifest.read_bytes()
+        if len(content) > 2 * 1024 * 1024:
+            raise ValueError("oversized selection")
+        selection = json.loads(content)
+        if (
+            type(selection.get("schema_version")) is not int
+            or selection["schema_version"] != 1
+            or selection.get("scope") != "heldout_test"
+            or selection.get("frozen") is not True
+        ):
+            raise ValueError("not a frozen held-out selection")
+        summary = json.loads((manifest_dir / "summary.json").read_text())
+        for name in ("studies.csv", "series.csv", "labels.csv"):
+            digest = _sha((manifest_dir / name).read_bytes())
+            if (
+                digest != selection["manifests_sha256"][name]
+                or digest != summary["output_sha256"][name]
+            ):
+                raise ValueError("fixed manifest changed")
+        lock = json.loads(Path(__file__).with_name("assets.lock.json").read_text())
+        weights = {name: item["sha256"] for name, item in lock["weights"].items()}
+        if selection["original_weights_sha256"] != weights:
+            raise ValueError("original model weights are not the pinned weights")
+
+        def verify_file(item: dict) -> None:
+            expected = item["sha256"]
+            if not isinstance(expected, str) or not re.fullmatch(r"[0-9a-f]{64}", expected):
+                raise ValueError("invalid artifact checksum")
+            value = item["path"]
+            if not isinstance(value, str) or not value or "://" in value:
+                raise ValueError("artifact must be a local file")
+            path = Path(value)
+            if not path.is_absolute():
+                path = selection_manifest.parent / path
+            if not path.is_file() or path.is_symlink():
+                raise ValueError("frozen artifact is missing or a symlink")
+            digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            if digest.hexdigest() != expected:
+                raise ValueError("frozen artifact changed")
+
+        verify_file(selection["protocol"])
+        for key in ("source_files", "training_artifacts"):
+            if key in selection:
+                if not isinstance(selection[key], list) or not selection[key]:
+                    raise ValueError("frozen audit artifacts must be a nonempty list")
+                for item in selection[key]:
+                    verify_file(item)
+        seeds = {}
+        paths = set()
+        for variant in ("frozen_head", "fine_tuned"):
+            items = selection["checkpoints"][variant]
+            if not isinstance(items, list) or len(items) != 3:
+                raise ValueError("three completed checkpoints per variant are required")
+            seeds[variant] = set()
+            for item in items:
+                seed = item["seed"]
+                if type(seed) is not int or seed in seeds[variant]:
+                    raise ValueError("checkpoint seeds must be distinct integers")
+                seeds[variant].add(seed)
+                path = Path(item["path"])
+                path = path if path.is_absolute() else selection_manifest.parent / path
+                identity = str(path.resolve())
+                if identity in paths:
+                    raise ValueError("each run needs its own checkpoint file")
+                paths.add(identity)
+                verify_file(item)
+        if seeds["frozen_head"] != seeds["fine_tuned"]:
+            raise ValueError("the two model variants must use the same three seeds")
+        return selection, _sha(content)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        raise ArchiveDownloadError(
+            "Held-out test is sealed: provide a valid frozen selection with unchanged fixed manifests, protocol, pinned original weights and all six checkpoints."
         ) from None
 
 
@@ -395,7 +483,14 @@ def is_complete_series(directory: str | Path) -> bool:
 
 
 class _Progress:
-    def __init__(self, path: Path, plans: list[SeriesPlan], source_sha: str, manifest_sha: str):
+    def __init__(
+        self,
+        path: Path,
+        plans: list[SeriesPlan],
+        source_sha: str,
+        manifest_sha: str,
+        context: dict | None = None,
+    ):
         self.path, self.lock, self.started = path, threading.Lock(), time.monotonic()
         self.value = {
             "stage": "downloading",
@@ -410,6 +505,7 @@ class _Progress:
             ),
             "source_identity_sha256": source_sha,
             "manifest_sha256": manifest_sha,
+            **(context or {}),
         }
         self.update()
 
@@ -449,6 +545,7 @@ def _process_series(
     source_sha: str,
     progress: _Progress,
     stop: threading.Event,
+    marker_context: dict | None = None,
 ) -> None:
     if stop.is_set():
         return
@@ -462,6 +559,7 @@ def _process_series(
         "manifest_sha256": manifest_sha,
         "source_identity_sha256": source_sha,
         "verification": "ZIP central metadata, local header, decompressed size, CRC32",
+        **(marker_context or {}),
     }
     if _existing_matches(final, plan.members):
         _atomic_json(final / COMPLETE_MARKER, marker)
@@ -508,10 +606,52 @@ def download_train_validation(
         raise ArchiveDownloadError("Worker count must be between 1 and 8.")
     root = Path(data_root)
     selected, manifest_sha = _selected_series(Path(manifest_dir))
-    status_path = root / "_download_cache" / "train_validation_download.json"
+    return _download_selected(root, selected, manifest_sha, workers, source=source)
+
+
+def download_test(
+    data_root: str | Path,
+    manifest_dir: str | Path,
+    selection_manifest: str | Path,
+    workers: int = 4,
+    *,
+    source: Any = None,
+) -> dict[str, Any]:
+    """Download only the sealed test cohort after all six models are fixed."""
+    if not 1 <= workers <= 8:
+        raise ArchiveDownloadError("Worker count must be between 1 and 8.")
+    _selection, selection_sha = validate_test_selection(manifest_dir, selection_manifest)
+    selected, manifest_sha = _selected_series(Path(manifest_dir), splits=("test",))
+    return _download_selected(
+        Path(data_root),
+        selected,
+        manifest_sha,
+        workers,
+        source=source,
+        status_name="test_download.json",
+        context={"scope": "heldout_test", "selection_sha256": selection_sha},
+    )
+
+
+def _download_selected(
+    root: Path,
+    selected: set[str],
+    manifest_sha: str,
+    workers: int,
+    *,
+    source: Any,
+    status_name: str = "train_validation_download.json",
+    context: dict | None = None,
+) -> dict[str, Any]:
+    status_path = root / "_download_cache" / status_name
     _atomic_json(
         status_path,
-        {"stage": "indexing", "total_series": len(selected), "manifest_sha256": manifest_sha},
+        {
+            "stage": "indexing",
+            "total_series": len(selected),
+            "manifest_sha256": manifest_sha,
+            **(context or {}),
+        },
     )
     try:
         source = source if source is not None else _open_official_archive()
@@ -526,16 +666,25 @@ def download_train_validation(
                 "error_type": type(exc).__name__,
                 "total_series": len(selected),
                 "manifest_sha256": manifest_sha,
+                **(context or {}),
             },
         )
         raise
-    progress = _Progress(status_path, plans, source_sha, manifest_sha)
+    progress = _Progress(status_path, plans, source_sha, manifest_sha, context)
     stop = threading.Event()
     try:
         with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = [
                 executor.submit(
-                    _process_series, plan, source, root, manifest_sha, source_sha, progress, stop
+                    _process_series,
+                    plan,
+                    source,
+                    root,
+                    manifest_sha,
+                    source_sha,
+                    progress,
+                    stop,
+                    context,
                 )
                 for plan in plans
             ]
@@ -559,9 +708,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--manifest-dir", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--split", choices=("train-validation", "test"), default="train-validation")
+    parser.add_argument("--selection-manifest", type=Path)
     args = parser.parse_args(argv)
+    if args.split == "test" and args.selection_manifest is None:
+        parser.error("--split test requires --selection-manifest; test remains sealed")
     try:
-        result = download_train_validation(args.data_root, args.manifest_dir, args.workers)
+        result = (
+            download_test(args.data_root, args.manifest_dir, args.selection_manifest, args.workers)
+            if args.split == "test"
+            else download_train_validation(args.data_root, args.manifest_dir, args.workers)
+        )
     except KeyboardInterrupt:
         parser.exit(130, "Interrupted. Completed MRI series remain reusable.\n")
     except ArchiveDownloadError as exc:
