@@ -236,8 +236,8 @@ def results_markdown(test: dict) -> str:
     lines = [
         f"На отложенном тесте оценил **{original['n_assessed']} из {original['n_labeled']} уровней ({original['coverage']:.1%})**.",
         "",
-        "| Модель | Seed | Macro-F1 | Тяжёлые: определены / всего | Тяжёлый → норма/лёгкий |",
-        "| --- | ---: | ---: | ---: | ---: |",
+        "| Модель | Seed | Macro-F1 на обработанных областях | Тяжёлые: определены / всего | Тяжёлый → норма/лёгкий | Тяжёлый → умеренный |",
+        "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     names = {
         "original": "Исходный SpineNet",
@@ -247,9 +247,9 @@ def results_markdown(test: dict) -> str:
     for e in test["entries"]:
         m, severe = e["metrics"], e["metrics"]["severe"]
         lines.append(
-            f"| {names[e['variant']]} | {e['seed'] if e['seed'] is not None else '—'} | {_number(m['conditional']['macro_f1'])} | {severe['correctly_predicted_severe']} / {severe['n_total']} | {severe['predicted_normal_mild']} |"
+            f"| {names[e['variant']]} | {e['seed'] if e['seed'] is not None else '—'} | {_number(m['conditional']['macro_f1'])} | {severe['correctly_predicted_severe']} / {severe['n_total']} | {severe['predicted_normal_mild']} | {severe['predicted_moderate']} |"
         )
-    lines += ["", "Среднее и стандартное отклонение macro-F1 по трём seed:"]
+    lines += ["", "Среднее и стандартное отклонение macro-F1 по трём seed:", ""]
     for variant in VARIANTS[1:]:
         values = [
             e["metrics"]["conditional"]["macro_f1"]
@@ -258,9 +258,18 @@ def results_markdown(test: dict) -> str:
         ]
         mean, std = _mean_std(values)
         lines.append(f"- {names[variant]}: **{_number(mean)} ± {_number(std)}**.")
+    if original["severe"]["not_assessed"]:
+        severe_coverage = (
+            f"Среди всех {original['severe']['n_total']} тяжёлых уровней "
+            f"**{original['severe']['not_assessed']} не обработано**. "
+            "Они остаются в общем знаменателе обнаружения тяжёлого стеноза."
+        )
+    else:
+        severe_coverage = f"Все **{original['severe']['n_total']} тяжёлых уровней обработаны**."
     lines += [
         "",
-        f"Среди всех {original['severe']['n_total']} тяжёлых уровней **{original['severe']['not_assessed']} не обработано**. Они остаются в общем знаменателе обнаружения тяжёлого стеноза. Стандартное отклонение описывает разброс между запусками, а не неопределённость на новых пациентах.",
+        severe_coverage + " Стандартное отклонение описывает разброс между запусками, "
+        "а не неопределённость на новых пациентах.",
     ]
     timings = test.get("timings", {})
     benchmark = timings.get("classifier_batch1", [])
@@ -285,7 +294,8 @@ def results_markdown(test: dict) -> str:
         if full.get("median_seconds") is not None:
             lines += [
                 "",
-                f"Отдельно полный исходный конвейер — от чтения DICOM до оценок — занял "
+                f"Отдельно во время извлечения тестовых признаков полный исходный конвейер "
+                f"— от чтения DICOM до оценок — занял "
                 f"в медиане **{full['median_seconds']:.2f} с на серию** ({full['count']} серий).",
             ]
         if residual.get("median_seconds") is not None:
@@ -315,6 +325,30 @@ def _replace_block(path: Path, name: str, body: str) -> None:
     prefix, remainder = content.split(start)
     _, suffix = remainder.split(end)
     path.write_text(prefix + start + "\n" + body + "\n" + end + suffix)
+
+
+def _validation_markdown(fine: dict) -> str:
+    lines = [
+        "Выбранные модели после дообучения последнего блока (валидация):",
+        "",
+        "| Seed | Обучено эпох | Выбранная эпоха | Macro-F1 | Тяжёлые: определены / всего |",
+        "| ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for run in fine["runs"]:
+        severe = run["metrics"]["severe"]
+        lines.append(
+            f"| {run['seed']} | {run['epochs_run']} | {run['best_epoch']} | "
+            f"{run['validation_macro_f1']:.3f} | "
+            f"{severe['correctly_predicted_severe']} / {severe['n_total']} |"
+        )
+    lines += [
+        "",
+        f"Средний validation macro-F1 — **{fine['validation_macro_f1_mean']:.3f} ± "
+        f"{fine['validation_macro_f1_std']:.3f}** (стандартное отклонение между seed). "
+        "Эпоха 0 означает, что по валидации сохранилось исходное состояние этого запуска. "
+        "Эта таблица использовалась для выбора эпохи, итоговую оценку даёт отдельный тест.",
+    ]
+    return "\n".join(lines)
 
 
 def draw_final_comparison(
@@ -358,6 +392,10 @@ def draw_final_comparison(
     body = results_markdown(test)
     if readme:
         _replace_block(Path(readme), "FINAL_RESULTS", body)
+        if "<!-- FINETUNE_VALIDATION_START -->" in Path(readme).read_text():
+            _replace_block(Path(readme), "FINETUNE_VALIDATION", _validation_markdown(fine))
     if protocol_doc:
         _replace_block(Path(protocol_doc), "FINETUNE_RESULTS", body)
+        if "<!-- FINETUNE_VALIDATION_START -->" in Path(protocol_doc).read_text():
+            _replace_block(Path(protocol_doc), "FINETUNE_VALIDATION", _validation_markdown(fine))
     return payload
