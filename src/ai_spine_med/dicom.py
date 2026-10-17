@@ -51,7 +51,11 @@ def load_sagittal_series(
     directory = Path(directory)
     if not directory.is_dir():
         raise DicomGeometryError("DICOM series directory does not exist")
-    paths = sorted(p for p in directory.iterdir() if p.is_file() and not p.name.startswith("."))
+    paths = sorted(
+        p
+        for p in directory.iterdir()
+        if p.is_file() and not p.name.startswith(".") and p.name != "_series_complete.json"
+    )
     if len(paths) < 2:
         raise DicomGeometryError("A spatial series requires at least two DICOM slices")
     if not 0 < max_obliquity_degrees < 45:

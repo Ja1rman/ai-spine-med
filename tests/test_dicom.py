@@ -57,6 +57,15 @@ def test_physical_sort_spacing_and_private_metadata(tmp_path):
     assert "PRIVATE" not in str(result.metadata)
 
 
+def test_download_completion_marker_is_not_a_slice(tmp_path):
+    make_pair(tmp_path)
+    (tmp_path / "_series_complete.json").write_text('{"schema_version": 1}')
+    assert load_sagittal_series(tmp_path).volume.shape == (2, 3, 2)
+    (tmp_path / "unexpected.json").write_text("{}")
+    with pytest.raises(DicomGeometryError, match="Cannot read DICOM"):
+        load_sagittal_series(tmp_path)
+
+
 def test_load_rle_lossless_series_without_external_codecs(tmp_path):
     """Exercise the compressed pixel path used by RSNA, not a mock decoder."""
     pixels = np.arange(64 * 64, dtype=np.uint16).reshape(64, 64)
