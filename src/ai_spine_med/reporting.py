@@ -13,7 +13,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
 COLORS = ("#4b89a6", "#e4a44c", "#ca6473")
 CLASS_LABELS = ("Норма / лёгкий", "Умеренный", "Тяжёлый")
@@ -40,61 +39,6 @@ def _save(fig: plt.Figure, destination: Path) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(destination, dpi=170, bbox_inches="tight")
     plt.close(fig)
-
-
-def draw_pipeline(out: Path) -> None:
-    _style()
-    fig, ax = plt.subplots(figsize=(13, 4.6))
-    ax.set(xlim=(0, 13), ylim=(0, 4.5))
-    ax.axis("off")
-    boxes = [
-        (0.15, 2.0, 2.0, "Сагиттальная\nT2/STIR-серия", "#e4edf4"),
-        (2.65, 2.0, 2.3, "SpineNet\nПозвонки и уровни", "#e4edf4"),
-        (5.45, 2.0, 2.0, "Области дисков\nL4–L5 и L5–S1", "#e4edf4"),
-        (7.95, 2.0, 2.1, "Замороженная сеть\n512 признаков", "#e4edf4"),
-        (10.55, 2.0, 2.3, "Новая голова\nLinear(512, 3)", "#e5f1e9"),
-    ]
-    for x, y, width, label, color in boxes:
-        ax.add_patch(
-            FancyBboxPatch(
-                (x, y),
-                width,
-                1.0,
-                boxstyle="round,pad=0.04",
-                facecolor=color,
-                edgecolor="#a6bac8",
-                linewidth=1.2,
-            )
-        )
-        ax.text(x + width / 2, y + 0.5, label, ha="center", va="center", fontsize=10)
-    for left, right in zip(boxes, boxes[1:]):
-        ax.add_patch(
-            FancyArrowPatch(
-                (left[0] + left[2] + 0.08, 2.5),
-                (right[0] - 0.08, 2.5),
-                arrowstyle="-|>",
-                mutation_scale=16,
-                color="#607a8c",
-            )
-        )
-    ax.text(6.45, 1.62, "9 × 112 × 224", ha="center", color="#607a8c", fontsize=10)
-    ax.text(9.0, 1.62, "веса не меняются", ha="center", color="#607a8c", fontsize=10)
-    ax.text(11.7, 1.62, "обучаю на RSNA", ha="center", color="#43805b", fontsize=10)
-    ax.text(0.15, 4.0, "Что меняется в эксперименте", fontsize=18, weight="bold")
-    ax.text(
-        0.15,
-        3.55,
-        "Локализация и основная сеть исходные. Обучается только последний слой.",
-        fontsize=11,
-        color="#607a8c",
-    )
-    ax.text(
-        0.15,
-        0.55,
-        "Нет нужной области → not_assessed     •     Выход → норма/лёгкий, умеренный, тяжёлый",
-        fontsize=12,
-    )
-    _save(fig, out / "pipeline.png")
 
 
 def draw_cohort(manifest_dir: Path, out: Path) -> None:
@@ -209,7 +153,6 @@ def draw_experiment(
     runs = training["runs"]
     if not runs:
         raise ValueError("No completed training runs")
-    draw_pipeline(out)
     draw_cohort(manifest_dir, out)
     _style()
 
