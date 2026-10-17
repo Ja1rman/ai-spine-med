@@ -135,6 +135,70 @@ def main(argv: list[str] | None = None) -> int:
     final_report.add_argument("--update-readme", type=Path)
     final_report.add_argument("--protocol-doc", type=Path)
     final_report.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
+    inference = sub.add_parser("predict", help="Оценить два уровня одной DICOM-серии")
+    inference.add_argument("--dicom-dir", type=Path, required=True)
+    inference.add_argument("--checkpoint", type=Path, nargs="+", required=True)
+    inference.add_argument("--cache", type=Path, default=Path(".cache"))
+    inference.add_argument("--out", type=Path, required=True)
+    inference.add_argument("--device", default="auto")
+    inference.add_argument("--threads", type=int, default=4)
+    experiments = sub.add_parser(
+        "head-experiments", help="Сравнить головы на трёх CV-разбиениях train"
+    )
+    experiments.add_argument("--features", type=Path, default=Path("artifacts/features-v1"))
+    experiments.add_argument("--out", type=Path, required=True)
+    experiments.add_argument("--protocol", type=Path, default=Path("configs/head-v2.json"))
+    experiments.add_argument("--threads", type=int, default=4)
+    review = sub.add_parser(
+        "error-review", help="Подготовить локальную галерею для проверки с врачом"
+    )
+    review.add_argument("--features", type=Path, default=Path("artifacts/features-v1"))
+    review.add_argument("--heads", type=Path, default=Path("reports/runs/head-v1"))
+    review.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    review.add_argument("--out", type=Path, required=True)
+    review.add_argument("--count", type=int, default=48)
+    review.add_argument("--seed", type=int, default=2026)
+    review.add_argument(
+        "--experiments", type=Path, help="Прикрепить сравнение с готовыми v2-головами"
+    )
+    bootstrap = sub.add_parser(
+        "bootstrap-v1", help="Оценить неопределённость фиксированного теста v1"
+    )
+    bootstrap.add_argument("--test-results", type=Path, default=Path("reports/runs/test-v1"))
+    bootstrap.add_argument("--out", type=Path, required=True)
+    bootstrap.add_argument("--resamples", type=int, default=2000)
+    bootstrap.add_argument("--seed", type=int, default=2026)
+    legacy = sub.add_parser(
+        "ensemble-validation", help="Проверить ансамбль прежних голов на validation"
+    )
+    legacy.add_argument("--heads", type=Path, default=Path("reports/runs/head-v1"))
+    legacy.add_argument("--out", type=Path, required=True)
+    dev_bootstrap = sub.add_parser(
+        "bootstrap-development", help="Bootstrap новых development-оценок"
+    )
+    dev_bootstrap.add_argument("--experiments", type=Path, default=Path("reports/runs/head-v2"))
+    dev_bootstrap.add_argument(
+        "--legacy-ensemble", type=Path, default=Path("reports/runs/ensemble-v1-validation")
+    )
+    dev_bootstrap.add_argument("--out", type=Path, required=True)
+    dev_bootstrap.add_argument("--resamples", type=int, default=2000)
+    dev_bootstrap.add_argument("--seed", type=int, default=2026)
+    improvements = sub.add_parser(
+        "report-improvements", help="Построить агрегированный отчёт новых экспериментов"
+    )
+    improvements.add_argument("--experiments", type=Path, default=Path("reports/runs/head-v2"))
+    improvements.add_argument(
+        "--old-bootstrap", type=Path, default=Path("reports/runs/bootstrap-v1-verified")
+    )
+    improvements.add_argument(
+        "--dev-bootstrap", type=Path, default=Path("reports/runs/bootstrap-v2-validation")
+    )
+    improvements.add_argument(
+        "--legacy-ensemble", type=Path, default=Path("reports/runs/ensemble-v1-validation")
+    )
+    improvements.add_argument("--review", type=Path, default=Path("reports/runs/error-review-v2"))
+    improvements.add_argument("--out", type=Path, default=Path("docs/images"))
+    improvements.add_argument("--report-doc", type=Path, default=Path("docs/improvements.md"))
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -317,6 +381,76 @@ def main(argv: list[str] | None = None) -> int:
                 manifest_dir=args.manifest_dir,
             )
             print(f"Final figures saved to {args.out}")
+        elif args.command == "predict":
+            from .inference import run_inference
+
+            result = run_inference(
+                args.dicom_dir,
+                args.out,
+                checkpoint=args.checkpoint,
+                cache_dir=args.cache,
+                device=args.device,
+                threads=args.threads,
+            )
+            print(f"Saved research predictions to {args.out}; status={result['status']}")
+            return 1 if result["status"] == "failed" else 0
+        elif args.command == "head-experiments":
+            from .head_experiments import run_head_experiments
+
+            result = run_head_experiments(
+                args.features, args.out, protocol_path=args.protocol, threads=args.threads
+            )
+            print(
+                f"CV-selected candidate: {result['selected_candidate']}; results saved to {args.out}"
+            )
+        elif args.command == "error-review":
+            from .error_review import attach_development_comparison, generate_error_review
+
+            generate_error_review(
+                args.features,
+                args.heads,
+                args.data_root,
+                args.out,
+                count=args.count,
+                seed=args.seed,
+            )
+            if args.experiments:
+                attach_development_comparison(args.out, args.experiments)
+            print(f"Local physician review saved to {args.out}; clinical review is pending")
+        elif args.command == "bootstrap-v1":
+            from .uncertainty import bootstrap_v1_test
+
+            bootstrap_v1_test(args.test_results, args.out, resamples=args.resamples, seed=args.seed)
+            print(f"Fixed-model study-bootstrap intervals saved to {args.out}")
+        elif args.command == "ensemble-validation":
+            from .uncertainty import legacy_validation_ensemble
+
+            legacy_validation_ensemble(args.heads, args.out)
+            print(f"Legacy validation ensemble saved to {args.out}")
+        elif args.command == "bootstrap-development":
+            from .uncertainty import bootstrap_v2_validation
+
+            bootstrap_v2_validation(
+                args.experiments,
+                args.legacy_ensemble,
+                args.out,
+                resamples=args.resamples,
+                seed=args.seed,
+            )
+            print(f"Development bootstrap intervals saved to {args.out}")
+        elif args.command == "report-improvements":
+            from .improvement_report import draw_improvements
+
+            draw_improvements(
+                args.experiments,
+                args.old_bootstrap,
+                args.dev_bootstrap,
+                args.legacy_ensemble,
+                args.review,
+                args.out,
+                report_doc=args.report_doc,
+            )
+            print(f"Aggregate development report saved to {args.report_doc}")
     except (ValueError, FileNotFoundError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1

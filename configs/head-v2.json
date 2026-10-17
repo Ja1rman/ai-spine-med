@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "experiment": "lightweight_heads_v2",
+  "frozen_reference_commit": "75937c2b4f5c88f24019bd6bc4f9740486163785",
+  "feature_cache_id": "b2f9c8e63c9e29854133657a93a177259da5b5a5ecd7d111c296b3e5361d25a2",
+  "levels": ["L4-L5", "L5-S1"],
+  "classes": ["normal_mild", "moderate", "severe"],
+  "seeds": [42, 2024, 3407],
+  "candidates": ["linear", "mlp", "coral"],
+  "architectures": {
+    "linear": "Linear(512,3)",
+    "mlp": "Linear(512,64),ReLU,Dropout(0.2),Linear(64,3)",
+    "coral": "Shared Linear(512,1) score without bias; two learned thresholds b and b+softplus(gap), cumulative probabilities P(y>0),P(y>1)"
+  },
+  "optimizer": "AdamW",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "batch_size": 64,
+  "max_epochs": 30,
+  "patience": 5,
+  "class_weights": "Inverse square root of assessed fold-training class counts, normalized to mean 1; per-example weight for CORAL averaged binary loss",
+  "feature_standardization": false,
+  "encoder_training": false,
+  "augmentation": false,
+  "cv_folds": 3,
+  "cv_seed": 2026,
+  "cv_population": "Original TRAIN studies only; StratifiedGroupKFold over complete labeled targets, grouped by study_id. Both levels and unassessed targets remain assigned to the same fold as their study.",
+  "cv_epoch_selection": "Strictly highest held-fold macro-F1 over labels [0,1,2], earliest epoch on ties; patience 5. This is development selection, not an unbiased nested-CV estimate.",
+  "final_fit_epochs": "For each candidate and seed, median selected epoch across its three CV folds; refit on all original TRAIN for exactly that many epochs, then evaluate original validation once.",
+  "ensemble": "Equal arithmetic mean of three seed probability vectors; no fitted weights, no test selection",
+  "candidate_selection": "Highest arithmetic mean of the three CV-fold ensemble macro-F1 values; ties keep candidate order linear,mlp,coral",
+  "primary_metric": "Macro-F1 on assessed targets with fixed labels [0,1,2]",
+  "other_metrics": ["moderate F1 and recall", "severe detection among all requested severe targets", "severe to normal/mild and moderate", "normal/mild assigned higher severity", "per-level confusion and coverage", "all seed scores and ensemble"],
+  "bootstrap": {
+    "resamples": 2000,
+    "seed": 2026,
+    "unit": "study_id; both levels and failures resampled together",
+    "interval": "2.5 and 97.5 percentiles; paired differences use identical sampled studies",
+    "scope": "Fixed v1 test models and v2 development validation; no model or threshold selection from bootstrap test results"
+  },
+  "error_review": {
+    "cases": 48,
+    "correct_controls": 8,
+    "seed": 2026,
+    "population": "Train/validation only; purposive error sample, not a representative estimate",
+    "expert_review": "Pending; do not change reference labels automatically"
+  },
+  "test_policy": "Do not train, choose epochs/candidates, fit ensemble weights or tune thresholds using the already opened v1 test. Report new-version development results separately. Independent confirmation needs a new prospectively held-out cohort."
+}
