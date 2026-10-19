@@ -1,0 +1,1270 @@
+{
+  "schema_version": 1,
+  "experiment": "sagittal_axial_fusion_v3",
+  "scope": "Development: original TRAIN grouped CV and previously used validation; no new independent test",
+  "test_evaluated": false,
+  "new_version_independently_tested": false,
+  "provenance": {
+    "protocol_sha256": "147bc0906fc5412bc9b09560e2cbf9294362df89e47972698e2cc9509afc03e5",
+    "implementation_sha256": "7d16c57f2a0d5425f2acc8460616e430d35b37ebad063d49d7ab0acd40163104",
+    "axial_metadata_sha256": "db9d333c6a2118b1d784979b117e3e7b3124d37804728ab6827fd1bee7ed1412",
+    "axial_output_inventory_sha256": "f9c4e49562124143ff19fe92bfd41bec7d7742a10468953e825b17932572281c",
+    "folds_sha256": "075de4726ca2ffa0ed33033ae14f65182c35c8ac45083ad2611d07f757630e15"
+  },
+  "variants": {
+    "sagittal": {
+      "cv_mean_fold_ensemble_macro_f1": 0.6940513604992212,
+      "validation": {
+        "runs": [
+          {
+            "seed": 42,
+            "best_epoch": 10,
+            "macro_f1": 0.6043317655649335
+          },
+          {
+            "seed": 2024,
+            "best_epoch": 5,
+            "macro_f1": 0.6703823529411764
+          },
+          {
+            "seed": 3407,
+            "best_epoch": 6,
+            "macro_f1": 0.7030796181781844
+          }
+        ],
+        "ensemble_metrics": {
+          "n_requested": 594,
+          "n_labeled": 594,
+          "n_missing_reference_label": 0,
+          "n_assessed": 582,
+          "n_not_assessed": 12,
+          "coverage": 0.9797979797979798,
+          "class_counts": {
+            "normal_mild": 509,
+            "moderate": 43,
+            "severe": 42
+          },
+          "assessed_class_counts": {
+            "normal_mild": 498,
+            "moderate": 43,
+            "severe": 41
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 11,
+            "moderate": 0,
+            "severe": 1
+          },
+          "conditional": {
+            "macro_f1": 0.6907640329352494,
+            "accuracy": 0.8986254295532646,
+            "precision": {
+              "normal_mild": 0.9539078156312625,
+              "moderate": 0.4473684210526316,
+              "severe": 0.6666666666666666
+            },
+            "recall": {
+              "normal_mild": 0.9558232931726908,
+              "moderate": 0.3953488372093023,
+              "severe": 0.7317073170731707
+            },
+            "f1": {
+              "normal_mild": 0.954864593781344,
+              "moderate": 0.41975308641975306,
+              "severe": 0.6976744186046512
+            },
+            "confusion_matrix": [
+              [
+                476,
+                16,
+                6
+              ],
+              [
+                17,
+                17,
+                9
+              ],
+              [
+                6,
+                5,
+                30
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 42,
+            "n_assessed": 41,
+            "correctly_predicted_severe": 30,
+            "predicted_normal_mild": 6,
+            "predicted_moderate": 5,
+            "not_assessed": 1,
+            "recall_conditional": 0.7317073170731707,
+            "detection_rate_all_requested": 0.7142857142857143,
+            "missed_all_requested": 12
+          },
+          "by_level": {
+            "L4-L5": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 293,
+              "n_not_assessed": 4,
+              "coverage": 0.9865319865319865,
+              "class_counts": {
+                "normal_mild": 221,
+                "moderate": 37,
+                "severe": 39
+              },
+              "assessed_class_counts": {
+                "normal_mild": 218,
+                "moderate": 37,
+                "severe": 38
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 3,
+                "moderate": 0,
+                "severe": 1
+              },
+              "conditional": {
+                "macro_f1": 0.69534338521796,
+                "accuracy": 0.8361774744027304,
+                "precision": {
+                  "normal_mild": 0.9216589861751152,
+                  "moderate": 0.46875,
+                  "severe": 0.6818181818181818
+                },
+                "recall": {
+                  "normal_mild": 0.9174311926605505,
+                  "moderate": 0.40540540540540543,
+                  "severe": 0.7894736842105263
+                },
+                "f1": {
+                  "normal_mild": 0.9195402298850575,
+                  "moderate": 0.43478260869565216,
+                  "severe": 0.7317073170731707
+                },
+                "confusion_matrix": [
+                  [
+                    200,
+                    13,
+                    5
+                  ],
+                  [
+                    13,
+                    15,
+                    9
+                  ],
+                  [
+                    4,
+                    4,
+                    30
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 39,
+                "n_assessed": 38,
+                "correctly_predicted_severe": 30,
+                "predicted_normal_mild": 4,
+                "predicted_moderate": 4,
+                "not_assessed": 1,
+                "recall_conditional": 0.7894736842105263,
+                "detection_rate_all_requested": 0.7692307692307693,
+                "missed_all_requested": 9
+              }
+            },
+            "L5-S1": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 289,
+              "n_not_assessed": 8,
+              "coverage": 0.9730639730639731,
+              "class_counts": {
+                "normal_mild": 288,
+                "moderate": 6,
+                "severe": 3
+              },
+              "assessed_class_counts": {
+                "normal_mild": 280,
+                "moderate": 6,
+                "severe": 3
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 8,
+                "moderate": 0,
+                "severe": 0
+              },
+              "conditional": {
+                "macro_f1": 0.4385132463424278,
+                "accuracy": 0.9619377162629758,
+                "precision": {
+                  "normal_mild": 0.9787234042553191,
+                  "moderate": 0.3333333333333333,
+                  "severe": 0.0
+                },
+                "recall": {
+                  "normal_mild": 0.9857142857142858,
+                  "moderate": 0.3333333333333333,
+                  "severe": 0.0
+                },
+                "f1": {
+                  "normal_mild": 0.9822064056939501,
+                  "moderate": 0.3333333333333333,
+                  "severe": 0.0
+                },
+                "confusion_matrix": [
+                  [
+                    276,
+                    3,
+                    1
+                  ],
+                  [
+                    4,
+                    2,
+                    0
+                  ],
+                  [
+                    2,
+                    1,
+                    0
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 3,
+                "n_assessed": 3,
+                "correctly_predicted_severe": 0,
+                "predicted_normal_mild": 2,
+                "predicted_moderate": 1,
+                "not_assessed": 0,
+                "recall_conditional": 0.0,
+                "detection_rate_all_requested": 0.0,
+                "missed_all_requested": 3
+              }
+            }
+          },
+          "scope": "Previously used original validation uniform ensemble; development; fixed common-paired target subset; development estimate, no independent test",
+          "by_status": {
+            "ok": 582,
+            "not_assessed": 12
+          },
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 6,
+            "sagittal:missing_vertebra:S1": 4,
+            "sagittal:missing_vertebra:L4,L5": 1,
+            "sagittal:missing_vertebra:L5,S1": 1
+          }
+        }
+      }
+    },
+    "axial": {
+      "cv_mean_fold_ensemble_macro_f1": 0.4877435775753574,
+      "validation": {
+        "runs": [
+          {
+            "seed": 42,
+            "best_epoch": 4,
+            "macro_f1": 0.48137323872089777
+          },
+          {
+            "seed": 2024,
+            "best_epoch": 10,
+            "macro_f1": 0.4225723146077129
+          },
+          {
+            "seed": 3407,
+            "best_epoch": 8,
+            "macro_f1": 0.5163922175212965
+          }
+        ],
+        "ensemble_metrics": {
+          "n_requested": 594,
+          "n_labeled": 594,
+          "n_missing_reference_label": 0,
+          "n_assessed": 582,
+          "n_not_assessed": 12,
+          "coverage": 0.9797979797979798,
+          "class_counts": {
+            "normal_mild": 509,
+            "moderate": 43,
+            "severe": 42
+          },
+          "assessed_class_counts": {
+            "normal_mild": 498,
+            "moderate": 43,
+            "severe": 41
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 11,
+            "moderate": 0,
+            "severe": 1
+          },
+          "conditional": {
+            "macro_f1": 0.509042880133628,
+            "accuracy": 0.8247422680412371,
+            "precision": {
+              "normal_mild": 0.9134808853118712,
+              "moderate": 0.24390243902439024,
+              "severe": 0.36363636363636365
+            },
+            "recall": {
+              "normal_mild": 0.9116465863453815,
+              "moderate": 0.23255813953488372,
+              "severe": 0.3902439024390244
+            },
+            "f1": {
+              "normal_mild": 0.9125628140703518,
+              "moderate": 0.23809523809523808,
+              "severe": 0.3764705882352941
+            },
+            "confusion_matrix": [
+              [
+                454,
+                21,
+                23
+              ],
+              [
+                28,
+                10,
+                5
+              ],
+              [
+                15,
+                10,
+                16
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 42,
+            "n_assessed": 41,
+            "correctly_predicted_severe": 16,
+            "predicted_normal_mild": 15,
+            "predicted_moderate": 10,
+            "not_assessed": 1,
+            "recall_conditional": 0.3902439024390244,
+            "detection_rate_all_requested": 0.38095238095238093,
+            "missed_all_requested": 26
+          },
+          "by_level": {
+            "L4-L5": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 293,
+              "n_not_assessed": 4,
+              "coverage": 0.9865319865319865,
+              "class_counts": {
+                "normal_mild": 221,
+                "moderate": 37,
+                "severe": 39
+              },
+              "assessed_class_counts": {
+                "normal_mild": 218,
+                "moderate": 37,
+                "severe": 38
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 3,
+                "moderate": 0,
+                "severe": 1
+              },
+              "conditional": {
+                "macro_f1": 0.4919439012393075,
+                "accuracy": 0.689419795221843,
+                "precision": {
+                  "normal_mild": 0.8380952380952381,
+                  "moderate": 0.2564102564102564,
+                  "severe": 0.36363636363636365
+                },
+                "recall": {
+                  "normal_mild": 0.8073394495412844,
+                  "moderate": 0.2702702702702703,
+                  "severe": 0.42105263157894735
+                },
+                "f1": {
+                  "normal_mild": 0.822429906542056,
+                  "moderate": 0.2631578947368421,
+                  "severe": 0.3902439024390244
+                },
+                "confusion_matrix": [
+                  [
+                    176,
+                    19,
+                    23
+                  ],
+                  [
+                    22,
+                    10,
+                    5
+                  ],
+                  [
+                    12,
+                    10,
+                    16
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 39,
+                "n_assessed": 38,
+                "correctly_predicted_severe": 16,
+                "predicted_normal_mild": 12,
+                "predicted_moderate": 10,
+                "not_assessed": 1,
+                "recall_conditional": 0.42105263157894735,
+                "detection_rate_all_requested": 0.41025641025641024,
+                "missed_all_requested": 23
+              }
+            },
+            "L5-S1": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 289,
+              "n_not_assessed": 8,
+              "coverage": 0.9730639730639731,
+              "class_counts": {
+                "normal_mild": 288,
+                "moderate": 6,
+                "severe": 3
+              },
+              "assessed_class_counts": {
+                "normal_mild": 280,
+                "moderate": 6,
+                "severe": 3
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 8,
+                "moderate": 0,
+                "severe": 0
+              },
+              "conditional": {
+                "macro_f1": 0.3268665490887713,
+                "accuracy": 0.9619377162629758,
+                "precision": {
+                  "normal_mild": 0.9686411149825784,
+                  "moderate": 0.0,
+                  "severe": 0.0
+                },
+                "recall": {
+                  "normal_mild": 0.9928571428571429,
+                  "moderate": 0.0,
+                  "severe": 0.0
+                },
+                "f1": {
+                  "normal_mild": 0.9805996472663139,
+                  "moderate": 0.0,
+                  "severe": 0.0
+                },
+                "confusion_matrix": [
+                  [
+                    278,
+                    2,
+                    0
+                  ],
+                  [
+                    6,
+                    0,
+                    0
+                  ],
+                  [
+                    3,
+                    0,
+                    0
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 3,
+                "n_assessed": 3,
+                "correctly_predicted_severe": 0,
+                "predicted_normal_mild": 3,
+                "predicted_moderate": 0,
+                "not_assessed": 0,
+                "recall_conditional": 0.0,
+                "detection_rate_all_requested": 0.0,
+                "missed_all_requested": 3
+              }
+            }
+          },
+          "scope": "Previously used original validation uniform ensemble; development; fixed common-paired target subset; development estimate, no independent test",
+          "by_status": {
+            "ok": 582,
+            "not_assessed": 12
+          },
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 6,
+            "sagittal:missing_vertebra:S1": 4,
+            "sagittal:missing_vertebra:L4,L5": 1,
+            "sagittal:missing_vertebra:L5,S1": 1
+          }
+        }
+      }
+    },
+    "fusion": {
+      "cv_mean_fold_ensemble_macro_f1": 0.6840830781458055,
+      "validation": {
+        "runs": [
+          {
+            "seed": 42,
+            "best_epoch": 4,
+            "macro_f1": 0.6503230653515785
+          },
+          {
+            "seed": 2024,
+            "best_epoch": 5,
+            "macro_f1": 0.6772024983563446
+          },
+          {
+            "seed": 3407,
+            "best_epoch": 5,
+            "macro_f1": 0.6047203349777415
+          }
+        ],
+        "ensemble_metrics": {
+          "n_requested": 594,
+          "n_labeled": 594,
+          "n_missing_reference_label": 0,
+          "n_assessed": 582,
+          "n_not_assessed": 12,
+          "coverage": 0.9797979797979798,
+          "class_counts": {
+            "normal_mild": 509,
+            "moderate": 43,
+            "severe": 42
+          },
+          "assessed_class_counts": {
+            "normal_mild": 498,
+            "moderate": 43,
+            "severe": 41
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 11,
+            "moderate": 0,
+            "severe": 1
+          },
+          "conditional": {
+            "macro_f1": 0.6332575149406833,
+            "accuracy": 0.8900343642611683,
+            "precision": {
+              "normal_mild": 0.939453125,
+              "moderate": 0.3548387096774194,
+              "severe": 0.6666666666666666
+            },
+            "recall": {
+              "normal_mild": 0.9658634538152611,
+              "moderate": 0.2558139534883721,
+              "severe": 0.6341463414634146
+            },
+            "f1": {
+              "normal_mild": 0.9524752475247524,
+              "moderate": 0.2972972972972973,
+              "severe": 0.65
+            },
+            "confusion_matrix": [
+              [
+                481,
+                14,
+                3
+              ],
+              [
+                22,
+                11,
+                10
+              ],
+              [
+                9,
+                6,
+                26
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 42,
+            "n_assessed": 41,
+            "correctly_predicted_severe": 26,
+            "predicted_normal_mild": 9,
+            "predicted_moderate": 6,
+            "not_assessed": 1,
+            "recall_conditional": 0.6341463414634146,
+            "detection_rate_all_requested": 0.6190476190476191,
+            "missed_all_requested": 16
+          },
+          "by_level": {
+            "L4-L5": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 293,
+              "n_not_assessed": 4,
+              "coverage": 0.9865319865319865,
+              "class_counts": {
+                "normal_mild": 221,
+                "moderate": 37,
+                "severe": 39
+              },
+              "assessed_class_counts": {
+                "normal_mild": 218,
+                "moderate": 37,
+                "severe": 38
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 3,
+                "moderate": 0,
+                "severe": 1
+              },
+              "conditional": {
+                "macro_f1": 0.6229780752954911,
+                "accuracy": 0.8122866894197952,
+                "precision": {
+                  "normal_mild": 0.8942731277533039,
+                  "moderate": 0.3333333333333333,
+                  "severe": 0.6666666666666666
+                },
+                "recall": {
+                  "normal_mild": 0.9311926605504587,
+                  "moderate": 0.24324324324324326,
+                  "severe": 0.6842105263157895
+                },
+                "f1": {
+                  "normal_mild": 0.9123595505617977,
+                  "moderate": 0.28125,
+                  "severe": 0.6753246753246753
+                },
+                "confusion_matrix": [
+                  [
+                    203,
+                    12,
+                    3
+                  ],
+                  [
+                    18,
+                    9,
+                    10
+                  ],
+                  [
+                    6,
+                    6,
+                    26
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 39,
+                "n_assessed": 38,
+                "correctly_predicted_severe": 26,
+                "predicted_normal_mild": 6,
+                "predicted_moderate": 6,
+                "not_assessed": 1,
+                "recall_conditional": 0.6842105263157895,
+                "detection_rate_all_requested": 0.6666666666666666,
+                "missed_all_requested": 13
+              }
+            },
+            "L5-S1": {
+              "n_requested": 297,
+              "n_labeled": 297,
+              "n_missing_reference_label": 0,
+              "n_assessed": 289,
+              "n_not_assessed": 8,
+              "coverage": 0.9730639730639731,
+              "class_counts": {
+                "normal_mild": 288,
+                "moderate": 6,
+                "severe": 3
+              },
+              "assessed_class_counts": {
+                "normal_mild": 280,
+                "moderate": 6,
+                "severe": 3
+              },
+              "not_assessed_class_counts": {
+                "normal_mild": 8,
+                "moderate": 0,
+                "severe": 0
+              },
+              "conditional": {
+                "macro_f1": 0.46135693215339235,
+                "accuracy": 0.9688581314878892,
+                "precision": {
+                  "normal_mild": 0.9754385964912281,
+                  "moderate": 0.5,
+                  "severe": 0.0
+                },
+                "recall": {
+                  "normal_mild": 0.9928571428571429,
+                  "moderate": 0.3333333333333333,
+                  "severe": 0.0
+                },
+                "f1": {
+                  "normal_mild": 0.984070796460177,
+                  "moderate": 0.4,
+                  "severe": 0.0
+                },
+                "confusion_matrix": [
+                  [
+                    278,
+                    2,
+                    0
+                  ],
+                  [
+                    4,
+                    2,
+                    0
+                  ],
+                  [
+                    3,
+                    0,
+                    0
+                  ]
+                ],
+                "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+              },
+              "severe": {
+                "n_total": 3,
+                "n_assessed": 3,
+                "correctly_predicted_severe": 0,
+                "predicted_normal_mild": 3,
+                "predicted_moderate": 0,
+                "not_assessed": 0,
+                "recall_conditional": 0.0,
+                "detection_rate_all_requested": 0.0,
+                "missed_all_requested": 3
+              }
+            }
+          },
+          "scope": "Previously used original validation uniform ensemble; development; fixed common-paired target subset; development estimate, no independent test",
+          "by_status": {
+            "ok": 582,
+            "not_assessed": 12
+          },
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 6,
+            "sagittal:missing_vertebra:S1": 4,
+            "sagittal:missing_vertebra:L4,L5": 1,
+            "sagittal:missing_vertebra:L5,S1": 1
+          }
+        }
+      }
+    }
+  },
+  "availability": {
+    "train": {
+      "n_requested": 2764,
+      "n_labeled": 2764,
+      "sagittal_available": 2732,
+      "axial_available": 2760,
+      "paired_assessed": 2728,
+      "not_assessed": 36,
+      "not_assessed_by_reason": {
+        "sagittal:missing_vertebra:S1": 28,
+        "axial:processing_failed": 4,
+        "sagittal:DicomGeometryError": 4
+      },
+      "by_level": {
+        "L4-L5": {
+          "n_requested": 1382,
+          "n_labeled": 1382,
+          "sagittal_available": 1380,
+          "axial_available": 1380,
+          "paired_assessed": 1378,
+          "not_assessed": 4,
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 2,
+            "sagittal:DicomGeometryError": 2
+          }
+        },
+        "L5-S1": {
+          "n_requested": 1382,
+          "n_labeled": 1382,
+          "sagittal_available": 1352,
+          "axial_available": 1380,
+          "paired_assessed": 1350,
+          "not_assessed": 32,
+          "not_assessed_by_reason": {
+            "sagittal:missing_vertebra:S1": 28,
+            "axial:processing_failed": 2,
+            "sagittal:DicomGeometryError": 2
+          }
+        }
+      }
+    },
+    "validation": {
+      "n_requested": 594,
+      "n_labeled": 594,
+      "sagittal_available": 588,
+      "axial_available": 588,
+      "paired_assessed": 582,
+      "not_assessed": 12,
+      "not_assessed_by_reason": {
+        "axial:processing_failed": 6,
+        "sagittal:missing_vertebra:S1": 4,
+        "sagittal:missing_vertebra:L4,L5": 1,
+        "sagittal:missing_vertebra:L5,S1": 1
+      },
+      "by_level": {
+        "L4-L5": {
+          "n_requested": 297,
+          "n_labeled": 297,
+          "sagittal_available": 296,
+          "axial_available": 294,
+          "paired_assessed": 293,
+          "not_assessed": 4,
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 3,
+            "sagittal:missing_vertebra:L4,L5": 1
+          }
+        },
+        "L5-S1": {
+          "n_requested": 297,
+          "n_labeled": 297,
+          "sagittal_available": 292,
+          "axial_available": 294,
+          "paired_assessed": 289,
+          "not_assessed": 8,
+          "not_assessed_by_reason": {
+            "axial:processing_failed": 3,
+            "sagittal:missing_vertebra:S1": 4,
+            "sagittal:missing_vertebra:L5,S1": 1
+          }
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "method": "Paired nonparametric percentile bootstrap, unit=study_id; all levels and failures stay together",
+    "resamples": 2000,
+    "seed": 2026,
+    "n_studies": 297,
+    "n_targets": 594,
+    "n_assessed": 582,
+    "n_severe_all_requested": 42,
+    "models": {
+      "sagittal": {
+        "macro_f1": {
+          "point": 0.6907640329352494,
+          "lower_95": 0.6188686095724434,
+          "upper_95": 0.7551546707335483,
+          "valid_resamples": 2000
+        },
+        "moderate_f1": {
+          "point": 0.41975308641975306,
+          "lower_95": 0.27266584766584767,
+          "upper_95": 0.5609756097560976,
+          "valid_resamples": 2000
+        },
+        "severe_rate": {
+          "point": 0.7142857142857143,
+          "lower_95": 0.5743920972644377,
+          "upper_95": 0.8421052631578947,
+          "valid_resamples": 2000
+        }
+      },
+      "axial": {
+        "macro_f1": {
+          "point": 0.509042880133628,
+          "lower_95": 0.44409329174460754,
+          "upper_95": 0.5685144409302862,
+          "valid_resamples": 2000
+        },
+        "moderate_f1": {
+          "point": 0.23809523809523808,
+          "lower_95": 0.11232833957553058,
+          "upper_95": 0.3614521917457062,
+          "valid_resamples": 2000
+        },
+        "severe_rate": {
+          "point": 0.38095238095238093,
+          "lower_95": 0.22916666666666666,
+          "upper_95": 0.5348837209302325,
+          "valid_resamples": 2000
+        }
+      },
+      "fusion": {
+        "macro_f1": {
+          "point": 0.6332575149406833,
+          "lower_95": 0.5621908364995433,
+          "upper_95": 0.7003267402307588,
+          "valid_resamples": 2000
+        },
+        "moderate_f1": {
+          "point": 0.2972972972972973,
+          "lower_95": 0.16129032258064516,
+          "upper_95": 0.43138368983957215,
+          "valid_resamples": 2000
+        },
+        "severe_rate": {
+          "point": 0.6190476190476191,
+          "lower_95": 0.4666666666666667,
+          "upper_95": 0.7647058823529411,
+          "valid_resamples": 2000
+        }
+      }
+    },
+    "contrasts": {
+      "fusion_minus_sagittal": {
+        "left": [
+          "fusion"
+        ],
+        "right": [
+          "sagittal"
+        ],
+        "metrics": {
+          "macro_f1": {
+            "point": -0.057506517994566075,
+            "lower_95": -0.11816759816304896,
+            "upper_95": 0.0021784209068070404,
+            "valid_resamples": 2000
+          },
+          "moderate_f1": {
+            "point": -0.12245578912245575,
+            "lower_95": -0.27113356863614063,
+            "upper_95": 0.016425713069391185,
+            "valid_resamples": 2000
+          },
+          "severe_rate": {
+            "point": -0.09523809523809523,
+            "lower_95": -0.19047619047619047,
+            "upper_95": -0.021739130434782594,
+            "valid_resamples": 2000
+          }
+        }
+      },
+      "axial_minus_sagittal": {
+        "left": [
+          "axial"
+        ],
+        "right": [
+          "sagittal"
+        ],
+        "metrics": {
+          "macro_f1": {
+            "point": -0.18172115280162138,
+            "lower_95": -0.265923770747316,
+            "upper_95": -0.0998795817169064,
+            "valid_resamples": 2000
+          },
+          "moderate_f1": {
+            "point": -0.18165784832451498,
+            "lower_95": -0.36100797579757976,
+            "upper_95": -0.005239804055593674,
+            "valid_resamples": 2000
+          },
+          "severe_rate": {
+            "point": -0.33333333333333337,
+            "lower_95": -0.4883720930232558,
+            "upper_95": -0.17647058823529416,
+            "valid_resamples": 2000
+          }
+        }
+      }
+    },
+    "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class.",
+    "by_level": {
+      "L4-L5": {
+        "method": "Paired nonparametric percentile bootstrap, unit=study_id; all levels and failures stay together",
+        "resamples": 2000,
+        "seed": 2026,
+        "n_studies": 297,
+        "n_targets": 297,
+        "n_assessed": 293,
+        "n_severe_all_requested": 39,
+        "models": {
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.69534338521796,
+              "lower_95": 0.6210961665826481,
+              "upper_95": 0.764533708614981,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.43478260869565216,
+              "lower_95": 0.27450980392156865,
+              "upper_95": 0.5814174271415954,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.7692307692307693,
+              "lower_95": 0.625,
+              "upper_95": 0.8918918918918919,
+              "valid_resamples": 2000
+            }
+          },
+          "axial": {
+            "macro_f1": {
+              "point": 0.4919439012393075,
+              "lower_95": 0.4205189520252545,
+              "upper_95": 0.5581837100732558,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.2631578947368421,
+              "lower_95": 0.12697408077154912,
+              "upper_95": 0.3950617283950617,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.41025641025641024,
+              "lower_95": 0.2448730711796914,
+              "upper_95": 0.5641025641025641,
+              "valid_resamples": 2000
+            }
+          },
+          "fusion": {
+            "macro_f1": {
+              "point": 0.6229780752954911,
+              "lower_95": 0.5513304689648593,
+              "upper_95": 0.6893710862515687,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.28125,
+              "lower_95": 0.1332608695652174,
+              "upper_95": 0.42503073770491784,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.6666666666666666,
+              "lower_95": 0.5134961884961885,
+              "upper_95": 0.8125,
+              "valid_resamples": 2000
+            }
+          }
+        },
+        "contrasts": {
+          "fusion_minus_sagittal": {
+            "left": [
+              "fusion"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.07236530992246892,
+                "lower_95": -0.1435093068773723,
+                "upper_95": -0.0023299489761298316,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.15353260869565216,
+                "lower_95": -0.31822390572390574,
+                "upper_95": 0.010274379833626612,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.10256410256410264,
+                "lower_95": -0.20756682389937114,
+                "upper_95": -0.02325581395348841,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "axial_minus_sagittal": {
+            "left": [
+              "axial"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.20339948397865254,
+                "lower_95": -0.2948527594447189,
+                "upper_95": -0.11448093099381693,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.17162471395881007,
+                "lower_95": -0.3718604968319309,
+                "upper_95": 0.022336926677334643,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.35897435897435903,
+                "lower_95": -0.5306281887755101,
+                "upper_95": -0.19047619047619047,
+                "valid_resamples": 2000
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      },
+      "L5-S1": {
+        "method": "Paired nonparametric percentile bootstrap, unit=study_id; all levels and failures stay together",
+        "resamples": 2000,
+        "seed": 2026,
+        "n_studies": 297,
+        "n_targets": 297,
+        "n_assessed": 289,
+        "n_severe_all_requested": 3,
+        "models": {
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.4385132463424278,
+              "lower_95": 0.32560834058782073,
+              "upper_95": 0.551997465443261,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.3333333333333333,
+              "lower_95": 0.0,
+              "upper_95": 0.6666666666666666,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1892
+            }
+          },
+          "axial": {
+            "macro_f1": {
+              "point": 0.3268665490887713,
+              "lower_95": 0.32265717674970346,
+              "upper_95": 0.33042466550319954,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1892
+            }
+          },
+          "fusion": {
+            "macro_f1": {
+              "point": 0.46135693215339235,
+              "lower_95": 0.3262655690048367,
+              "upper_95": 0.5804382805441064,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.4,
+              "lower_95": 0.0,
+              "upper_95": 0.75,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1892
+            }
+          }
+        },
+        "contrasts": {
+          "fusion_minus_sagittal": {
+            "left": [
+              "fusion"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.022843685810964576,
+                "lower_95": -0.000545043483508785,
+                "upper_95": 0.06969231200893482,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": 0.06666666666666671,
+                "lower_95": 0.0,
+                "upper_95": 0.20795454545454453,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.0,
+                "lower_95": 0.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1892
+              }
+            }
+          },
+          "axial_minus_sagittal": {
+            "left": [
+              "axial"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.1116466972536565,
+                "lower_95": -0.22451396768201062,
+                "upper_95": 0.002355392042472239,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.3333333333333333,
+                "lower_95": -0.6666666666666666,
+                "upper_95": 0.0,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.0,
+                "lower_95": 0.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1892
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      }
+    }
+  },
+  "learning_curve_audit": {
+    "sagittal": {
+      "n_cv_runs": 9,
+      "median_weighted_train_loss_first": 0.6583301738259334,
+      "median_weighted_train_loss_last": 0.24954780428303164,
+      "median_unweighted_held_loss_first": 0.33639657497406006,
+      "median_unweighted_held_loss_last": 0.31790971755981445,
+      "n_held_loss_last_above_first": 1,
+      "scope": "Descriptive post-hoc curve audit. Last epoch may follow selected best checkpoint. Train loss is weighted, held loss unweighted; absolute loss levels are not directly comparable."
+    },
+    "axial": {
+      "n_cv_runs": 9,
+      "median_weighted_train_loss_first": 0.8603056508656305,
+      "median_weighted_train_loss_last": 0.06533602549451986,
+      "median_unweighted_held_loss_first": 0.5084438323974609,
+      "median_unweighted_held_loss_last": 0.8246368169784546,
+      "n_held_loss_last_above_first": 9,
+      "scope": "Descriptive post-hoc curve audit. Last epoch may follow selected best checkpoint. Train loss is weighted, held loss unweighted; absolute loss levels are not directly comparable."
+    },
+    "fusion": {
+      "n_cv_runs": 9,
+      "median_weighted_train_loss_first": 0.7024946906291211,
+      "median_weighted_train_loss_last": 0.03632311205689116,
+      "median_unweighted_held_loss_first": 0.34315913915634155,
+      "median_unweighted_held_loss_last": 0.46619081497192383,
+      "n_held_loss_last_above_first": 9,
+      "scope": "Descriptive post-hoc curve audit. Last epoch may follow selected best checkpoint. Train loss is weighted, held loss unweighted; absolute loss levels are not directly comparable."
+    }
+  },
+  "validation_error_transitions_fusion_vs_sagittal": {
+    "corrected": 10,
+    "worsened": 15,
+    "both_correct": 508,
+    "both_wrong": 49
+  }
+}

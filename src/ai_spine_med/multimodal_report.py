@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import csv
+import hashlib
 import json
 from pathlib import Path
 
@@ -35,6 +37,16 @@ def draw_multimodal_report(
         "scope": "Development: original TRAIN grouped CV and previously used validation; no new independent test",
         "test_evaluated": False,
         "new_version_independently_tested": False,
+        "provenance": {
+            key: source["configuration"][key]
+            for key in (
+                "protocol_sha256",
+                "implementation_sha256",
+                "axial_metadata_sha256",
+                "axial_output_inventory_sha256",
+                "folds_sha256",
+            )
+        },
         "variants": {},
         "availability": source["availability"],
         "bootstrap": source["bootstrap"],
@@ -71,6 +83,69 @@ def draw_multimodal_report(
             f"| {NAMES[name]} | {item['seed']} | {item['best_epoch']} | {item['macro_f1']:.3f} |"
             for item in seeds
         )
+    curve_audit = {}
+    for name in VARIANTS:
+        histories = [
+            json.loads(path.read_text())
+            for path in sorted((root / "cv" / name).glob("fold-*/seed-*/history.json"))
+        ]
+        if len(histories) != 9 or any(not history for history in histories):
+            raise ValueError("Require all nine CV training histories for each variant")
+        curve_audit[name] = {
+            "n_cv_runs": 9,
+            "median_weighted_train_loss_first": float(
+                np.median([h[0]["training_loss"] for h in histories])
+            ),
+            "median_weighted_train_loss_last": float(
+                np.median([h[-1]["training_loss"] for h in histories])
+            ),
+            "median_unweighted_held_loss_first": float(
+                np.median([h[0]["heldout_loss_unweighted"] for h in histories])
+            ),
+            "median_unweighted_held_loss_last": float(
+                np.median([h[-1]["heldout_loss_unweighted"] for h in histories])
+            ),
+            "n_held_loss_last_above_first": sum(
+                h[-1]["heldout_loss_unweighted"] > h[0]["heldout_loss_unweighted"]
+                for h in histories
+            ),
+            "scope": "Descriptive post-hoc curve audit. Last epoch may follow selected best checkpoint. Train loss is weighted, held loss unweighted; absolute loss levels are not directly comparable.",
+        }
+    public["learning_curve_audit"] = curve_audit
+    prediction_tables = {}
+    for name in ("sagittal", "fusion"):
+        prediction_path = root / "validation" / name / "ensemble" / "predictions.csv"
+        expected = source["variants"][name]["validation"]["ensemble"]["predictions_sha256"]
+        if hashlib.sha256(prediction_path.read_bytes()).hexdigest() != expected:
+            raise ValueError("Validation prediction checksum differs from the experiment")
+        with prediction_path.open(newline="") as handle:
+            prediction_tables[name] = {
+                (row["study_id"], row["level"]): row for row in csv.DictReader(handle)
+            }
+    if prediction_tables["sagittal"].keys() != prediction_tables["fusion"].keys():
+        raise ValueError("Validation error audit requires matching study/level keys")
+    transitions = {"corrected": 0, "worsened": 0, "both_correct": 0, "both_wrong": 0}
+    for key, sag in prediction_tables["sagittal"].items():
+        fusion = prediction_tables["fusion"][key]
+        if (sag["label"], sag["status"]) != (fusion["label"], fusion["status"]):
+            raise ValueError("Validation error audit labels/status differ")
+        if sag["status"] != "ok":
+            continue
+        correct_sag, correct_fusion = (
+            sag["prediction"] == sag["label"],
+            fusion["prediction"] == fusion["label"],
+        )
+        group = (
+            "both_correct"
+            if correct_sag and correct_fusion
+            else "corrected"
+            if correct_fusion
+            else "worsened"
+            if correct_sag
+            else "both_wrong"
+        )
+        transitions[group] += 1
+    public["validation_error_transitions_fusion_vs_sagittal"] = transitions
     fig, ax = plt.subplots(figsize=(9.4, 5.1))
     positions = np.arange(3)
     bars1 = ax.bar(
@@ -228,6 +303,14 @@ CV также используется для выбора эпох, поэто�
 | --- | ---: | ---: | ---: | ---: | ---: |
 """
     text += "\n".join(rows)
+    train_availability = source["availability"]["train"]
+    val_availability = source["availability"]["validation"]
+    text += (
+        f"\n\nОбщие обработанные уровни: train **{train_availability['paired_assessed']} / "
+        f"{train_availability['n_requested']}**, validation **{val_availability['paired_assessed']} / "
+        f"{val_availability['n_requested']}**. В таблице три варианта сравниваются на одном и том же наборе. "
+        "Отказы не считаю нормой; для тяжёлых случаев оставляю их в полном знаменателе.\n"
+    )
     interval = intervals[1]
     text += (
         f"\n\nНа validation объединение изменило macro-F1 относительно сагиттального варианта "
@@ -256,25 +339,47 @@ CV также используется для выбора эпох, поэто�
 | --- | ---: | ---: | ---: |
 """
     text += "\n".join(seed_rows)
+    text += (
+        "\n\nОбъединение исправило **"
+        + str(transitions["corrected"])
+        + "** ошибок сагиттального варианта, "
+        "но добавило **" + str(transitions["worsened"]) + "** новых. "
+        "Это описание тех же обработанных уровней, не дополнительная оценка точности.\n"
+    )
+    l5_severe = [metrics[name]["by_level"]["L5-S1"]["severe"] for name in VARIANTS]
+    if all(item["n_total"] == 3 and item["correctly_predicted_severe"] == 0 for item in l5_severe):
+        text += "\nНа L5–S1 все три ансамбля пропустили три тяжёлых случая из трёх; примеров слишком мало для надёжной оценки чувствительности, но проблему оставляю видимой.\n"
     text += """
 
 Неопределённость разницы оцениваю парным bootstrap по пациентам, 2000 повторов. Оба уровня и отказы пациента попадают в повтор вместе. Интервалы относятся к этим фиксированным моделям и этим пациентам; они не учитывают неопределённость разметки и перенос на другую клинику. Числа и интервалы сохранены в [агрегированных результатах](multimodal-results.json).
+
+Вероятности классов не откалиброваны; не трактую их как вероятность правильного клинического решения.
+
+По кривым обучения вижу признаки переобучения аксиального и общего вариантов: потери на обучающей части снижаются, а на отложенных CV-пациентах к остановке растут. Сохранены более ранние checkpoints с лучшим macro-F1, а не последние эпохи. Веса классов применяются только к training loss, поэтому абсолютные значения training и held loss напрямую не сравниваю.
+
+Моя рабочая гипотеза: общие ImageNet-признаки по всему полю зрения дают слишком слабый сигнал о нужной области и уровне. Это ещё не установленная причина. Сначала хочу проверить с врачом выбранные срезы, затем решать, нужны ли локализация канала, более подходящее предобучение или дообучение аксиальной сети. Эти варианты в текущий эксперимент не подмешиваю.
 
 ## Как повторить
 
 Официальный набор RSNA и доступ Kaggle нужны локально. Новые файлы не содержат тестовых пациентов.
 
 ```bash
+mkdir -p .cache/axial-v3
+curl --fail --location https://download.pytorch.org/models/resnet18-f37072fd.pth \
+  --output .cache/axial-v3/resnet18-f37072fd.pth
 ai-spine prepare-axial
 ai-spine download-axial
 ai-spine extract-axial --device auto
 ai-spine multimodal-experiment
 ai-spine report-multimodal
+ai-spine multimodal-review
 ```
 
 Для извлечения аксиальных признаков использую официальные веса `resnet18-f37072fd.pth` из [PyTorch](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html). Файл должен лежать в `.cache/axial-v3/`; его контрольная сумма проверяется перед загрузкой. Исходный сагиттальный cache готовлю командами из основного README. Все checkpoint, индивидуальные предсказания и медицинские изображения остаются локально.
 
-Полный заранее заданный протокол — [multimodal-v3.json](../configs/multimodal-v3.json). Следующий шаг с врачом — проверить срезы, на которые обращает внимание аксиальная модель, и случаи, где объединение исправляет или добавляет ошибки. Изменение этих моделей не меняет ограничения лицензии исходного SpineNet.
+Полный заранее заданный протокол — [multimodal-v3.json](../configs/multimodal-v3.json). Команда `multimodal-review` создаёт приватную галерею из 24 примеров: шесть исправленных объединением ошибок, шесть новых ошибок, шесть общих ошибок и шесть правильных контрольных примеров. Это целевой разбор с видимыми метками и ответами, а не независимая врачебная оценка точности. Для проверки нумерации и степени стеноза врачу также нужна полная DICOM-серия: трёх выбранных срезов и сагиттальной вырезки может быть недостаточно.
+
+Галерея находится локально в `reports/runs/multimodal-review-v3/index.html`, пустые поля для врача — в соседнем `doctor_review.csv`. При повторном запуске выбираю новый `--out`, чтобы сохранить уже введённые ответы. Изменение моделей не меняет ограничения лицензии исходного SpineNet.
 """
     document.write_text(text, encoding="utf-8")
     return public
