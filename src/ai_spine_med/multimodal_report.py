@@ -1,0 +1,280 @@
+"""Public aggregate figures and first-person notes for the paired MRI experiment."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+
+VARIANTS = ("sagittal", "axial", "fusion")
+NAMES = {"sagittal": "Сагиттальные", "axial": "Аксиальные", "fusion": "Вместе"}
+COLORS = ("#4979a5", "#d79138", "#498568")
+
+
+def draw_multimodal_report(
+    experiment: str | Path,
+    *,
+    document: str | Path = "docs/multimodal.md",
+    figures: str | Path = "docs/images",
+) -> dict:
+    root, document, figures = Path(experiment), Path(document), Path(figures)
+    source = json.loads((root / "summary.json").read_text())
+    if source.get("test_evaluated") is not False:
+        raise ValueError("This report accepts development experiments without test access only")
+    figures.mkdir(parents=True, exist_ok=True)
+    document.parent.mkdir(parents=True, exist_ok=True)
+    plt.rcParams.update({"font.size": 11, "figure.dpi": 140, "savefig.dpi": 160})
+    public = {
+        "schema_version": 1,
+        "experiment": "sagittal_axial_fusion_v3",
+        "scope": "Development: original TRAIN grouped CV and previously used validation; no new independent test",
+        "test_evaluated": False,
+        "new_version_independently_tested": False,
+        "variants": {},
+        "availability": source["availability"],
+        "bootstrap": source["bootstrap"],
+    }
+    metrics, cv_scores, val_scores = {}, [], []
+    rows = []
+    seed_rows = []
+    for name in VARIANTS:
+        result = source["variants"][name]
+        validation = result["validation"]
+        metric = validation["ensemble"]["metrics"]
+        metrics[name] = metric
+        cv_score = result.get("mean_fold_ensemble_macro_f1")
+        if cv_score is None:
+            cv_score = result["cv"]["mean_fold_ensemble_macro_f1"]
+        cv_scores.append(float(cv_score))
+        val_scores.append(metric["conditional"]["macro_f1"])
+        seeds = [
+            {key: item[key] for key in ("seed", "best_epoch", "macro_f1")}
+            for item in validation["runs"]
+        ]
+        public["variants"][name] = {
+            "cv_mean_fold_ensemble_macro_f1": cv_score,
+            "validation": {"runs": seeds, "ensemble_metrics": metric},
+        }
+        severe = metric["severe"]
+        rows.append(
+            f"| {NAMES[name]} | {cv_score:.3f} | {metric['conditional']['macro_f1']:.3f} "
+            f"| {metric['conditional']['f1']['moderate']:.3f} "
+            f"| {severe['correctly_predicted_severe']} / {severe['n_total']} "
+            f"| {metric['n_assessed']} / {metric['n_labeled']} |"
+        )
+        seed_rows.extend(
+            f"| {NAMES[name]} | {item['seed']} | {item['best_epoch']} | {item['macro_f1']:.3f} |"
+            for item in seeds
+        )
+    fig, ax = plt.subplots(figsize=(9.4, 5.1))
+    positions = np.arange(3)
+    bars1 = ax.bar(
+        positions - 0.18,
+        cv_scores,
+        0.34,
+        color=COLORS,
+        alpha=0.5,
+        label="TRAIN: среднее 3 CV-фолдов",
+    )
+    bars2 = ax.bar(
+        positions + 0.18, val_scores, 0.34, color=COLORS, label="Validation: ансамбль 3 seed"
+    )
+    ax.bar_label(bars1, fmt="%.3f", padding=3)
+    ax.bar_label(bars2, fmt="%.3f", padding=3)
+    ax.set(
+        xticks=positions,
+        xticklabels=[NAMES[v] for v in VARIANTS],
+        ylim=(0, 1),
+        ylabel="Macro-F1",
+        title="Три варианта на одинаковых пациентах и уровнях",
+    )
+    ax.legend(loc="upper left", frameon=False)
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.text(
+        0.5,
+        0.01,
+        "CV использовалась для выбора эпох; validation уже участвовала в развитии проекта. Это development-оценки.",
+        ha="center",
+        fontsize=8,
+    )
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    fig.savefig(figures / "multimodal_comparison.png")
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 3, figsize=(13.3, 4.3), sharey=True)
+    for axis, name in zip(axes, VARIANTS):
+        matrix = np.asarray(metrics[name]["conditional"]["confusion_matrix"])
+        normalized = matrix / np.maximum(matrix.sum(axis=1, keepdims=True), 1)
+        axis.imshow(normalized, vmin=0, vmax=1, cmap="Blues")
+        for i in range(3):
+            for j in range(3):
+                axis.text(
+                    j,
+                    i,
+                    f"{matrix[i, j]}\n{normalized[i, j]:.0%}",
+                    ha="center",
+                    va="center",
+                    color="white" if normalized[i, j] > 0.55 else "#17212b",
+                )
+        axis.set(
+            xticks=range(3),
+            yticks=range(3),
+            xticklabels=["Норма /\nлёгкий", "Умеренный", "Тяжёлый"],
+            yticklabels=["Норма / лёгкий", "Умеренный", "Тяжёлый"],
+            title=NAMES[name],
+            xlabel="Предсказание",
+        )
+    axes[0].set_ylabel("Разметка RSNA")
+    fig.suptitle("Validation: ошибки ансамблей на общих обработанных уровнях")
+    fig.tight_layout()
+    fig.savefig(figures / "multimodal_confusion.png")
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 2, figsize=(11.1, 4.8))
+    for axis, level in zip(axes, ("L4-L5", "L5-S1")):
+        scores = [
+            metrics[v]["by_level"][level]["severe"]["detection_rate_all_requested"] or 0
+            for v in VARIANTS
+        ]
+        bars = axis.bar(range(3), scores, color=COLORS)
+        for bar, name in zip(bars, VARIANTS):
+            severe = metrics[name]["by_level"][level]["severe"]
+            axis.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 0.025,
+                f"{severe['correctly_predicted_severe']} / {severe['n_total']}",
+                ha="center",
+            )
+        axis.set(
+            xticks=range(3),
+            xticklabels=[NAMES[v] for v in VARIANTS],
+            ylim=(0, 1.12),
+            title=level,
+            ylabel="Доля тяжёлых случаев, определённых как тяжёлые",
+        )
+        axis.spines[["top", "right"]].set_visible(False)
+    fig.suptitle("Validation: тяжёлый стеноз, включая отказы в знаменателе")
+    fig.tight_layout()
+    fig.savefig(figures / "multimodal_severe.png")
+    plt.close(fig)
+    contrasts = source["bootstrap"]["contrasts"]
+    labels = ("Аксиальные − сагиттальные", "Вместе − сагиттальные")
+    keys = ("axial_minus_sagittal", "fusion_minus_sagittal")
+    intervals = [contrasts[key]["metrics"]["macro_f1"] for key in keys]
+    points = np.asarray([item["point"] for item in intervals])
+    lower = np.asarray([item["lower_95"] for item in intervals])
+    upper = np.asarray([item["upper_95"] for item in intervals])
+    fig, ax = plt.subplots(figsize=(9.2, 3.8))
+    ax.axvline(0, color="#87919a", linestyle="--", linewidth=1)
+    ax.errorbar(
+        points, [1, 0], xerr=[points - lower, upper - points], fmt="o", color="#376d5e", capsize=5
+    )
+    ax.set(
+        yticks=[1, 0],
+        yticklabels=labels,
+        ylim=(-0.6, 1.6),
+        xlabel="Разница macro-F1: точка и парный 95% bootstrap-интервал",
+        title="Validation: насколько устойчиво отличается результат",
+    )
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    fig.savefig(figures / "multimodal_bootstrap.png")
+    plt.close(fig)
+    public_path = document.with_name("multimodal-results.json")
+    public_path.write_text(json.dumps(public, indent=2, ensure_ascii=False, allow_nan=False) + "\n")
+    text = """# Сагиттальные и аксиальные T2
+
+Я проверил, помогает ли аксиальная T2-серия определять степень центрального стеноза на L4–L5 и L5–S1. Для этого обучил три варианта на одинаковых пациентах и доступных уровнях: по сагиттальным снимкам, по аксиальным и по их сочетанию.
+
+Старое сравнение на тесте сохранил без изменений. Здесь использую только прежние train и validation. Validation уже использовалась в предыдущих экспериментах, поэтому эти числа считаю результатами разработки. Для независимого подтверждения нужны новые пациенты.
+
+## Как устроены варианты
+
+```mermaid
+flowchart TB
+    S["Сагиттальная T2/STIR"] --> SN["Замороженный SpineNet<br/>область каждого уровня, 512 признаков"]
+    A["Все аксиальные T2-серии пациента"] --> RN["Замороженный ResNet18 ImageNet<br/>512 признаков на срез"]
+    RN --> AT["Обучаемое внимание<br/>отдельно для L4–L5 и L5–S1"]
+    SN --> SH["Сагиттальный классификатор"]
+    AT --> AH["Аксиальный классификатор"]
+    SN --> F["Объединение признаков"]
+    AT --> F
+    F --> FH["Общий классификатор"]
+    SH --> C["Норма / лёгкий, умеренный, тяжёлый"]
+    AH --> C
+    FH --> C
+```
+
+Аксиальному варианту сагиттальные снимки не нужны. Он получает все аксиальные срезы пациента и их относительное положение по оси «выше–ниже» внутри совместимой системы координат. Обучаемое внимание собирает признаки для каждого из двух уровней. Координаты из разметки RSNA для выбора срезов не использую, включая обучение. Внимание пока не проверено врачом и само по себе не доказывает правильную анатомическую локализацию. Наличие обработанной аксиальной серии также не подтверждает, что в её поле зрения действительно присутствуют оба нужных уровня: это отдельно надо проверить.
+
+Для аксиальных снимков использую соседний, текущий и следующий срез как три канала; соседей беру только из той же серии, при близкой ориентации и расстоянии. Интенсивность ограничиваю 1-м и 99-м процентилями внутри серии. Сохраняю всё поле зрения, привожу размер к 224×224 и применяю нормализацию ImageNet. При разных системах координат не считаю серии совмещёнными: нормирую положение внутри каждой группы и объединяю признаки как набор. Группы упорядочиваю по идентификатору серии, срезы внутри группы — по физическому положению. Если срезов больше 96, беру 96 равномерно по этому фиксированному порядку. Не подбираю их по тяжести или координатам врача.
+
+Это первое лёгкое сравнение: обе сети извлечения признаков заморожены, обучаются внимание и небольшие классификаторы. У SpineNet медицинское предобучение, а у ResNet18 — ImageNet; их архитектуры тоже различаются. Результат этого эксперимента не показывает предельные возможности аксиальных МРТ.
+
+## Как сравниваю
+
+Сохраняю исходное разбиение пациентов. Обе области и все серии одного пациента остаются вместе. Для трёх вариантов использую одинаковые обработанные пары «пациент–уровень», а недоступные области отдельно учитываю как отказы. Основной macro-F1 вычисляю по общей обработанной части; наличие обеих модальностей и полное покрытие проверяю отдельно.
+
+На исходном train провожу три CV-разбиения и три запуска каждого варианта: seed 42, 2024 и 3407. Нормализацию признаков и веса классов считаю только по обучающей части каждого фолда. По CV выбираю эпоху, затем обучаю финальную модель на всём train фиксированное число эпох и один раз оцениваю validation. Ансамбль — простое среднее вероятностей трёх seed. Веса ансамбля и пороги по результатам не подбираю.
+
+CV также используется для выбора эпох, поэтому её оценки тоже относятся к разработке. Не называю их независимым тестом.
+
+## Полученные результаты
+
+| Вариант | CV: средний macro-F1 ансамбля | Validation: macro-F1 ансамбля | F1 умеренного | Тяжёлые: найдены / всего | Обработано / запрошено |
+| --- | ---: | ---: | ---: | ---: | ---: |
+"""
+    text += "\n".join(rows)
+    interval = intervals[1]
+    text += (
+        f"\n\nНа validation объединение изменило macro-F1 относительно сагиттального варианта "
+        f"на **{interval['point']:+.3f}**. Парный 95% bootstrap-интервал разницы: "
+        f"**[{interval['lower_95']:+.3f}; {interval['upper_95']:+.3f}]**. "
+    )
+    if interval["lower_95"] <= 0 <= interval["upper_95"]:
+        text += "Интервал включает ноль, поэтому устойчивый прирост по этим данным пока не установлен.\n"
+    elif interval["lower_95"] > 0:
+        text += "На этой development-выборке интервал выше нуля; перенос результата на новых пациентов ещё не проверен.\n"
+    else:
+        text += "На этой development-выборке объединённый вариант оказался хуже; это не доказывает бесполезность аксиальных снимков для других моделей.\n"
+    text += """
+
+![Сравнение трёх вариантов](images/multimodal_comparison.png)
+
+![Матрицы ошибок](images/multimodal_confusion.png)
+
+![Тяжёлый стеноз по уровням](images/multimodal_severe.png)
+
+![Неопределённость разницы между вариантами](images/multimodal_bootstrap.png)
+
+Каждый отдельный запуск:
+
+| Вариант | Seed | Эпохи финального обучения | Validation macro-F1 |
+| --- | ---: | ---: | ---: |
+"""
+    text += "\n".join(seed_rows)
+    text += """
+
+Неопределённость разницы оцениваю парным bootstrap по пациентам, 2000 повторов. Оба уровня и отказы пациента попадают в повтор вместе. Интервалы относятся к этим фиксированным моделям и этим пациентам; они не учитывают неопределённость разметки и перенос на другую клинику. Числа и интервалы сохранены в [агрегированных результатах](multimodal-results.json).
+
+## Как повторить
+
+Официальный набор RSNA и доступ Kaggle нужны локально. Новые файлы не содержат тестовых пациентов.
+
+```bash
+ai-spine prepare-axial
+ai-spine download-axial
+ai-spine extract-axial --device auto
+ai-spine multimodal-experiment
+ai-spine report-multimodal
+```
+
+Для извлечения аксиальных признаков использую официальные веса `resnet18-f37072fd.pth` из [PyTorch](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html). Файл должен лежать в `.cache/axial-v3/`; его контрольная сумма проверяется перед загрузкой. Исходный сагиттальный cache готовлю командами из основного README. Все checkpoint, индивидуальные предсказания и медицинские изображения остаются локально.
+
+Полный заранее заданный протокол — [multimodal-v3.json](../configs/multimodal-v3.json). Следующий шаг с врачом — проверить срезы, на которые обращает внимание аксиальная модель, и случаи, где объединение исправляет или добавляет ошибки. Изменение этих моделей не меняет ограничения лицензии исходного SpineNet.
+"""
+    document.write_text(text, encoding="utf-8")
+    return public

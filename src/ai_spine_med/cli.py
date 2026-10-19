@@ -199,6 +199,56 @@ def main(argv: list[str] | None = None) -> int:
     improvements.add_argument("--review", type=Path, default=Path("reports/runs/error-review-v2"))
     improvements.add_argument("--out", type=Path, default=Path("docs/images"))
     improvements.add_argument("--report-doc", type=Path, default=Path("docs/improvements.md"))
+    axial_prepare = sub.add_parser(
+        "prepare-axial", help="Подготовить Axial T2 для прежних train/validation пациентов"
+    )
+    axial_prepare.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    axial_prepare.add_argument("--manifest-dir", type=Path, default=Path("artifacts/rsna-v1"))
+    axial_prepare.add_argument("--out", type=Path, default=Path("artifacts/axial-v3"))
+    axial_download = sub.add_parser(
+        "download-axial", help="Скачать выбранные train/validation Axial T2"
+    )
+    axial_download.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    axial_download.add_argument("--manifest", type=Path, default=Path("artifacts/axial-v3"))
+    axial_download.add_argument("--workers", type=int, default=8)
+    axial_extract = sub.add_parser(
+        "extract-axial", help="Извлечь признаки всех аксиальных срезов без координат разметки"
+    )
+    axial_extract.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    axial_extract.add_argument("--manifest", type=Path, default=Path("artifacts/axial-v3"))
+    axial_extract.add_argument("--out", type=Path, default=Path("artifacts/axial-features-v3"))
+    axial_extract.add_argument(
+        "--weights", type=Path, default=Path(".cache/axial-v3/resnet18-f37072fd.pth")
+    )
+    axial_extract.add_argument("--device", default="auto")
+    axial_extract.add_argument("--threads", type=int, default=4)
+    axial_extract.add_argument("--limit", type=int)
+    multimodal = sub.add_parser(
+        "multimodal-experiment",
+        help="Сравнить sagittal, axial и fusion на прежнем train/validation",
+    )
+    multimodal.add_argument("--sagittal", type=Path, default=Path("artifacts/features-v1"))
+    multimodal.add_argument("--axial", type=Path, default=Path("artifacts/axial-features-v3"))
+    multimodal.add_argument("--protocol", type=Path, default=Path("configs/multimodal-v3.json"))
+    multimodal.add_argument("--out", type=Path, default=Path("reports/runs/multimodal-v3"))
+    multimodal.add_argument("--threads", type=int, default=4)
+    multimodal_report = sub.add_parser(
+        "report-multimodal", help="Сохранить графики и агрегированный отчёт сравнения МРТ"
+    )
+    multimodal_report.add_argument(
+        "--experiment", type=Path, default=Path("reports/runs/multimodal-v3")
+    )
+    multimodal_report.add_argument("--document", type=Path, default=Path("docs/multimodal.md"))
+    multimodal_report.add_argument("--figures", type=Path, default=Path("docs/images"))
+    multi_review = sub.add_parser(
+        "multimodal-review", help="Собрать приватную галерею ошибок и аксиального внимания"
+    )
+    multi_review.add_argument("--experiment", type=Path, default=Path("reports/runs/multimodal-v3"))
+    multi_review.add_argument("--sagittal", type=Path, default=Path("artifacts/features-v1"))
+    multi_review.add_argument("--axial", type=Path, default=Path("artifacts/axial-features-v3"))
+    multi_review.add_argument("--data-root", type=Path, default=Path("data/rsna"))
+    multi_review.add_argument("--out", type=Path, default=Path("reports/runs/multimodal-review-v3"))
+    multi_review.add_argument("--count", type=int, default=24)
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -451,6 +501,53 @@ def main(argv: list[str] | None = None) -> int:
                 report_doc=args.report_doc,
             )
             print(f"Aggregate development report saved to {args.report_doc}")
+        elif args.command == "prepare-axial":
+            from .axial_data import prepare_axial_manifest
+
+            result = prepare_axial_manifest(args.data_root, args.manifest_dir, args.out)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "download-axial":
+            from .axial_data import download_axial
+
+            result = download_axial(args.data_root, args.manifest, workers=args.workers)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "extract-axial":
+            from .axial_features import extract_axial_features
+
+            result = extract_axial_features(
+                args.data_root,
+                args.manifest,
+                args.out,
+                args.weights,
+                device=args.device,
+                limit=args.limit,
+                threads=args.threads,
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "multimodal-experiment":
+            from .multimodal import run_multimodal
+
+            result = run_multimodal(
+                args.sagittal, args.axial, args.protocol, args.out, threads=args.threads
+            )
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "report-multimodal":
+            from .multimodal_report import draw_multimodal_report
+
+            draw_multimodal_report(args.experiment, document=args.document, figures=args.figures)
+            print(f"Aggregate MRI comparison report saved to {args.document}")
+        elif args.command == "multimodal-review":
+            from .multimodal_review import generate_multimodal_review
+
+            generate_multimodal_review(
+                args.experiment,
+                args.sagittal,
+                args.axial,
+                args.data_root,
+                args.out,
+                count=args.count,
+            )
+            print(f"Private MRI review saved to {args.out}; physician review pending")
     except (ValueError, FileNotFoundError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
