@@ -1,0 +1,1002 @@
+{
+  "schema_version": 1,
+  "experiment": "xml_only_vs_mixed_axial_level_localization",
+  "phase": "validation",
+  "seeds": [
+    42,
+    2024,
+    3407
+  ],
+  "selection_dataset": "aisslab",
+  "selection_metric": "mean hit10 over AISSLab levels; tie: cross-entropy",
+  "center_reused_exactly": true,
+  "test_evaluated": false,
+  "severity_evaluated": false,
+  "original_validation_failures": 3,
+  "arms": {
+    "xml_only": {
+      "training_datasets": [
+        "aisslab"
+      ],
+      "seeds": [
+        {
+          "seed": 42,
+          "selected_epoch": 5,
+          "fit_counts": {
+            "aisslab": 350
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.8918918918918919,
+                "hit10": 1.0,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 6.310591756930064e-15,
+                "p90_distance_mm_when_verifiable": 5.000001668930054,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 66,
+                "hit10_count": 74
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8266666666666667,
+                "hit10": 0.9733333333333334,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 7.357328179850853e-14,
+                "p90_distance_mm_when_verifiable": 5.0002118110656735,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 62,
+                "hit10_count": 73
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.40816326530612246,
+                "hit10": 0.6870748299319728,
+                "unverifiable_top_series": 12,
+                "median_distance_mm_when_verifiable": 7.0,
+                "p90_distance_mm_when_verifiable": 19.123842048645024,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 120,
+                "hit10_count": 202
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5340136054421769,
+                "hit10": 0.7244897959183674,
+                "unverifiable_top_series": 9,
+                "median_distance_mm_when_verifiable": 4.800002098083496,
+                "p90_distance_mm_when_verifiable": 26.39958381652832,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 157,
+                "hit10_count": 213
+              }
+            },
+            "macro_hit10": 0.8462244897959184
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.7432432432432432,
+                "hit10": 0.8918918918918919,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.39999794960022,
+                "p90_distance_mm_when_verifiable": 10.00002737045288,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 55,
+                "hit10_count": 66
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8133333333333334,
+                "hit10": 0.9066666666666666,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.2453166481959238e-14,
+                "p90_distance_mm_when_verifiable": 5.400000762939453,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 61,
+                "hit10_count": 68
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.445578231292517,
+                "hit10": 0.6632653061224489,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 5.499624729156494,
+                "p90_distance_mm_when_verifiable": 20.736419677734382,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 131,
+                "hit10_count": 195
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5204081632653061,
+                "hit10": 0.6938775510204082,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 4.800002098083496,
+                "p90_distance_mm_when_verifiable": 23.279998397827164,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 153,
+                "hit10_count": 204
+              }
+            },
+            "macro_hit10": 0.7889253539253539
+          }
+        },
+        {
+          "seed": 2024,
+          "selected_epoch": 5,
+          "fit_counts": {
+            "aisslab": 350
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.918918918918919,
+                "hit10": 1.0,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 5.974359063902154e-15,
+                "p90_distance_mm_when_verifiable": 4.999957847595215,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 68,
+                "hit10_count": 74
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8533333333333334,
+                "hit10": 0.9866666666666667,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.620944589490747e-14,
+                "p90_distance_mm_when_verifiable": 5.000026988983154,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 64,
+                "hit10_count": 74
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.41836734693877553,
+                "hit10": 0.6972789115646258,
+                "unverifiable_top_series": 12,
+                "median_distance_mm_when_verifiable": 6.999999761581421,
+                "p90_distance_mm_when_verifiable": 19.919995307922367,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 123,
+                "hit10_count": 205
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5306122448979592,
+                "hit10": 0.7312925170068028,
+                "unverifiable_top_series": 10,
+                "median_distance_mm_when_verifiable": 4.800002574920654,
+                "p90_distance_mm_when_verifiable": 25.00007209777832,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 156,
+                "hit10_count": 215
+              }
+            },
+            "macro_hit10": 0.8538095238095238
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.7432432432432432,
+                "hit10": 0.8918918918918919,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.39999794960022,
+                "p90_distance_mm_when_verifiable": 10.00002737045288,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 55,
+                "hit10_count": 66
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8133333333333334,
+                "hit10": 0.9066666666666666,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.2453166481959238e-14,
+                "p90_distance_mm_when_verifiable": 5.400000762939453,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 61,
+                "hit10_count": 68
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.445578231292517,
+                "hit10": 0.6632653061224489,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 5.499624729156494,
+                "p90_distance_mm_when_verifiable": 20.736419677734382,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 131,
+                "hit10_count": 195
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5204081632653061,
+                "hit10": 0.6938775510204082,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 4.800002098083496,
+                "p90_distance_mm_when_verifiable": 23.279998397827164,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 153,
+                "hit10_count": 204
+              }
+            },
+            "macro_hit10": 0.7889253539253539
+          }
+        },
+        {
+          "seed": 3407,
+          "selected_epoch": 6,
+          "fit_counts": {
+            "aisslab": 350
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.9054054054054054,
+                "hit10": 1.0,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 7.322877867578363e-15,
+                "p90_distance_mm_when_verifiable": 4.999997520446778,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 67,
+                "hit10_count": 74
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8666666666666667,
+                "hit10": 0.9866666666666667,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 7.357328179850853e-14,
+                "p90_distance_mm_when_verifiable": 5.000026607513428,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 65,
+                "hit10_count": 74
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.41496598639455784,
+                "hit10": 0.6870748299319728,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 6.4999988079071045,
+                "p90_distance_mm_when_verifiable": 18.428613471984864,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 122,
+                "hit10_count": 202
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5170068027210885,
+                "hit10": 0.7346938775510204,
+                "unverifiable_top_series": 9,
+                "median_distance_mm_when_verifiable": 4.800426483154297,
+                "p90_distance_mm_when_verifiable": 23.481867218017562,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 152,
+                "hit10_count": 216
+              }
+            },
+            "macro_hit10": 0.852108843537415
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.7432432432432432,
+                "hit10": 0.8918918918918919,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.39999794960022,
+                "p90_distance_mm_when_verifiable": 10.00002737045288,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 55,
+                "hit10_count": 66
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8133333333333334,
+                "hit10": 0.9066666666666666,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.2453166481959238e-14,
+                "p90_distance_mm_when_verifiable": 5.400000762939453,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 61,
+                "hit10_count": 68
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.445578231292517,
+                "hit10": 0.6632653061224489,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 5.499624729156494,
+                "p90_distance_mm_when_verifiable": 20.736419677734382,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 131,
+                "hit10_count": 195
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5204081632653061,
+                "hit10": 0.6938775510204082,
+                "unverifiable_top_series": 15,
+                "median_distance_mm_when_verifiable": 4.800002098083496,
+                "p90_distance_mm_when_verifiable": 23.279998397827164,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 153,
+                "hit10_count": 204
+              }
+            },
+            "macro_hit10": 0.7889253539253539
+          }
+        }
+      ],
+      "ensemble": {
+        "groups": {
+          "aisslab/L4-L5": {
+            "n": 74,
+            "hit5": 0.9054054054054054,
+            "hit10": 1.0,
+            "unverifiable_top_series": 0,
+            "median_distance_mm_when_verifiable": 6.310591756930064e-15,
+            "p90_distance_mm_when_verifiable": 4.999997520446778,
+            "requested": 75,
+            "predicted": 75,
+            "missing_reference": 1,
+            "hit5_count": 67,
+            "hit10_count": 74
+          },
+          "aisslab/L5-S1": {
+            "n": 75,
+            "hit5": 0.8666666666666667,
+            "hit10": 0.9866666666666667,
+            "unverifiable_top_series": 0,
+            "median_distance_mm_when_verifiable": 1.620944589490747e-14,
+            "p90_distance_mm_when_verifiable": 5.000026607513428,
+            "requested": 75,
+            "predicted": 75,
+            "missing_reference": 0,
+            "hit5_count": 65,
+            "hit10_count": 74
+          },
+          "rsna/L4-L5": {
+            "n": 294,
+            "hit5": 0.40816326530612246,
+            "hit10": 0.6870748299319728,
+            "unverifiable_top_series": 12,
+            "median_distance_mm_when_verifiable": 6.999999284744263,
+            "p90_distance_mm_when_verifiable": 19.16028175354004,
+            "requested": 294,
+            "predicted": 294,
+            "missing_reference": 0,
+            "hit5_count": 120,
+            "hit10_count": 202
+          },
+          "rsna/L5-S1": {
+            "n": 294,
+            "hit5": 0.5340136054421769,
+            "hit10": 0.7380952380952381,
+            "unverifiable_top_series": 9,
+            "median_distance_mm_when_verifiable": 4.800002098083496,
+            "p90_distance_mm_when_verifiable": 25.000061798095704,
+            "requested": 294,
+            "predicted": 294,
+            "missing_reference": 0,
+            "hit5_count": 157,
+            "hit10_count": 217
+          }
+        },
+        "macro_hit10": 0.8529591836734695
+      },
+      "aggregates": {
+        "aisslab/L4-L5": {
+          "hit5": {
+            "mean": 0.9054054054054054,
+            "std_across_seeds": 0.01103373758010443
+          },
+          "hit10": {
+            "mean": 1.0,
+            "std_across_seeds": 0.0
+          }
+        },
+        "aisslab/L5-S1": {
+          "hit5": {
+            "mean": 0.8488888888888889,
+            "std_across_seeds": 0.01662958838566198
+          },
+          "hit10": {
+            "mean": 0.9822222222222222,
+            "std_across_seeds": 0.006285393610547077
+          }
+        },
+        "rsna/L4-L5": {
+          "hit5": {
+            "mean": 0.4138321995464853,
+            "std_across_seeds": 0.004242241935117852
+          },
+          "hit10": {
+            "mean": 0.6904761904761906,
+            "std_across_seeds": 0.00481025021215339
+          }
+        },
+        "rsna/L5-S1": {
+          "hit5": {
+            "mean": 0.5272108843537415,
+            "std_across_seeds": 0.007347778569623432
+          },
+          "hit10": {
+            "mean": 0.7301587301587302,
+            "std_across_seeds": 0.004242241935117852
+          }
+        }
+      }
+    },
+    "mixed": {
+      "training_datasets": [
+        "aisslab",
+        "rsna"
+      ],
+      "seeds": [
+        {
+          "seed": 42,
+          "selected_epoch": 2,
+          "fit_counts": {
+            "aisslab": 350,
+            "rsna": 1380
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.8378378378378378,
+                "hit10": 0.9864864864864865,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 3.999999523162842,
+                "p90_distance_mm_when_verifiable": 5.000041580200195,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 62,
+                "hit10_count": 73
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8133333333333334,
+                "hit10": 1.0,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 3.9999985694885254,
+                "p90_distance_mm_when_verifiable": 5.000644397735596,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 61,
+                "hit10_count": 75
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.6700680272108843,
+                "hit10": 0.8435374149659864,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 4.399986505508423,
+                "p90_distance_mm_when_verifiable": 13.199998950958252,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 197,
+                "hit10_count": 248
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.7312925170068028,
+                "hit10": 0.891156462585034,
+                "unverifiable_top_series": 6,
+                "median_distance_mm_when_verifiable": 4.399996995925903,
+                "p90_distance_mm_when_verifiable": 9.929880046844483,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 215,
+                "hit10_count": 262
+              }
+            },
+            "macro_hit10": 0.9302950910093767
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.6621621621621622,
+                "hit10": 0.8783783783783784,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.40000057220459,
+                "p90_distance_mm_when_verifiable": 10.000039768218993,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 49,
+                "hit10_count": 65
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.84,
+                "hit10": 0.8933333333333333,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.104082628680626e-14,
+                "p90_distance_mm_when_verifiable": 8.160023498535196,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 63,
+                "hit10_count": 67
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.48639455782312924,
+                "hit10": 0.6530612244897959,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 4.999987840652466,
+                "p90_distance_mm_when_verifiable": 20.35616245269775,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 143,
+                "hit10_count": 192
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5170068027210885,
+                "hit10": 0.6836734693877551,
+                "unverifiable_top_series": 16,
+                "median_distance_mm_when_verifiable": 4.800002336502075,
+                "p90_distance_mm_when_verifiable": 22.33030185699464,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 152,
+                "hit10_count": 201
+              }
+            },
+            "macro_hit10": 0.7771116013973156
+          }
+        },
+        {
+          "seed": 2024,
+          "selected_epoch": 1,
+          "fit_counts": {
+            "aisslab": 350,
+            "rsna": 1380
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.8108108108108109,
+                "hit10": 0.9864864864864865,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.0,
+                "p90_distance_mm_when_verifiable": 5.000047731399536,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 60,
+                "hit10_count": 73
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8,
+                "hit10": 0.9866666666666667,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.000000953674316,
+                "p90_distance_mm_when_verifiable": 5.240285682678226,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 60,
+                "hit10_count": 74
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.6496598639455783,
+                "hit10": 0.8163265306122449,
+                "unverifiable_top_series": 12,
+                "median_distance_mm_when_verifiable": 4.399999380111694,
+                "p90_distance_mm_when_verifiable": 18.17021579742432,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 191,
+                "hit10_count": 240
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.7210884353741497,
+                "hit10": 0.8775510204081632,
+                "unverifiable_top_series": 7,
+                "median_distance_mm_when_verifiable": 4.399998664855957,
+                "p90_distance_mm_when_verifiable": 9.999950790405274,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 212,
+                "hit10_count": 258
+              }
+            },
+            "macro_hit10": 0.9167576760433903
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.6621621621621622,
+                "hit10": 0.8783783783783784,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.40000057220459,
+                "p90_distance_mm_when_verifiable": 10.000039768218993,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 49,
+                "hit10_count": 65
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.84,
+                "hit10": 0.8933333333333333,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.104082628680626e-14,
+                "p90_distance_mm_when_verifiable": 8.160023498535196,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 63,
+                "hit10_count": 67
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.48639455782312924,
+                "hit10": 0.6530612244897959,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 4.999987840652466,
+                "p90_distance_mm_when_verifiable": 20.35616245269775,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 143,
+                "hit10_count": 192
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5170068027210885,
+                "hit10": 0.6836734693877551,
+                "unverifiable_top_series": 16,
+                "median_distance_mm_when_verifiable": 4.800002336502075,
+                "p90_distance_mm_when_verifiable": 22.33030185699464,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 152,
+                "hit10_count": 201
+              }
+            },
+            "macro_hit10": 0.7771116013973156
+          }
+        },
+        {
+          "seed": 3407,
+          "selected_epoch": 2,
+          "fit_counts": {
+            "aisslab": 350,
+            "rsna": 1380
+          },
+          "validation_levels": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.8243243243243243,
+                "hit10": 0.972972972972973,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.000002861022949,
+                "p90_distance_mm_when_verifiable": 5.000047731399536,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 61,
+                "hit10_count": 72
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.8266666666666667,
+                "hit10": 0.9866666666666667,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 3.999999523162842,
+                "p90_distance_mm_when_verifiable": 5.000644397735596,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 62,
+                "hit10_count": 74
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.6666666666666666,
+                "hit10": 0.8231292517006803,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 4.399933576583862,
+                "p90_distance_mm_when_verifiable": 15.137647724151604,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 196,
+                "hit10_count": 242
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.7244897959183674,
+                "hit10": 0.8877551020408163,
+                "unverifiable_top_series": 6,
+                "median_distance_mm_when_verifiable": 4.399997711181641,
+                "p90_distance_mm_when_verifiable": 9.99960699081421,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 213,
+                "hit10_count": 261
+              }
+            },
+            "macro_hit10": 0.9176309983452839
+          },
+          "positional_baseline": {
+            "groups": {
+              "aisslab/L4-L5": {
+                "n": 74,
+                "hit5": 0.6621621621621622,
+                "hit10": 0.8783783783783784,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 4.40000057220459,
+                "p90_distance_mm_when_verifiable": 10.000039768218993,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 1,
+                "hit5_count": 49,
+                "hit10_count": 65
+              },
+              "aisslab/L5-S1": {
+                "n": 75,
+                "hit5": 0.84,
+                "hit10": 0.8933333333333333,
+                "unverifiable_top_series": 0,
+                "median_distance_mm_when_verifiable": 1.104082628680626e-14,
+                "p90_distance_mm_when_verifiable": 8.160023498535196,
+                "requested": 75,
+                "predicted": 75,
+                "missing_reference": 0,
+                "hit5_count": 63,
+                "hit10_count": 67
+              },
+              "rsna/L4-L5": {
+                "n": 294,
+                "hit5": 0.48639455782312924,
+                "hit10": 0.6530612244897959,
+                "unverifiable_top_series": 14,
+                "median_distance_mm_when_verifiable": 4.999987840652466,
+                "p90_distance_mm_when_verifiable": 20.35616245269775,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 143,
+                "hit10_count": 192
+              },
+              "rsna/L5-S1": {
+                "n": 294,
+                "hit5": 0.5170068027210885,
+                "hit10": 0.6836734693877551,
+                "unverifiable_top_series": 16,
+                "median_distance_mm_when_verifiable": 4.800002336502075,
+                "p90_distance_mm_when_verifiable": 22.33030185699464,
+                "requested": 294,
+                "predicted": 294,
+                "missing_reference": 0,
+                "hit5_count": 152,
+                "hit10_count": 201
+              }
+            },
+            "macro_hit10": 0.7771116013973156
+          }
+        }
+      ],
+      "ensemble": {
+        "groups": {
+          "aisslab/L4-L5": {
+            "n": 74,
+            "hit5": 0.8378378378378378,
+            "hit10": 0.9864864864864865,
+            "unverifiable_top_series": 0,
+            "median_distance_mm_when_verifiable": 4.000000238418579,
+            "p90_distance_mm_when_verifiable": 5.0000372409820555,
+            "requested": 75,
+            "predicted": 75,
+            "missing_reference": 1,
+            "hit5_count": 62,
+            "hit10_count": 73
+          },
+          "aisslab/L5-S1": {
+            "n": 75,
+            "hit5": 0.8266666666666667,
+            "hit10": 1.0,
+            "unverifiable_top_series": 0,
+            "median_distance_mm_when_verifiable": 3.9999985694885254,
+            "p90_distance_mm_when_verifiable": 5.000644397735596,
+            "requested": 75,
+            "predicted": 75,
+            "missing_reference": 0,
+            "hit5_count": 62,
+            "hit10_count": 75
+          },
+          "rsna/L4-L5": {
+            "n": 294,
+            "hit5": 0.6802721088435374,
+            "hit10": 0.8299319727891157,
+            "unverifiable_top_series": 14,
+            "median_distance_mm_when_verifiable": 4.349780559539795,
+            "p90_distance_mm_when_verifiable": 14.952136611938476,
+            "requested": 294,
+            "predicted": 294,
+            "missing_reference": 0,
+            "hit5_count": 200,
+            "hit10_count": 244
+          },
+          "rsna/L5-S1": {
+            "n": 294,
+            "hit5": 0.7312925170068028,
+            "hit10": 0.891156462585034,
+            "unverifiable_top_series": 6,
+            "median_distance_mm_when_verifiable": 4.399997711181641,
+            "p90_distance_mm_when_verifiable": 9.929880046844483,
+            "requested": 294,
+            "predicted": 294,
+            "missing_reference": 0,
+            "hit5_count": 215,
+            "hit10_count": 262
+          }
+        },
+        "macro_hit10": 0.926893730465159
+      },
+      "aggregates": {
+        "aisslab/L4-L5": {
+          "hit5": {
+            "mean": 0.8243243243243242,
+            "std_across_seeds": 0.011033737580104383
+          },
+          "hit10": {
+            "mean": 0.981981981981982,
+            "std_across_seeds": 0.006370331362040956
+          }
+        },
+        "aisslab/L5-S1": {
+          "hit5": {
+            "mean": 0.8133333333333334,
+            "std_across_seeds": 0.010886621079036327
+          },
+          "hit10": {
+            "mean": 0.9911111111111112,
+            "std_across_seeds": 0.006285393610547077
+          }
+        },
+        "rsna/L4-L5": {
+          "hit5": {
+            "mean": 0.6621315192743764,
+            "std_across_seeds": 0.008927446569174347
+          },
+          "hit10": {
+            "mean": 0.8276643990929706,
+            "std_across_seeds": 0.01156240252515372
+          }
+        },
+        "rsna/L5-S1": {
+          "hit5": {
+            "mean": 0.72562358276644,
+            "std_across_seeds": 0.004242241935117852
+          },
+          "hit10": {
+            "mean": 0.8854875283446711,
+            "std_across_seeds": 0.00578120126257686
+          }
+        }
+      }
+    }
+  },
+  "paired_ensemble_comparison": {
+    "unit": "patient within each dataset/level",
+    "resamples": 2000,
+    "groups": {
+      "aisslab/L4-L5": {
+        "n_patients": 74,
+        "delta_hit10": 0.013513513513513514,
+        "ci95": [
+          0.0,
+          0.04054054054054054
+        ]
+      },
+      "aisslab/L5-S1": {
+        "n_patients": 75,
+        "delta_hit10": -0.013333333333333334,
+        "ci95": [
+          -0.04,
+          0.0
+        ]
+      },
+      "rsna/L4-L5": {
+        "n_patients": 294,
+        "delta_hit10": -0.14285714285714285,
+        "ci95": [
+          -0.1836734693877551,
+          -0.10204081632653061
+        ]
+      },
+      "rsna/L5-S1": {
+        "n_patients": 294,
+        "delta_hit10": -0.15306122448979592,
+        "ci95": [
+          -0.19387755102040816,
+          -0.11564625850340136
+        ]
+      }
+    }
+  },
+  "xml_training_annotation_counts": {
+    "patients": 350,
+    "referenced_levels": 695
+  }
+}

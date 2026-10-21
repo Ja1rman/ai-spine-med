@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "experiment": "xml_only_level_localizer_v7",
+  "interpretation": "Exploratory validation-only comparison of training sources, not a new independent test and not a causal estimate of annotation quality.",
+  "training_index_sha256": "1d32645556721167250cbebdc61a1791f6be3314c57fac963dac957d9b76f1e7",
+  "base_protocol_sha256": "3802a41230a19857a93371cb01963fcec215d6abf221b6c4947bd71e74cf0d14",
+  "base_localizer_sha256": "6d2cabfc0eaa065492a44f76f3c277251b8db23f442420e1d8a7217369599cc0",
+  "base_implementation_sha256": "ca962c479f12dd91eb6fe9041701f13a203265162818d06b9951571f00b9e08b",
+  "arms": {"xml_only": ["aisslab"], "mixed": ["aisslab", "rsna"]},
+  "seeds": [42, 2024, 3407],
+  "selection_dataset": "aisslab",
+  "selection": "For both arms use AISSLab validation macro hit within10mm across levels, then lower cross-entropy. Epoch0 positional prior eligible. RSNA validation is scored only after all six models are sealed.",
+  "architecture": "Unchanged v6 SliceLocalizer; frozen original ImageNet features. Fit mean/std and position prior using each arm TRAIN only.",
+  "training": "Unchanged v6 domain-balanced cross-entropy, AdamW, batch8, learning_rate0.0003, weight_decay0.0001, max15 epochs, patience4. No grades, AP, sagittal images or TEST.",
+  "center": "Reuse the exact sealed v6 AISSLab-XML-trained center state for all six models. No center fitting here.",
+  "severity": "No severity fitting or evaluation in this localization-only comparison.",
+  "ensemble": "Arithmetic mean slice probabilities of all three prespecified seeds per arm. No seed selection.",
+  "evaluation": "Same validation patients, per-domain and per-level hit5/hit10, distance, missing references and failures. Paired patient bootstrap of ensemble hit10 difference. Descriptive v6 reference has a different epoch selection criterion.",
+  "bootstrap_resamples": 2000,
+  "bootstrap_seed": 73017
+}
