@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "experiment": "probability_mean_v3",
+  "reference_commit": "b19a41ddf4af88847b10fec70888ec64b6c630c4",
+  "scope": "Post-hoc development check requested after examining validation errors; no independent test",
+  "weights": {
+    "sagittal": 0.5,
+    "axial": 0.5
+  },
+  "seeds": [
+    42,
+    2024,
+    3407
+  ],
+  "classes": [
+    "normal_mild",
+    "moderate",
+    "severe"
+  ],
+  "levels": [
+    "L4-L5",
+    "L5-S1"
+  ],
+  "source_summary_sha256": "5898f3ee30422e500617c0dc98e0036e8740a54521506d29a41ebd62763a99da",
+  "source_prediction_sha256": {
+    "sagittal": "0192a938e0575d38614ec9b466f7b36dd2fa947c0d0f144d5def4bc81cebb977",
+    "axial": "df61a746d18e3c7afabe8f9ca2ff96aeb21477e266b51126e6112ec9d9b74710",
+    "fusion": "71e0babe561b023a6d19f0b3221271336dec8f86bba3bc5047f1b4be30812b00"
+  },
+  "expected_validation": {
+    "n_studies": 297,
+    "n_targets": 594,
+    "n_assessed": 582
+  },
+  "combination": "Arithmetic mean of the two three-seed probability ensembles, then argmax; no logits or class-index averaging",
+  "missing_policy": "Preserve every common not_assessed target; no imputation or single-modality fallback",
+  "bootstrap_resamples": 2000,
+  "bootstrap_seed": 2026,
+  "bootstrap_unit": "study_id; both levels and failures together",
+  "training_performed": false,
+  "weight_or_threshold_tuning": false,
+  "test_policy": "No TEST prediction tables, features or MRI are opened",
+  "limitations": [
+    "Previously used validation and post-hoc method choice after reviewing errors",
+    "Bootstrap conditions on fixed models; no claim of clinical validity or new-site generalization",
+    "Source scores are uncalibrated; equal weights do not imply equal clinical reliability"
+  ]
+}

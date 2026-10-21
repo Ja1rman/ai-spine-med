@@ -249,6 +249,28 @@ def main(argv: list[str] | None = None) -> int:
     multi_review.add_argument("--data-root", type=Path, default=Path("data/rsna"))
     multi_review.add_argument("--out", type=Path, default=Path("reports/runs/multimodal-review-v3"))
     multi_review.add_argument("--count", type=int, default=24)
+    probability_mean = sub.add_parser(
+        "probability-mean", help="Сравнить среднее вероятностей двух готовых МРТ-моделей"
+    )
+    probability_mean.add_argument(
+        "--experiment", type=Path, default=Path("reports/runs/multimodal-v3")
+    )
+    probability_mean.add_argument(
+        "--protocol", type=Path, default=Path("configs/probability-mean-v3.json")
+    )
+    probability_mean.add_argument(
+        "--out", type=Path, default=Path("reports/runs/probability-mean-v3")
+    )
+    probability_report = sub.add_parser(
+        "report-probability-mean", help="Построить агрегированный отчёт среднего вероятностей"
+    )
+    probability_report.add_argument(
+        "--experiment", type=Path, default=Path("reports/runs/probability-mean-v3")
+    )
+    probability_report.add_argument(
+        "--document", type=Path, default=Path("docs/probability-mean.md")
+    )
+    probability_report.add_argument("--figures", type=Path, default=Path("docs/images"))
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -548,6 +570,32 @@ def main(argv: list[str] | None = None) -> int:
                 count=args.count,
             )
             print(f"Private MRI review saved to {args.out}; physician review pending")
+        elif args.command == "probability-mean":
+            from .probability_mean import run_probability_mean
+
+            result = run_probability_mean(args.experiment, args.protocol, args.out)
+            print(
+                json.dumps(
+                    {
+                        "n_studies": result["n_studies"],
+                        "n_targets": result["n_targets"],
+                        "n_assessed": result["n_assessed"],
+                        "macro_f1": {
+                            name: item["metrics"]["conditional"]["macro_f1"]
+                            for name, item in result["models"].items()
+                        },
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
+        elif args.command == "report-probability-mean":
+            from .probability_mean_report import draw_probability_mean_report
+
+            draw_probability_mean_report(
+                args.experiment, document=args.document, figures=args.figures
+            )
+            print(f"Aggregate probability-mean report saved to {args.document}")
     except (ValueError, FileNotFoundError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1
