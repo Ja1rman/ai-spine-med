@@ -271,6 +271,12 @@ def main(argv: list[str] | None = None) -> int:
         "--document", type=Path, default=Path("docs/probability-mean.md")
     )
     probability_report.add_argument("--figures", type=Path, default=Path("docs/images"))
+    transfer = sub.add_parser(
+        "axial-transfer", help="Дообучить аксиальную модель на AISSLab и сравнить до/после"
+    )
+    transfer.add_argument("stage", choices=["prepare", "cache", "train", "evaluate", "report"])
+    transfer.add_argument("--device", default="auto", choices=["auto", "cpu", "mps"])
+    transfer.add_argument("--workers", type=int, default=4)
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -589,6 +595,10 @@ def main(argv: list[str] | None = None) -> int:
                     indent=2,
                 )
             )
+        elif args.command == "axial-transfer":
+            from .axial_transfer_workflow import main as transfer_main
+
+            transfer_main([args.stage, "--device", args.device, "--workers", str(args.workers)])
         elif args.command == "report-probability-mean":
             from .probability_mean_report import draw_probability_mean_report
 
