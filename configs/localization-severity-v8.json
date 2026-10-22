@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "experiment": "xml_vs_mixed_localization_frozen_severity_validation_v8",
+  "phase": "validation",
+  "frozen_files": {
+    "configs/axial-localizer-v6.json": "3802a41230a19857a93371cb01963fcec215d6abf221b6c4947bd71e74cf0d14",
+    "artifacts/axial-localizer-v6/index.json": "1d32645556721167250cbebdc61a1791f6be3314c57fac963dac957d9b76f1e7",
+    "reports/runs/xml-localizer-v7/selection.json": "e378189542a77957490aba0b323b54efd593e639a6b7c7cc88cbbf5869031d05",
+    "reports/runs/explicit-localization-v6/severity/selection.json": "ef20ca7cd99c02b95b2497563dfdef3b326d11d9f8405d97b3875c9a13335041",
+    "data/rsna/train.csv": "f0c9e06486bcddcd83b1ee1d95ab9db8e028d7c3c9fcbada950f0b8e4d828528",
+    "artifacts/aisslab-axial-v4/records.json": "63f7789387f9757cdb4394b1965e2cf0f2ad98b1d46e3a61c5f918ef54748a9b",
+    "src/ai_spine_med/axial_localizer_extract.py": "e140ad92e465b591d4350739651c8f0d4e650efb8d19c64ec38228951894a3fb",
+    "src/ai_spine_med/axial_localizer_crops.py": "0eb7b1a04753f2cf6cd6f356e75ebdce2dbaa4ba1c25ba4915b47cb9623b4159",
+    "src/ai_spine_med/localized_stenosis.py": "fe43ac86a1c0767c58197f57e7a92d3e93210b4c3d96f5c00461d11a3fc83519",
+    "src/ai_spine_med/axial_features.py": "eedfcf35d3616887cb6b87b544a2f76d4fb2da0abf3d8f583116e23d54fdc67d",
+    "src/ai_spine_med/axial_localizer.py": "ca962c479f12dd91eb6fe9041701f13a203265162818d06b9951571f00b9e08b",
+    "src/ai_spine_med/training.py": "be19d73c618c0c762f1afcd91eff091addbba2c0cea9ba46c5a66e6c1178b982"
+  },
+  "arms": ["xml_only", "mixed"],
+  "localizer_seeds": [42, 2024, 3407],
+  "localizer_ensemble": "mean_probabilities_before_argmax",
+  "center": "Reuse the exact sealed v6 center model including its normalizers; predicted coordinates still depend on the selected image.",
+  "roi": "Unchanged v6: 50x50mm square, up to3 centers within10mm, original pinned frozen ImageNet ResNet18 features.",
+  "severity_seeds": [42, 2024, 3407],
+  "severity": "All three sealed v6 heads and their TRAIN normalizers, mean class probabilities, no fitting or model selection.",
+  "labels": "Join RSNA and AISSLab validation grade references only after both arms finish image inference; missing grades stay missing. AISSLab class equivalence remains unverified.",
+  "evaluation": "Same full validation cohort with original failures, primary RSNA, separate AISSLab. Per-level macroF1, severe recall/counts, severe->normal, confusion matrices, paired prediction changes. Paired patient bootstrap mixed minus XML-only, 2000 resamples.",
+  "interpretation": "Sensitivity of the existing frozen classifier to replacing localization, not optimal retraining for each crop. Previously used validation patients are not an independent confirmation. No TEST.",
+  "bootstrap_resamples": 2000,
+  "bootstrap_seed": 83017
+}
