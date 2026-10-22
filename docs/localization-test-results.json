@@ -1,0 +1,6120 @@
+{
+  "schema_version": 1,
+  "experiment": "v9_adapted_xml_only_and_mixed_axial_vs_v1_sagittal_on_paired_rsna_test",
+  "phase": "test",
+  "scope": "historically_reused_test_exploratory",
+  "severity_seeds": [
+    42,
+    2024,
+    3407
+  ],
+  "fixed_before_test": true,
+  "no_test_selection": true,
+  "labels_joined_after_image_inference": true,
+  "bootstrap_resamples": 2000,
+  "bootstrap_seed": 103017,
+  "severity_ensemble": "Equal mean of three probability vectors; no best-seed selection",
+  "sagittal_baseline": "Prespecified v1 frozen-head ensemble; not the original unadapted SpineNet",
+  "axial_models": "v9 separately adapted heads with frozen v7 XML-only or mixed localizers",
+  "selection_scope": "All fitting and epoch choices were completed on TRAIN/VAL before this TEST inference",
+  "test_limitation": "These TEST patients were already inspected in historical error analysis; exploratory follow-up, not fresh independent confirmation",
+  "roi_mm": [
+    50,
+    50
+  ],
+  "primary_dataset": "rsna",
+  "groups": {
+    "rsna/all": {
+      "n_requested": 590,
+      "n_requested_patients": 295,
+      "n_common_labeled_assessed": 588,
+      "n_common_patients": 295,
+      "n_excluded_from_common": 2,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 590,
+          "n_labeled": 590,
+          "n_missing_reference_label": 0,
+          "n_assessed": 590,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 508,
+            "moderate": 42,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 508,
+            "moderate": 42,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.511512282191095,
+            "accuracy": 0.8457627118644068,
+            "precision": {
+              "normal_mild": 0.9206963249516441,
+              "moderate": 0.21951219512195122,
+              "severe": 0.4375
+            },
+            "recall": {
+              "normal_mild": 0.937007874015748,
+              "moderate": 0.21428571428571427,
+              "severe": 0.35
+            },
+            "f1": {
+              "normal_mild": 0.9287804878048781,
+              "moderate": 0.21686746987951808,
+              "severe": 0.3888888888888889
+            },
+            "confusion_matrix": [
+              [
+                476,
+                21,
+                11
+              ],
+              [
+                26,
+                9,
+                7
+              ],
+              [
+                15,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 15,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.35,
+            "detection_rate_all_requested": 0.35,
+            "missed_all_requested": 26
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 590,
+          "moderate_found": 9,
+          "false_severe": 18
+        },
+        "mixed": {
+          "n_requested": 590,
+          "n_labeled": 590,
+          "n_missing_reference_label": 0,
+          "n_assessed": 590,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 508,
+            "moderate": 42,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 508,
+            "moderate": 42,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5345865899698303,
+            "accuracy": 0.8593220338983051,
+            "precision": {
+              "normal_mild": 0.9303675048355899,
+              "moderate": 0.20588235294117646,
+              "severe": 0.48717948717948717
+            },
+            "recall": {
+              "normal_mild": 0.9468503937007874,
+              "moderate": 0.16666666666666666,
+              "severe": 0.475
+            },
+            "f1": {
+              "normal_mild": 0.9385365853658536,
+              "moderate": 0.18421052631578946,
+              "severe": 0.4810126582278481
+            },
+            "confusion_matrix": [
+              [
+                481,
+                18,
+                9
+              ],
+              [
+                24,
+                7,
+                11
+              ],
+              [
+                12,
+                9,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 9,
+            "not_assessed": 0,
+            "recall_conditional": 0.475,
+            "detection_rate_all_requested": 0.475,
+            "missed_all_requested": 21
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 590,
+          "moderate_found": 7,
+          "false_severe": 20
+        },
+        "sagittal": {
+          "n_requested": 590,
+          "n_labeled": 590,
+          "n_missing_reference_label": 0,
+          "n_assessed": 588,
+          "n_not_assessed": 2,
+          "coverage": 0.9966101694915255,
+          "class_counts": {
+            "normal_mild": 508,
+            "moderate": 42,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 1,
+            "moderate": 1,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7022497877955104,
+            "accuracy": 0.9047619047619048,
+            "precision": {
+              "normal_mild": 0.9529411764705882,
+              "moderate": 0.43243243243243246,
+              "severe": 0.7317073170731707
+            },
+            "recall": {
+              "normal_mild": 0.9585798816568047,
+              "moderate": 0.3902439024390244,
+              "severe": 0.75
+            },
+            "f1": {
+              "normal_mild": 0.9557522123893806,
+              "moderate": 0.41025641025641024,
+              "severe": 0.7407407407407407
+            },
+            "confusion_matrix": [
+              [
+                486,
+                16,
+                5
+              ],
+              [
+                19,
+                16,
+                6
+              ],
+              [
+                5,
+                5,
+                30
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 30,
+            "predicted_normal_mild": 5,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.75,
+            "detection_rate_all_requested": 0.75,
+            "missed_all_requested": 10
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 588,
+          "moderate_found": 16,
+          "false_severe": 11
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 588,
+          "n_labeled": 588,
+          "n_missing_reference_label": 0,
+          "n_assessed": 588,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5126503287211607,
+            "accuracy": 0.8469387755102041,
+            "precision": {
+              "normal_mild": 0.9223300970873787,
+              "moderate": 0.21951219512195122,
+              "severe": 0.4375
+            },
+            "recall": {
+              "normal_mild": 0.9368836291913215,
+              "moderate": 0.21951219512195122,
+              "severe": 0.35
+            },
+            "f1": {
+              "normal_mild": 0.9295499021526419,
+              "moderate": 0.21951219512195122,
+              "severe": 0.3888888888888889
+            },
+            "confusion_matrix": [
+              [
+                475,
+                21,
+                11
+              ],
+              [
+                25,
+                9,
+                7
+              ],
+              [
+                15,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 15,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.35,
+            "detection_rate_all_requested": 0.35,
+            "missed_all_requested": 26
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 588,
+          "moderate_found": 9,
+          "false_severe": 18
+        },
+        "mixed": {
+          "n_requested": 588,
+          "n_labeled": 588,
+          "n_missing_reference_label": 0,
+          "n_assessed": 588,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5356713209530967,
+            "accuracy": 0.8605442176870748,
+            "precision": {
+              "normal_mild": 0.9320388349514563,
+              "moderate": 0.20588235294117646,
+              "severe": 0.48717948717948717
+            },
+            "recall": {
+              "normal_mild": 0.9467455621301775,
+              "moderate": 0.17073170731707318,
+              "severe": 0.475
+            },
+            "f1": {
+              "normal_mild": 0.9393346379647749,
+              "moderate": 0.18666666666666668,
+              "severe": 0.4810126582278481
+            },
+            "confusion_matrix": [
+              [
+                480,
+                18,
+                9
+              ],
+              [
+                23,
+                7,
+                11
+              ],
+              [
+                12,
+                9,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 9,
+            "not_assessed": 0,
+            "recall_conditional": 0.475,
+            "detection_rate_all_requested": 0.475,
+            "missed_all_requested": 21
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 588,
+          "moderate_found": 7,
+          "false_severe": 20
+        },
+        "sagittal": {
+          "n_requested": 588,
+          "n_labeled": 588,
+          "n_missing_reference_label": 0,
+          "n_assessed": 588,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 507,
+            "moderate": 41,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7022497877955104,
+            "accuracy": 0.9047619047619048,
+            "precision": {
+              "normal_mild": 0.9529411764705882,
+              "moderate": 0.43243243243243246,
+              "severe": 0.7317073170731707
+            },
+            "recall": {
+              "normal_mild": 0.9585798816568047,
+              "moderate": 0.3902439024390244,
+              "severe": 0.75
+            },
+            "f1": {
+              "normal_mild": 0.9557522123893806,
+              "moderate": 0.41025641025641024,
+              "severe": 0.7407407407407407
+            },
+            "confusion_matrix": [
+              [
+                486,
+                16,
+                5
+              ],
+              [
+                19,
+                16,
+                6
+              ],
+              [
+                5,
+                5,
+                30
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 30,
+            "predicted_normal_mild": 5,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.75,
+            "detection_rate_all_requested": 0.75,
+            "missed_all_requested": 10
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 588,
+          "moderate_found": 16,
+          "false_severe": 11
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 502,
+          "improved": 21,
+          "worsened": 55,
+          "both_correct": 477,
+          "both_wrong": 35,
+          "severe_improved": 1,
+          "severe_worsened": 17,
+          "severe_both_found": 13,
+          "severe_both_missed": 9,
+          "improved_by_reference_class": {
+            "normal_mild": 16,
+            "moderate": 4,
+            "severe": 1
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 511,
+          "improved": 20,
+          "worsened": 46,
+          "both_correct": 486,
+          "both_wrong": 36,
+          "severe_improved": 1,
+          "severe_worsened": 12,
+          "severe_both_found": 18,
+          "severe_both_missed": 9,
+          "improved_by_reference_class": {
+            "normal_mild": 13,
+            "moderate": 6,
+            "severe": 1
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 539,
+          "improved": 24,
+          "worsened": 16,
+          "both_correct": 482,
+          "both_wrong": 66,
+          "severe_improved": 7,
+          "severe_worsened": 2,
+          "severe_both_found": 12,
+          "severe_both_missed": 19,
+          "improved_by_reference_class": {
+            "normal_mild": 15,
+            "moderate": 2,
+            "severe": 7
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 295,
+        "n_targets": 588,
+        "n_assessed": 588,
+        "n_severe_all_requested": 40,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.5126503287211607,
+              "lower_95": 0.44530494025918,
+              "upper_95": 0.5765176005479943,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.21951219512195122,
+              "lower_95": 0.1012594297404424,
+              "upper_95": 0.33766233766233766,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.35,
+              "lower_95": 0.20930232558139536,
+              "upper_95": 0.5,
+              "valid_resamples": 2000
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.5356713209530967,
+              "lower_95": 0.4715378028663546,
+              "upper_95": 0.591609711392998,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.18666666666666668,
+              "lower_95": 0.06894592476489028,
+              "upper_95": 0.3055555555555556,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.475,
+              "lower_95": 0.3142857142857143,
+              "upper_95": 0.6388888888888888,
+              "valid_resamples": 2000
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.7022497877955104,
+              "lower_95": 0.6379938309005406,
+              "upper_95": 0.7631501006621527,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.41025641025641024,
+              "lower_95": 0.2682926829268293,
+              "upper_95": 0.5411887254901959,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.75,
+              "lower_95": 0.6052478580171359,
+              "upper_95": 0.8780487804878049,
+              "valid_resamples": 2000
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.18959945907434972,
+                "lower_95": -0.27418201115753343,
+                "upper_95": -0.11113868944506575,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.19074421513445902,
+                "lower_95": -0.3461951219512195,
+                "upper_95": -0.030322612549076942,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.4,
+                "lower_95": -0.5789473684210527,
+                "upper_95": -0.2391045548654246,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.16657846684241373,
+                "lower_95": -0.25558359485945364,
+                "upper_95": -0.07942571537707788,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.22358974358974357,
+                "lower_95": -0.41710620300751877,
+                "upper_95": -0.025617433414043732,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.275,
+                "lower_95": -0.4473684210526316,
+                "upper_95": -0.11761285909712733,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.02302099223193599,
+                "lower_95": -0.039907522837103034,
+                "upper_95": 0.08517877877307693,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.032845528455284545,
+                "lower_95": -0.15017268157297378,
+                "upper_95": 0.08037143786318249,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.125,
+                "lower_95": 0.0,
+                "upper_95": 0.2727272727272727,
+                "valid_resamples": 2000
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      },
+      "individual_seed_models_full_cohort": {
+        "xml_only": {
+          "42": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.4935194632794709,
+              "accuracy": 0.8305084745762712,
+              "precision": {
+                "normal_mild": 0.9194499017681729,
+                "moderate": 0.2033898305084746,
+                "severe": 0.45454545454545453
+              },
+              "recall": {
+                "normal_mild": 0.9212598425196851,
+                "moderate": 0.2857142857142857,
+                "severe": 0.25
+              },
+              "f1": {
+                "normal_mild": 0.9203539823008849,
+                "moderate": 0.2376237623762376,
+                "severe": 0.3225806451612903
+              },
+              "confusion_matrix": [
+                [
+                  468,
+                  32,
+                  8
+                ],
+                [
+                  26,
+                  12,
+                  4
+                ],
+                [
+                  15,
+                  15,
+                  10
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 10,
+              "predicted_normal_mild": 15,
+              "predicted_moderate": 15,
+              "not_assessed": 0,
+              "recall_conditional": 0.25,
+              "detection_rate_all_requested": 0.25,
+              "missed_all_requested": 30
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 12,
+            "false_severe": 12
+          },
+          "2024": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.4990771697356942,
+              "accuracy": 0.8423728813559322,
+              "precision": {
+                "normal_mild": 0.9221789883268483,
+                "moderate": 0.18181818181818182,
+                "severe": 0.3953488372093023
+              },
+              "recall": {
+                "normal_mild": 0.9330708661417323,
+                "moderate": 0.14285714285714285,
+                "severe": 0.425
+              },
+              "f1": {
+                "normal_mild": 0.9275929549902152,
+                "moderate": 0.16,
+                "severe": 0.40963855421686746
+              },
+              "confusion_matrix": [
+                [
+                  474,
+                  19,
+                  15
+                ],
+                [
+                  25,
+                  6,
+                  11
+                ],
+                [
+                  15,
+                  8,
+                  17
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 17,
+              "predicted_normal_mild": 15,
+              "predicted_moderate": 8,
+              "not_assessed": 0,
+              "recall_conditional": 0.425,
+              "detection_rate_all_requested": 0.425,
+              "missed_all_requested": 23
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 6,
+            "false_severe": 26
+          },
+          "3407": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.48276697750381964,
+              "accuracy": 0.8372881355932204,
+              "precision": {
+                "normal_mild": 0.915057915057915,
+                "moderate": 0.21052631578947367,
+                "severe": 0.35294117647058826
+              },
+              "recall": {
+                "normal_mild": 0.9330708661417323,
+                "moderate": 0.19047619047619047,
+                "severe": 0.3
+              },
+              "f1": {
+                "normal_mild": 0.9239766081871345,
+                "moderate": 0.2,
+                "severe": 0.32432432432432434
+              },
+              "confusion_matrix": [
+                [
+                  474,
+                  20,
+                  14
+                ],
+                [
+                  26,
+                  8,
+                  8
+                ],
+                [
+                  18,
+                  10,
+                  12
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 12,
+              "predicted_normal_mild": 18,
+              "predicted_moderate": 10,
+              "not_assessed": 0,
+              "recall_conditional": 0.3,
+              "detection_rate_all_requested": 0.3,
+              "missed_all_requested": 28
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 8,
+            "false_severe": 22
+          }
+        },
+        "mixed": {
+          "42": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5535696133144751,
+              "accuracy": 0.864406779661017,
+              "precision": {
+                "normal_mild": 0.939453125,
+                "moderate": 0.2857142857142857,
+                "severe": 0.4418604651162791
+              },
+              "recall": {
+                "normal_mild": 0.9468503937007874,
+                "moderate": 0.23809523809523808,
+                "severe": 0.475
+              },
+              "f1": {
+                "normal_mild": 0.9431372549019608,
+                "moderate": 0.2597402597402597,
+                "severe": 0.4578313253012048
+              },
+              "confusion_matrix": [
+                [
+                  481,
+                  17,
+                  10
+                ],
+                [
+                  18,
+                  10,
+                  14
+                ],
+                [
+                  13,
+                  8,
+                  19
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 19,
+              "predicted_normal_mild": 13,
+              "predicted_moderate": 8,
+              "not_assessed": 0,
+              "recall_conditional": 0.475,
+              "detection_rate_all_requested": 0.475,
+              "missed_all_requested": 21
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 10,
+            "false_severe": 24
+          },
+          "2024": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5708475392289349,
+              "accuracy": 0.8610169491525423,
+              "precision": {
+                "normal_mild": 0.9298245614035088,
+                "moderate": 0.2702702702702703,
+                "severe": 0.525
+              },
+              "recall": {
+                "normal_mild": 0.9389763779527559,
+                "moderate": 0.23809523809523808,
+                "severe": 0.525
+              },
+              "f1": {
+                "normal_mild": 0.9343780607247796,
+                "moderate": 0.25316455696202533,
+                "severe": 0.525
+              },
+              "confusion_matrix": [
+                [
+                  477,
+                  20,
+                  11
+                ],
+                [
+                  24,
+                  10,
+                  8
+                ],
+                [
+                  12,
+                  7,
+                  21
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 21,
+              "predicted_normal_mild": 12,
+              "predicted_moderate": 7,
+              "not_assessed": 0,
+              "recall_conditional": 0.525,
+              "detection_rate_all_requested": 0.525,
+              "missed_all_requested": 19
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 10,
+            "false_severe": 19
+          },
+          "3407": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 590,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5702271544997398,
+              "accuracy": 0.8661016949152542,
+              "precision": {
+                "normal_mild": 0.9267822736030829,
+                "moderate": 0.3225806451612903,
+                "severe": 0.5
+              },
+              "recall": {
+                "normal_mild": 0.9468503937007874,
+                "moderate": 0.23809523809523808,
+                "severe": 0.5
+              },
+              "f1": {
+                "normal_mild": 0.9367088607594937,
+                "moderate": 0.273972602739726,
+                "severe": 0.5
+              },
+              "confusion_matrix": [
+                [
+                  481,
+                  15,
+                  12
+                ],
+                [
+                  24,
+                  10,
+                  8
+                ],
+                [
+                  14,
+                  6,
+                  20
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 20,
+              "predicted_normal_mild": 14,
+              "predicted_moderate": 6,
+              "not_assessed": 0,
+              "recall_conditional": 0.5,
+              "detection_rate_all_requested": 0.5,
+              "missed_all_requested": 20
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 590,
+            "moderate_found": 10,
+            "false_severe": 20
+          }
+        },
+        "sagittal": {
+          "42": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 588,
+            "n_not_assessed": 2,
+            "coverage": 0.9966101694915255,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 507,
+              "moderate": 41,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.7053919167258403,
+              "accuracy": 0.9081632653061225,
+              "precision": {
+                "normal_mild": 0.953125,
+                "moderate": 0.47058823529411764,
+                "severe": 0.7142857142857143
+              },
+              "recall": {
+                "normal_mild": 0.9625246548323472,
+                "moderate": 0.3902439024390244,
+                "severe": 0.75
+              },
+              "f1": {
+                "normal_mild": 0.957801766437684,
+                "moderate": 0.4266666666666667,
+                "severe": 0.7317073170731707
+              },
+              "confusion_matrix": [
+                [
+                  488,
+                  13,
+                  6
+                ],
+                [
+                  19,
+                  16,
+                  6
+                ],
+                [
+                  5,
+                  5,
+                  30
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 30,
+              "predicted_normal_mild": 5,
+              "predicted_moderate": 5,
+              "not_assessed": 0,
+              "recall_conditional": 0.75,
+              "detection_rate_all_requested": 0.75,
+              "missed_all_requested": 10
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 588,
+            "moderate_found": 16,
+            "false_severe": 12
+          },
+          "2024": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 588,
+            "n_not_assessed": 2,
+            "coverage": 0.9966101694915255,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 507,
+              "moderate": 41,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.6910448073972669,
+              "accuracy": 0.8996598639455783,
+              "precision": {
+                "normal_mild": 0.9546351084812623,
+                "moderate": 0.40476190476190477,
+                "severe": 0.717948717948718
+              },
+              "recall": {
+                "normal_mild": 0.9546351084812623,
+                "moderate": 0.4146341463414634,
+                "severe": 0.7
+              },
+              "f1": {
+                "normal_mild": 0.9546351084812623,
+                "moderate": 0.40963855421686746,
+                "severe": 0.7088607594936709
+              },
+              "confusion_matrix": [
+                [
+                  484,
+                  18,
+                  5
+                ],
+                [
+                  18,
+                  17,
+                  6
+                ],
+                [
+                  5,
+                  7,
+                  28
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 28,
+              "predicted_normal_mild": 5,
+              "predicted_moderate": 7,
+              "not_assessed": 0,
+              "recall_conditional": 0.7,
+              "detection_rate_all_requested": 0.7,
+              "missed_all_requested": 12
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 588,
+            "moderate_found": 17,
+            "false_severe": 11
+          },
+          "3407": {
+            "n_requested": 590,
+            "n_labeled": 590,
+            "n_missing_reference_label": 0,
+            "n_assessed": 588,
+            "n_not_assessed": 2,
+            "coverage": 0.9966101694915255,
+            "class_counts": {
+              "normal_mild": 508,
+              "moderate": 42,
+              "severe": 40
+            },
+            "assessed_class_counts": {
+              "normal_mild": 507,
+              "moderate": 41,
+              "severe": 40
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.6903490370457913,
+              "accuracy": 0.9013605442176871,
+              "precision": {
+                "normal_mild": 0.9528487229862476,
+                "moderate": 0.40540540540540543,
+                "severe": 0.7142857142857143
+              },
+              "recall": {
+                "normal_mild": 0.9566074950690335,
+                "moderate": 0.36585365853658536,
+                "severe": 0.75
+              },
+              "f1": {
+                "normal_mild": 0.9547244094488189,
+                "moderate": 0.38461538461538464,
+                "severe": 0.7317073170731707
+              },
+              "confusion_matrix": [
+                [
+                  485,
+                  17,
+                  5
+                ],
+                [
+                  19,
+                  15,
+                  7
+                ],
+                [
+                  5,
+                  5,
+                  30
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 40,
+              "n_assessed": 40,
+              "correctly_predicted_severe": 30,
+              "predicted_normal_mild": 5,
+              "predicted_moderate": 5,
+              "not_assessed": 0,
+              "recall_conditional": 0.75,
+              "detection_rate_all_requested": 0.75,
+              "missed_all_requested": 10
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 588,
+            "moderate_found": 15,
+            "false_severe": 12
+          }
+        }
+      }
+    },
+    "rsna/L4-L5": {
+      "n_requested": 295,
+      "n_requested_patients": 295,
+      "n_common_labeled_assessed": 295,
+      "n_common_patients": 295,
+      "n_excluded_from_common": 0,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5121247348670256,
+            "accuracy": 0.7491525423728813,
+            "precision": {
+              "normal_mild": 0.8540772532188842,
+              "moderate": 0.22857142857142856,
+              "severe": 0.5185185185185185
+            },
+            "recall": {
+              "normal_mild": 0.9004524886877828,
+              "moderate": 0.21621621621621623,
+              "severe": 0.3783783783783784
+            },
+            "f1": {
+              "normal_mild": 0.8766519823788547,
+              "moderate": 0.2222222222222222,
+              "severe": 0.4375
+            },
+            "confusion_matrix": [
+              [
+                199,
+                16,
+                6
+              ],
+              [
+                22,
+                8,
+                7
+              ],
+              [
+                12,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.3783783783783784,
+            "detection_rate_all_requested": 0.3783783783783784,
+            "missed_all_requested": 23
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 8,
+          "false_severe": 13
+        },
+        "mixed": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5230486484484432,
+            "accuracy": 0.7661016949152543,
+            "precision": {
+              "normal_mild": 0.8669527896995708,
+              "moderate": 0.19230769230769232,
+              "severe": 0.5277777777777778
+            },
+            "recall": {
+              "normal_mild": 0.9140271493212669,
+              "moderate": 0.13513513513513514,
+              "severe": 0.5135135135135135
+            },
+            "f1": {
+              "normal_mild": 0.8898678414096917,
+              "moderate": 0.15873015873015872,
+              "severe": 0.5205479452054794
+            },
+            "confusion_matrix": [
+              [
+                202,
+                13,
+                6
+              ],
+              [
+                21,
+                5,
+                11
+              ],
+              [
+                10,
+                8,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 10,
+            "predicted_moderate": 8,
+            "not_assessed": 0,
+            "recall_conditional": 0.5135135135135135,
+            "detection_rate_all_requested": 0.5135135135135135,
+            "missed_all_requested": 18
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 5,
+          "false_severe": 17
+        },
+        "sagittal": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7120406761662368,
+            "accuracy": 0.847457627118644,
+            "precision": {
+              "normal_mild": 0.9155555555555556,
+              "moderate": 0.45454545454545453,
+              "severe": 0.7837837837837838
+            },
+            "recall": {
+              "normal_mild": 0.9321266968325792,
+              "moderate": 0.40540540540540543,
+              "severe": 0.7837837837837838
+            },
+            "f1": {
+              "normal_mild": 0.9237668161434978,
+              "moderate": 0.42857142857142855,
+              "severe": 0.7837837837837838
+            },
+            "confusion_matrix": [
+              [
+                206,
+                13,
+                2
+              ],
+              [
+                16,
+                15,
+                6
+              ],
+              [
+                3,
+                5,
+                29
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 29,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.7837837837837838,
+            "detection_rate_all_requested": 0.7837837837837838,
+            "missed_all_requested": 8
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 15,
+          "false_severe": 8
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5121247348670256,
+            "accuracy": 0.7491525423728813,
+            "precision": {
+              "normal_mild": 0.8540772532188842,
+              "moderate": 0.22857142857142856,
+              "severe": 0.5185185185185185
+            },
+            "recall": {
+              "normal_mild": 0.9004524886877828,
+              "moderate": 0.21621621621621623,
+              "severe": 0.3783783783783784
+            },
+            "f1": {
+              "normal_mild": 0.8766519823788547,
+              "moderate": 0.2222222222222222,
+              "severe": 0.4375
+            },
+            "confusion_matrix": [
+              [
+                199,
+                16,
+                6
+              ],
+              [
+                22,
+                8,
+                7
+              ],
+              [
+                12,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.3783783783783784,
+            "detection_rate_all_requested": 0.3783783783783784,
+            "missed_all_requested": 23
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 8,
+          "false_severe": 13
+        },
+        "mixed": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5230486484484432,
+            "accuracy": 0.7661016949152543,
+            "precision": {
+              "normal_mild": 0.8669527896995708,
+              "moderate": 0.19230769230769232,
+              "severe": 0.5277777777777778
+            },
+            "recall": {
+              "normal_mild": 0.9140271493212669,
+              "moderate": 0.13513513513513514,
+              "severe": 0.5135135135135135
+            },
+            "f1": {
+              "normal_mild": 0.8898678414096917,
+              "moderate": 0.15873015873015872,
+              "severe": 0.5205479452054794
+            },
+            "confusion_matrix": [
+              [
+                202,
+                13,
+                6
+              ],
+              [
+                21,
+                5,
+                11
+              ],
+              [
+                10,
+                8,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 10,
+            "predicted_moderate": 8,
+            "not_assessed": 0,
+            "recall_conditional": 0.5135135135135135,
+            "detection_rate_all_requested": 0.5135135135135135,
+            "missed_all_requested": 18
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 5,
+          "false_severe": 17
+        },
+        "sagittal": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 221,
+            "moderate": 37,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7120406761662368,
+            "accuracy": 0.847457627118644,
+            "precision": {
+              "normal_mild": 0.9155555555555556,
+              "moderate": 0.45454545454545453,
+              "severe": 0.7837837837837838
+            },
+            "recall": {
+              "normal_mild": 0.9321266968325792,
+              "moderate": 0.40540540540540543,
+              "severe": 0.7837837837837838
+            },
+            "f1": {
+              "normal_mild": 0.9237668161434978,
+              "moderate": 0.42857142857142855,
+              "severe": 0.7837837837837838
+            },
+            "confusion_matrix": [
+              [
+                206,
+                13,
+                2
+              ],
+              [
+                16,
+                15,
+                6
+              ],
+              [
+                3,
+                5,
+                29
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 29,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.7837837837837838,
+            "detection_rate_all_requested": 0.7837837837837838,
+            "missed_all_requested": 8
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 15,
+          "false_severe": 8
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 227,
+          "improved": 15,
+          "worsened": 44,
+          "both_correct": 206,
+          "both_wrong": 30,
+          "severe_improved": 1,
+          "severe_worsened": 16,
+          "severe_both_found": 13,
+          "severe_both_missed": 7,
+          "improved_by_reference_class": {
+            "normal_mild": 11,
+            "moderate": 3,
+            "severe": 1
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 234,
+          "improved": 14,
+          "worsened": 38,
+          "both_correct": 212,
+          "both_wrong": 31,
+          "severe_improved": 1,
+          "severe_worsened": 11,
+          "severe_both_found": 18,
+          "severe_both_missed": 7,
+          "improved_by_reference_class": {
+            "normal_mild": 9,
+            "moderate": 4,
+            "severe": 1
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 256,
+          "improved": 18,
+          "worsened": 13,
+          "both_correct": 208,
+          "both_wrong": 56,
+          "severe_improved": 7,
+          "severe_worsened": 2,
+          "severe_both_found": 12,
+          "severe_both_missed": 16,
+          "improved_by_reference_class": {
+            "normal_mild": 10,
+            "moderate": 1,
+            "severe": 7
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 295,
+        "n_targets": 295,
+        "n_assessed": 295,
+        "n_severe_all_requested": 37,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.5121247348670256,
+              "lower_95": 0.43943761230756984,
+              "upper_95": 0.5794304427089937,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.2222222222222222,
+              "lower_95": 0.0967741935483871,
+              "upper_95": 0.3500337837837836,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.3783783783783784,
+              "lower_95": 0.22578629032258063,
+              "upper_95": 0.533414634146341,
+              "valid_resamples": 2000
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.5230486484484432,
+              "lower_95": 0.45216444647807463,
+              "upper_95": 0.5864221375797716,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.15873015873015872,
+              "lower_95": 0.038461538461538464,
+              "upper_95": 0.28125,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.5135135135135135,
+              "lower_95": 0.34372767857142855,
+              "upper_95": 0.6842481203007517,
+              "valid_resamples": 2000
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.7120406761662368,
+              "lower_95": 0.6412249189701041,
+              "upper_95": 0.7786069833647997,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.42857142857142855,
+              "lower_95": 0.273972602739726,
+              "upper_95": 0.5652536231884056,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.7837837837837838,
+              "lower_95": 0.6410256410256411,
+              "upper_95": 0.9166666666666666,
+              "valid_resamples": 2000
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.1999159412992112,
+                "lower_95": -0.2902512057390515,
+                "upper_95": -0.1142827566436561,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.20634920634920634,
+                "lower_95": -0.37478765780030027,
+                "upper_95": -0.025260468756794496,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.4054054054054054,
+                "lower_95": -0.5833333333333334,
+                "upper_95": -0.2352450980392159,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.18899202771779355,
+                "lower_95": -0.2846909546812348,
+                "upper_95": -0.09448799335155834,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.2698412698412698,
+                "lower_95": -0.4695444886018656,
+                "upper_95": -0.056647452172886366,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.2702702702702703,
+                "lower_95": -0.45454545454545453,
+                "upper_95": -0.10526315789473684,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.010923913581417644,
+                "lower_95": -0.05919925406479173,
+                "upper_95": 0.07747996974031607,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.06349206349206349,
+                "lower_95": -0.18935779884017218,
+                "upper_95": 0.05201814058956913,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.1351351351351351,
+                "lower_95": 0.0,
+                "upper_95": 0.2903815892997636,
+                "valid_resamples": 2000
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      },
+      "individual_seed_models_full_cohort": {
+        "xml_only": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.48468775687545507,
+              "accuracy": 0.7254237288135593,
+              "precision": {
+                "normal_mild": 0.8471615720524017,
+                "moderate": 0.21739130434782608,
+                "severe": 0.5
+              },
+              "recall": {
+                "normal_mild": 0.8778280542986425,
+                "moderate": 0.2702702702702703,
+                "severe": 0.2702702702702703
+              },
+              "f1": {
+                "normal_mild": 0.8622222222222222,
+                "moderate": 0.24096385542168675,
+                "severe": 0.3508771929824561
+              },
+              "confusion_matrix": [
+                [
+                  194,
+                  21,
+                  6
+                ],
+                [
+                  23,
+                  10,
+                  4
+                ],
+                [
+                  12,
+                  15,
+                  10
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 10,
+              "predicted_normal_mild": 12,
+              "predicted_moderate": 15,
+              "not_assessed": 0,
+              "recall_conditional": 0.2702702702702703,
+              "detection_rate_all_requested": 0.2702702702702703,
+              "missed_all_requested": 27
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 10,
+            "false_severe": 10
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.4943991746735649,
+              "accuracy": 0.7423728813559322,
+              "precision": {
+                "normal_mild": 0.8565217391304348,
+                "moderate": 0.18518518518518517,
+                "severe": 0.4473684210526316
+              },
+              "recall": {
+                "normal_mild": 0.8914027149321267,
+                "moderate": 0.13513513513513514,
+                "severe": 0.4594594594594595
+              },
+              "f1": {
+                "normal_mild": 0.8736141906873615,
+                "moderate": 0.15625,
+                "severe": 0.4533333333333333
+              },
+              "confusion_matrix": [
+                [
+                  197,
+                  14,
+                  10
+                ],
+                [
+                  21,
+                  5,
+                  11
+                ],
+                [
+                  12,
+                  8,
+                  17
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 17,
+              "predicted_normal_mild": 12,
+              "predicted_moderate": 8,
+              "not_assessed": 0,
+              "recall_conditional": 0.4594594594594595,
+              "detection_rate_all_requested": 0.4594594594594595,
+              "missed_all_requested": 20
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 5,
+            "false_severe": 21
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.4925937377773549,
+              "accuracy": 0.7423728813559322,
+              "precision": {
+                "normal_mild": 0.8432203389830508,
+                "moderate": 0.25,
+                "severe": 0.4444444444444444
+              },
+              "recall": {
+                "normal_mild": 0.9004524886877828,
+                "moderate": 0.21621621621621623,
+                "severe": 0.32432432432432434
+              },
+              "f1": {
+                "normal_mild": 0.8708971553610503,
+                "moderate": 0.2318840579710145,
+                "severe": 0.375
+              },
+              "confusion_matrix": [
+                [
+                  199,
+                  14,
+                  8
+                ],
+                [
+                  22,
+                  8,
+                  7
+                ],
+                [
+                  15,
+                  10,
+                  12
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 12,
+              "predicted_normal_mild": 15,
+              "predicted_moderate": 10,
+              "not_assessed": 0,
+              "recall_conditional": 0.32432432432432434,
+              "detection_rate_all_requested": 0.32432432432432434,
+              "missed_all_requested": 25
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 8,
+            "false_severe": 15
+          }
+        },
+        "mixed": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5471589286734053,
+              "accuracy": 0.7728813559322034,
+              "precision": {
+                "normal_mild": 0.881578947368421,
+                "moderate": 0.2857142857142857,
+                "severe": 0.48717948717948717
+              },
+              "recall": {
+                "normal_mild": 0.9095022624434389,
+                "moderate": 0.21621621621621623,
+                "severe": 0.5135135135135135
+              },
+              "f1": {
+                "normal_mild": 0.8953229398663697,
+                "moderate": 0.24615384615384617,
+                "severe": 0.5
+              },
+              "confusion_matrix": [
+                [
+                  201,
+                  13,
+                  7
+                ],
+                [
+                  16,
+                  8,
+                  13
+                ],
+                [
+                  11,
+                  7,
+                  19
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 19,
+              "predicted_normal_mild": 11,
+              "predicted_moderate": 7,
+              "not_assessed": 0,
+              "recall_conditional": 0.5135135135135135,
+              "detection_rate_all_requested": 0.5135135135135135,
+              "missed_all_requested": 18
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 8,
+            "false_severe": 20
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5555837252095686,
+              "accuracy": 0.7661016949152543,
+              "precision": {
+                "normal_mild": 0.8646288209606987,
+                "moderate": 0.26666666666666666,
+                "severe": 0.5555555555555556
+              },
+              "recall": {
+                "normal_mild": 0.8959276018099548,
+                "moderate": 0.21621621621621623,
+                "severe": 0.5405405405405406
+              },
+              "f1": {
+                "normal_mild": 0.88,
+                "moderate": 0.23880597014925373,
+                "severe": 0.547945205479452
+              },
+              "confusion_matrix": [
+                [
+                  198,
+                  15,
+                  8
+                ],
+                [
+                  21,
+                  8,
+                  8
+                ],
+                [
+                  10,
+                  7,
+                  20
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 20,
+              "predicted_normal_mild": 10,
+              "predicted_moderate": 7,
+              "not_assessed": 0,
+              "recall_conditional": 0.5405405405405406,
+              "detection_rate_all_requested": 0.5405405405405406,
+              "missed_all_requested": 17
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 8,
+            "false_severe": 16
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.555087505087505,
+              "accuracy": 0.7728813559322034,
+              "precision": {
+                "normal_mild": 0.8589743589743589,
+                "moderate": 0.3076923076923077,
+                "severe": 0.5428571428571428
+              },
+              "recall": {
+                "normal_mild": 0.9095022624434389,
+                "moderate": 0.21621621621621623,
+                "severe": 0.5135135135135135
+              },
+              "f1": {
+                "normal_mild": 0.8835164835164835,
+                "moderate": 0.25396825396825395,
+                "severe": 0.5277777777777778
+              },
+              "confusion_matrix": [
+                [
+                  201,
+                  12,
+                  8
+                ],
+                [
+                  21,
+                  8,
+                  8
+                ],
+                [
+                  12,
+                  6,
+                  19
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 19,
+              "predicted_normal_mild": 12,
+              "predicted_moderate": 6,
+              "not_assessed": 0,
+              "recall_conditional": 0.5135135135135135,
+              "detection_rate_all_requested": 0.5135135135135135,
+              "missed_all_requested": 18
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 8,
+            "false_severe": 16
+          }
+        },
+        "sagittal": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.7135614335219547,
+              "accuracy": 0.8508474576271187,
+              "precision": {
+                "normal_mild": 0.915929203539823,
+                "moderate": 0.4838709677419355,
+                "severe": 0.7631578947368421
+              },
+              "recall": {
+                "normal_mild": 0.9366515837104072,
+                "moderate": 0.40540540540540543,
+                "severe": 0.7837837837837838
+              },
+              "f1": {
+                "normal_mild": 0.9261744966442953,
+                "moderate": 0.4411764705882353,
+                "severe": 0.7733333333333333
+              },
+              "confusion_matrix": [
+                [
+                  207,
+                  11,
+                  3
+                ],
+                [
+                  16,
+                  15,
+                  6
+                ],
+                [
+                  3,
+                  5,
+                  29
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 29,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 5,
+              "not_assessed": 0,
+              "recall_conditional": 0.7837837837837838,
+              "detection_rate_all_requested": 0.7837837837837838,
+              "missed_all_requested": 8
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 15,
+            "false_severe": 9
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.699219964885879,
+              "accuracy": 0.8372881355932204,
+              "precision": {
+                "normal_mild": 0.918918918918919,
+                "moderate": 0.42105263157894735,
+                "severe": 0.7714285714285715
+              },
+              "recall": {
+                "normal_mild": 0.9230769230769231,
+                "moderate": 0.43243243243243246,
+                "severe": 0.7297297297297297
+              },
+              "f1": {
+                "normal_mild": 0.9209932279909706,
+                "moderate": 0.4266666666666667,
+                "severe": 0.75
+              },
+              "confusion_matrix": [
+                [
+                  204,
+                  15,
+                  2
+                ],
+                [
+                  15,
+                  16,
+                  6
+                ],
+                [
+                  3,
+                  7,
+                  27
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 27,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 7,
+              "not_assessed": 0,
+              "recall_conditional": 0.7297297297297297,
+              "detection_rate_all_requested": 0.7297297297297297,
+              "missed_all_requested": 10
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 16,
+            "false_severe": 8
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "assessed_class_counts": {
+              "normal_mild": 221,
+              "moderate": 37,
+              "severe": 37
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.698227215980025,
+              "accuracy": 0.8406779661016949,
+              "precision": {
+                "normal_mild": 0.9151785714285714,
+                "moderate": 0.42424242424242425,
+                "severe": 0.7631578947368421
+              },
+              "recall": {
+                "normal_mild": 0.9276018099547512,
+                "moderate": 0.3783783783783784,
+                "severe": 0.7837837837837838
+              },
+              "f1": {
+                "normal_mild": 0.9213483146067416,
+                "moderate": 0.4,
+                "severe": 0.7733333333333333
+              },
+              "confusion_matrix": [
+                [
+                  205,
+                  14,
+                  2
+                ],
+                [
+                  16,
+                  14,
+                  7
+                ],
+                [
+                  3,
+                  5,
+                  29
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 37,
+              "n_assessed": 37,
+              "correctly_predicted_severe": 29,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 5,
+              "not_assessed": 0,
+              "recall_conditional": 0.7837837837837838,
+              "detection_rate_all_requested": 0.7837837837837838,
+              "missed_all_requested": 8
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 14,
+            "false_severe": 9
+          }
+        }
+      }
+    },
+    "rsna/L5-S1": {
+      "n_requested": 295,
+      "n_requested_patients": 295,
+      "n_common_labeled_assessed": 293,
+      "n_common_patients": 293,
+      "n_excluded_from_common": 2,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 287,
+            "moderate": 5,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 287,
+            "moderate": 5,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.3840152841904156,
+            "accuracy": 0.9423728813559322,
+            "precision": {
+              "normal_mild": 0.9753521126760564,
+              "moderate": 0.16666666666666666,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.9651567944250871,
+              "moderate": 0.2,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.9702276707530648,
+              "moderate": 0.18181818181818182,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                277,
+                5,
+                5
+              ],
+              [
+                4,
+                1,
+                0
+              ],
+              [
+                3,
+                0,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 1,
+          "false_severe": 5
+        },
+        "mixed": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 295,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 287,
+            "moderate": 5,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 287,
+            "moderate": 5,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.42830841079527593,
+            "accuracy": 0.9525423728813559,
+            "precision": {
+              "normal_mild": 0.9823943661971831,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.9721254355400697,
+              "moderate": 0.4,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.9772329246935202,
+              "moderate": 0.3076923076923077,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                279,
+                5,
+                3
+              ],
+              [
+                3,
+                2,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 1,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 295,
+          "moderate_found": 2,
+          "false_severe": 3
+        },
+        "sagittal": {
+          "n_requested": 295,
+          "n_labeled": 295,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 2,
+          "coverage": 0.9932203389830508,
+          "class_counts": {
+            "normal_mild": 287,
+            "moderate": 5,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 1,
+            "moderate": 1,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5054832791260111,
+            "accuracy": 0.962457337883959,
+            "precision": {
+              "normal_mild": 0.9824561403508771,
+              "moderate": 0.25,
+              "severe": 0.25
+            },
+            "recall": {
+              "normal_mild": 0.9790209790209791,
+              "moderate": 0.25,
+              "severe": 0.3333333333333333
+            },
+            "f1": {
+              "normal_mild": 0.9807355516637478,
+              "moderate": 0.25,
+              "severe": 0.2857142857142857
+            },
+            "confusion_matrix": [
+              [
+                280,
+                3,
+                3
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                2,
+                0,
+                1
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 1,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.3333333333333333,
+            "detection_rate_all_requested": 0.3333333333333333,
+            "missed_all_requested": 2
+          },
+          "n_patients": 295,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 3
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.39061032863849765,
+            "accuracy": 0.9453924914675768,
+            "precision": {
+              "normal_mild": 0.9787234042553191,
+              "moderate": 0.16666666666666666,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.965034965034965,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.971830985915493,
+              "moderate": 0.2,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                276,
+                5,
+                5
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                3,
+                0,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 5
+        },
+        "mixed": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.43740219092331767,
+            "accuracy": 0.9556313993174061,
+            "precision": {
+              "normal_mild": 0.9858156028368794,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.972027972027972,
+              "moderate": 0.5,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.9788732394366197,
+              "moderate": 0.3333333333333333,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                278,
+                5,
+                3
+              ],
+              [
+                2,
+                2,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 1,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 2,
+          "false_severe": 3
+        },
+        "sagittal": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5054832791260111,
+            "accuracy": 0.962457337883959,
+            "precision": {
+              "normal_mild": 0.9824561403508771,
+              "moderate": 0.25,
+              "severe": 0.25
+            },
+            "recall": {
+              "normal_mild": 0.9790209790209791,
+              "moderate": 0.25,
+              "severe": 0.3333333333333333
+            },
+            "f1": {
+              "normal_mild": 0.9807355516637478,
+              "moderate": 0.25,
+              "severe": 0.2857142857142857
+            },
+            "confusion_matrix": [
+              [
+                280,
+                3,
+                3
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                2,
+                0,
+                1
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 1,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.3333333333333333,
+            "detection_rate_all_requested": 0.3333333333333333,
+            "missed_all_requested": 2
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 3
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 275,
+          "improved": 6,
+          "worsened": 11,
+          "both_correct": 271,
+          "both_wrong": 5,
+          "severe_improved": 0,
+          "severe_worsened": 1,
+          "severe_both_found": 0,
+          "severe_both_missed": 2,
+          "improved_by_reference_class": {
+            "normal_mild": 5,
+            "moderate": 1,
+            "severe": 0
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 277,
+          "improved": 6,
+          "worsened": 8,
+          "both_correct": 274,
+          "both_wrong": 5,
+          "severe_improved": 0,
+          "severe_worsened": 1,
+          "severe_both_found": 0,
+          "severe_both_missed": 2,
+          "improved_by_reference_class": {
+            "normal_mild": 4,
+            "moderate": 2,
+            "severe": 0
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 283,
+          "improved": 6,
+          "worsened": 3,
+          "both_correct": 274,
+          "both_wrong": 10,
+          "severe_improved": 0,
+          "severe_worsened": 0,
+          "severe_both_found": 0,
+          "severe_both_missed": 3,
+          "improved_by_reference_class": {
+            "normal_mild": 5,
+            "moderate": 1,
+            "severe": 0
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 293,
+        "n_targets": 293,
+        "n_assessed": 293,
+        "n_severe_all_requested": 3,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.39061032863849765,
+              "lower_95": 0.3203309692671395,
+              "upper_95": 0.49479730273752004,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.2,
+              "lower_95": 0.0,
+              "upper_95": 0.5,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1884
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.43740219092331767,
+              "lower_95": 0.32507554988974363,
+              "upper_95": 0.5497201113300183,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.3333333333333333,
+              "lower_95": 0.0,
+              "upper_95": 0.6666666666666666,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1884
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.5054832791260111,
+              "lower_95": 0.32517482517482516,
+              "upper_95": 0.7010239272832474,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.25,
+              "lower_95": 0.0,
+              "upper_95": 0.6666666666666666,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.3333333333333333,
+              "lower_95": 0.0,
+              "upper_95": 1.0,
+              "valid_resamples": 1884
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.11487295048751345,
+                "lower_95": -0.3608305195948216,
+                "upper_95": 0.12531557662849976,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.04999999999999999,
+                "lower_95": -0.6,
+                "upper_95": 0.5,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.3333333333333333,
+                "lower_95": -1.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.06808108820269343,
+                "lower_95": -0.3222170567399522,
+                "upper_95": 0.17323973875786056,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": 0.08333333333333331,
+                "lower_95": -0.5336363636363636,
+                "upper_95": 0.6153846153846154,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.3333333333333333,
+                "lower_95": -1.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.04679186228482002,
+                "lower_95": -0.028619451579386054,
+                "upper_95": 0.1561807363419431,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": 0.1333333333333333,
+                "lower_95": -0.08659722222222224,
+                "upper_95": 0.46153846153846156,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.0,
+                "lower_95": 0.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      },
+      "individual_seed_models_full_cohort": {
+        "xml_only": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.3962375073486184,
+              "accuracy": 0.9355932203389831,
+              "precision": {
+                "normal_mild": 0.9785714285714285,
+                "moderate": 0.15384615384615385,
+                "severe": 0.0
+              },
+              "recall": {
+                "normal_mild": 0.9547038327526133,
+                "moderate": 0.4,
+                "severe": 0.0
+              },
+              "f1": {
+                "normal_mild": 0.9664902998236331,
+                "moderate": 0.2222222222222222,
+                "severe": 0.0
+              },
+              "confusion_matrix": [
+                [
+                  274,
+                  11,
+                  2
+                ],
+                [
+                  3,
+                  2,
+                  0
+                ],
+                [
+                  3,
+                  0,
+                  0
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 0,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.0,
+              "detection_rate_all_requested": 0.0,
+              "missed_all_requested": 3
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 2,
+            "false_severe": 2
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.3840152841904156,
+              "accuracy": 0.9423728813559322,
+              "precision": {
+                "normal_mild": 0.9753521126760564,
+                "moderate": 0.16666666666666666,
+                "severe": 0.0
+              },
+              "recall": {
+                "normal_mild": 0.9651567944250871,
+                "moderate": 0.2,
+                "severe": 0.0
+              },
+              "f1": {
+                "normal_mild": 0.9702276707530648,
+                "moderate": 0.18181818181818182,
+                "severe": 0.0
+              },
+              "confusion_matrix": [
+                [
+                  277,
+                  5,
+                  5
+                ],
+                [
+                  4,
+                  1,
+                  0
+                ],
+                [
+                  3,
+                  0,
+                  0
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 0,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.0,
+              "detection_rate_all_requested": 0.0,
+              "missed_all_requested": 3
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 1,
+            "false_severe": 5
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.3222026947861746,
+              "accuracy": 0.9322033898305084,
+              "precision": {
+                "normal_mild": 0.975177304964539,
+                "moderate": 0.0,
+                "severe": 0.0
+              },
+              "recall": {
+                "normal_mild": 0.9581881533101045,
+                "moderate": 0.0,
+                "severe": 0.0
+              },
+              "f1": {
+                "normal_mild": 0.9666080843585237,
+                "moderate": 0.0,
+                "severe": 0.0
+              },
+              "confusion_matrix": [
+                [
+                  275,
+                  6,
+                  6
+                ],
+                [
+                  4,
+                  0,
+                  1
+                ],
+                [
+                  3,
+                  0,
+                  0
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 0,
+              "predicted_normal_mild": 3,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.0,
+              "detection_rate_all_requested": 0.0,
+              "missed_all_requested": 3
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 0,
+            "false_severe": 7
+          }
+        },
+        "mixed": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.4380229616656937,
+              "accuracy": 0.9559322033898305,
+              "precision": {
+                "normal_mild": 0.9859154929577465,
+                "moderate": 0.2857142857142857,
+                "severe": 0.0
+              },
+              "recall": {
+                "normal_mild": 0.975609756097561,
+                "moderate": 0.4,
+                "severe": 0.0
+              },
+              "f1": {
+                "normal_mild": 0.9807355516637478,
+                "moderate": 0.3333333333333333,
+                "severe": 0.0
+              },
+              "confusion_matrix": [
+                [
+                  280,
+                  4,
+                  3
+                ],
+                [
+                  2,
+                  2,
+                  1
+                ],
+                [
+                  2,
+                  1,
+                  0
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 0,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 1,
+              "not_assessed": 0,
+              "recall_conditional": 0.0,
+              "detection_rate_all_requested": 0.0,
+              "missed_all_requested": 3
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 2,
+            "false_severe": 4
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5320935145803798,
+              "accuracy": 0.9559322033898305,
+              "precision": {
+                "normal_mild": 0.9823943661971831,
+                "moderate": 0.2857142857142857,
+                "severe": 0.25
+              },
+              "recall": {
+                "normal_mild": 0.9721254355400697,
+                "moderate": 0.4,
+                "severe": 0.3333333333333333
+              },
+              "f1": {
+                "normal_mild": 0.9772329246935202,
+                "moderate": 0.3333333333333333,
+                "severe": 0.2857142857142857
+              },
+              "confusion_matrix": [
+                [
+                  279,
+                  5,
+                  3
+                ],
+                [
+                  3,
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  0,
+                  1
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 1,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.3333333333333333,
+              "detection_rate_all_requested": 0.3333333333333333,
+              "missed_all_requested": 2
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 2,
+            "false_severe": 3
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 295,
+            "n_not_assessed": 0,
+            "coverage": 1.0,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 0,
+              "moderate": 0,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5430069930069931,
+              "accuracy": 0.9593220338983051,
+              "precision": {
+                "normal_mild": 0.9824561403508771,
+                "moderate": 0.4,
+                "severe": 0.2
+              },
+              "recall": {
+                "normal_mild": 0.975609756097561,
+                "moderate": 0.4,
+                "severe": 0.3333333333333333
+              },
+              "f1": {
+                "normal_mild": 0.9790209790209791,
+                "moderate": 0.4,
+                "severe": 0.25
+              },
+              "confusion_matrix": [
+                [
+                  280,
+                  3,
+                  4
+                ],
+                [
+                  3,
+                  2,
+                  0
+                ],
+                [
+                  2,
+                  0,
+                  1
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 1,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.3333333333333333,
+              "detection_rate_all_requested": 0.3333333333333333,
+              "missed_all_requested": 2
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 295,
+            "moderate_found": 2,
+            "false_severe": 4
+          }
+        },
+        "sagittal": {
+          "42": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 293,
+            "n_not_assessed": 2,
+            "coverage": 0.9932203389830508,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 286,
+              "moderate": 4,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5179820179820179,
+              "accuracy": 0.9658703071672355,
+              "precision": {
+                "normal_mild": 0.9825174825174825,
+                "moderate": 0.3333333333333333,
+                "severe": 0.25
+              },
+              "recall": {
+                "normal_mild": 0.9825174825174825,
+                "moderate": 0.25,
+                "severe": 0.3333333333333333
+              },
+              "f1": {
+                "normal_mild": 0.9825174825174825,
+                "moderate": 0.2857142857142857,
+                "severe": 0.2857142857142857
+              },
+              "confusion_matrix": [
+                [
+                  281,
+                  2,
+                  3
+                ],
+                [
+                  3,
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0,
+                  1
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 1,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.3333333333333333,
+              "detection_rate_all_requested": 0.3333333333333333,
+              "missed_all_requested": 2
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 293,
+            "moderate_found": 1,
+            "false_severe": 3
+          },
+          "2024": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 293,
+            "n_not_assessed": 2,
+            "coverage": 0.9932203389830508,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 286,
+              "moderate": 4,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5054832791260111,
+              "accuracy": 0.962457337883959,
+              "precision": {
+                "normal_mild": 0.9824561403508771,
+                "moderate": 0.25,
+                "severe": 0.25
+              },
+              "recall": {
+                "normal_mild": 0.9790209790209791,
+                "moderate": 0.25,
+                "severe": 0.3333333333333333
+              },
+              "f1": {
+                "normal_mild": 0.9807355516637478,
+                "moderate": 0.25,
+                "severe": 0.2857142857142857
+              },
+              "confusion_matrix": [
+                [
+                  280,
+                  3,
+                  3
+                ],
+                [
+                  3,
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0,
+                  1
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 1,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.3333333333333333,
+              "detection_rate_all_requested": 0.3333333333333333,
+              "missed_all_requested": 2
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 293,
+            "moderate_found": 1,
+            "false_severe": 3
+          },
+          "3407": {
+            "n_requested": 295,
+            "n_labeled": 295,
+            "n_missing_reference_label": 0,
+            "n_assessed": 293,
+            "n_not_assessed": 2,
+            "coverage": 0.9932203389830508,
+            "class_counts": {
+              "normal_mild": 287,
+              "moderate": 5,
+              "severe": 3
+            },
+            "assessed_class_counts": {
+              "normal_mild": 286,
+              "moderate": 4,
+              "severe": 3
+            },
+            "not_assessed_class_counts": {
+              "normal_mild": 1,
+              "moderate": 1,
+              "severe": 0
+            },
+            "conditional": {
+              "macro_f1": 0.5054832791260111,
+              "accuracy": 0.962457337883959,
+              "precision": {
+                "normal_mild": 0.9824561403508771,
+                "moderate": 0.25,
+                "severe": 0.25
+              },
+              "recall": {
+                "normal_mild": 0.9790209790209791,
+                "moderate": 0.25,
+                "severe": 0.3333333333333333
+              },
+              "f1": {
+                "normal_mild": 0.9807355516637478,
+                "moderate": 0.25,
+                "severe": 0.2857142857142857
+              },
+              "confusion_matrix": [
+                [
+                  280,
+                  3,
+                  3
+                ],
+                [
+                  3,
+                  1,
+                  0
+                ],
+                [
+                  2,
+                  0,
+                  1
+                ]
+              ],
+              "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+            },
+            "severe": {
+              "n_total": 3,
+              "n_assessed": 3,
+              "correctly_predicted_severe": 1,
+              "predicted_normal_mild": 2,
+              "predicted_moderate": 0,
+              "not_assessed": 0,
+              "recall_conditional": 0.3333333333333333,
+              "detection_rate_all_requested": 0.3333333333333333,
+              "missed_all_requested": 2
+            },
+            "n_patients": 295,
+            "n_predictions_including_missing_reference": 293,
+            "moderate_found": 1,
+            "false_severe": 3
+          }
+        }
+      }
+    }
+  },
+  "complete_case_groups": {
+    "rsna/all": {
+      "n_requested": 586,
+      "n_requested_patients": 293,
+      "n_common_labeled_assessed": 586,
+      "n_common_patients": 293,
+      "n_excluded_from_common": 0,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5138116526732817,
+            "accuracy": 0.8481228668941979,
+            "precision": {
+              "normal_mild": 0.9239766081871345,
+              "moderate": 0.21951219512195122,
+              "severe": 0.4375
+            },
+            "recall": {
+              "normal_mild": 0.9367588932806324,
+              "moderate": 0.225,
+              "severe": 0.35
+            },
+            "f1": {
+              "normal_mild": 0.930323846908734,
+              "moderate": 0.2222222222222222,
+              "severe": 0.3888888888888889
+            },
+            "confusion_matrix": [
+              [
+                474,
+                21,
+                11
+              ],
+              [
+                24,
+                9,
+                7
+              ],
+              [
+                15,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 15,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.35,
+            "detection_rate_all_requested": 0.35,
+            "missed_all_requested": 26
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 9,
+          "false_severe": 18
+        },
+        "mixed": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5367797456715606,
+            "accuracy": 0.8617747440273038,
+            "precision": {
+              "normal_mild": 0.9337231968810916,
+              "moderate": 0.20588235294117646,
+              "severe": 0.48717948717948717
+            },
+            "recall": {
+              "normal_mild": 0.9466403162055336,
+              "moderate": 0.175,
+              "severe": 0.475
+            },
+            "f1": {
+              "normal_mild": 0.9401373895976447,
+              "moderate": 0.1891891891891892,
+              "severe": 0.4810126582278481
+            },
+            "confusion_matrix": [
+              [
+                479,
+                18,
+                9
+              ],
+              [
+                22,
+                7,
+                11
+              ],
+              [
+                12,
+                9,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 9,
+            "not_assessed": 0,
+            "recall_conditional": 0.475,
+            "detection_rate_all_requested": 0.475,
+            "missed_all_requested": 21
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 7,
+          "false_severe": 20
+        },
+        "sagittal": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7043108837980633,
+            "accuracy": 0.9061433447098977,
+            "precision": {
+              "normal_mild": 0.9547244094488189,
+              "moderate": 0.43243243243243246,
+              "severe": 0.7317073170731707
+            },
+            "recall": {
+              "normal_mild": 0.958498023715415,
+              "moderate": 0.4,
+              "severe": 0.75
+            },
+            "f1": {
+              "normal_mild": 0.9566074950690335,
+              "moderate": 0.4155844155844156,
+              "severe": 0.7407407407407407
+            },
+            "confusion_matrix": [
+              [
+                485,
+                16,
+                5
+              ],
+              [
+                18,
+                16,
+                6
+              ],
+              [
+                5,
+                5,
+                30
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 30,
+            "predicted_normal_mild": 5,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.75,
+            "detection_rate_all_requested": 0.75,
+            "missed_all_requested": 10
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 16,
+          "false_severe": 11
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5138116526732817,
+            "accuracy": 0.8481228668941979,
+            "precision": {
+              "normal_mild": 0.9239766081871345,
+              "moderate": 0.21951219512195122,
+              "severe": 0.4375
+            },
+            "recall": {
+              "normal_mild": 0.9367588932806324,
+              "moderate": 0.225,
+              "severe": 0.35
+            },
+            "f1": {
+              "normal_mild": 0.930323846908734,
+              "moderate": 0.2222222222222222,
+              "severe": 0.3888888888888889
+            },
+            "confusion_matrix": [
+              [
+                474,
+                21,
+                11
+              ],
+              [
+                24,
+                9,
+                7
+              ],
+              [
+                15,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 15,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.35,
+            "detection_rate_all_requested": 0.35,
+            "missed_all_requested": 26
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 9,
+          "false_severe": 18
+        },
+        "mixed": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5367797456715606,
+            "accuracy": 0.8617747440273038,
+            "precision": {
+              "normal_mild": 0.9337231968810916,
+              "moderate": 0.20588235294117646,
+              "severe": 0.48717948717948717
+            },
+            "recall": {
+              "normal_mild": 0.9466403162055336,
+              "moderate": 0.175,
+              "severe": 0.475
+            },
+            "f1": {
+              "normal_mild": 0.9401373895976447,
+              "moderate": 0.1891891891891892,
+              "severe": 0.4810126582278481
+            },
+            "confusion_matrix": [
+              [
+                479,
+                18,
+                9
+              ],
+              [
+                22,
+                7,
+                11
+              ],
+              [
+                12,
+                9,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 9,
+            "not_assessed": 0,
+            "recall_conditional": 0.475,
+            "detection_rate_all_requested": 0.475,
+            "missed_all_requested": 21
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 7,
+          "false_severe": 20
+        },
+        "sagittal": {
+          "n_requested": 586,
+          "n_labeled": 586,
+          "n_missing_reference_label": 0,
+          "n_assessed": 586,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "assessed_class_counts": {
+            "normal_mild": 506,
+            "moderate": 40,
+            "severe": 40
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7043108837980633,
+            "accuracy": 0.9061433447098977,
+            "precision": {
+              "normal_mild": 0.9547244094488189,
+              "moderate": 0.43243243243243246,
+              "severe": 0.7317073170731707
+            },
+            "recall": {
+              "normal_mild": 0.958498023715415,
+              "moderate": 0.4,
+              "severe": 0.75
+            },
+            "f1": {
+              "normal_mild": 0.9566074950690335,
+              "moderate": 0.4155844155844156,
+              "severe": 0.7407407407407407
+            },
+            "confusion_matrix": [
+              [
+                485,
+                16,
+                5
+              ],
+              [
+                18,
+                16,
+                6
+              ],
+              [
+                5,
+                5,
+                30
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 40,
+            "n_assessed": 40,
+            "correctly_predicted_severe": 30,
+            "predicted_normal_mild": 5,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.75,
+            "detection_rate_all_requested": 0.75,
+            "missed_all_requested": 10
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 586,
+          "moderate_found": 16,
+          "false_severe": 11
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 500,
+          "improved": 21,
+          "worsened": 55,
+          "both_correct": 476,
+          "both_wrong": 34,
+          "severe_improved": 1,
+          "severe_worsened": 17,
+          "severe_both_found": 13,
+          "severe_both_missed": 9,
+          "improved_by_reference_class": {
+            "normal_mild": 16,
+            "moderate": 4,
+            "severe": 1
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 509,
+          "improved": 20,
+          "worsened": 46,
+          "both_correct": 485,
+          "both_wrong": 35,
+          "severe_improved": 1,
+          "severe_worsened": 12,
+          "severe_both_found": 18,
+          "severe_both_missed": 9,
+          "improved_by_reference_class": {
+            "normal_mild": 13,
+            "moderate": 6,
+            "severe": 1
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 537,
+          "improved": 24,
+          "worsened": 16,
+          "both_correct": 481,
+          "both_wrong": 65,
+          "severe_improved": 7,
+          "severe_worsened": 2,
+          "severe_both_found": 12,
+          "severe_both_missed": 19,
+          "improved_by_reference_class": {
+            "normal_mild": 15,
+            "moderate": 2,
+            "severe": 7
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 293,
+        "n_targets": 586,
+        "n_assessed": 586,
+        "n_severe_all_requested": 40,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.5138116526732817,
+              "lower_95": 0.4487072298087989,
+              "upper_95": 0.5789373319352917,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.2222222222222222,
+              "lower_95": 0.1038961038961039,
+              "upper_95": 0.3409389952153108,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.35,
+              "lower_95": 0.21047149122807016,
+              "upper_95": 0.5,
+              "valid_resamples": 2000
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.5367797456715606,
+              "lower_95": 0.47732677338740653,
+              "upper_95": 0.5960543405342115,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.1891891891891892,
+              "lower_95": 0.07142857142857142,
+              "upper_95": 0.31327882960413067,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.475,
+              "lower_95": 0.325,
+              "upper_95": 0.627923588039867,
+              "valid_resamples": 2000
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.7043108837980633,
+              "lower_95": 0.6384875719343563,
+              "upper_95": 0.762591890247605,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.4155844155844156,
+              "lower_95": 0.2727272727272727,
+              "upper_95": 0.5454545454545454,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.75,
+              "lower_95": 0.627389705882353,
+              "upper_95": 0.8717948717948718,
+              "valid_resamples": 2000
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.19049923112478162,
+                "lower_95": -0.26928276696507203,
+                "upper_95": -0.10497585373389141,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.1933621933621934,
+                "lower_95": -0.34563531920748486,
+                "upper_95": -0.036967336782164704,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.4,
+                "lower_95": -0.5652536231884059,
+                "upper_95": -0.23255813953488375,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.16753113812650267,
+                "lower_95": -0.25354521168506405,
+                "upper_95": -0.07582121470807583,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.2263952263952264,
+                "lower_95": -0.41651922515686557,
+                "upper_95": -0.026993326659993513,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.275,
+                "lower_95": -0.43909529211571185,
+                "upper_95": -0.1275930851063833,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.022968092998278955,
+                "lower_95": -0.042488381947349246,
+                "upper_95": 0.08574567071558449,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.03303303303303301,
+                "lower_95": -0.14833151059466848,
+                "upper_95": 0.07789886092912449,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.125,
+                "lower_95": -0.021739130434782594,
+                "upper_95": 0.27662529550827414,
+                "valid_resamples": 2000
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      }
+    },
+    "rsna/L4-L5": {
+      "n_requested": 293,
+      "n_requested_patients": 293,
+      "n_common_labeled_assessed": 293,
+      "n_common_patients": 293,
+      "n_excluded_from_common": 0,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5136336310546205,
+            "accuracy": 0.7508532423208191,
+            "precision": {
+              "normal_mild": 0.8571428571428571,
+              "moderate": 0.22857142857142856,
+              "severe": 0.5185185185185185
+            },
+            "recall": {
+              "normal_mild": 0.9,
+              "moderate": 0.2222222222222222,
+              "severe": 0.3783783783783784
+            },
+            "f1": {
+              "normal_mild": 0.8780487804878049,
+              "moderate": 0.22535211267605634,
+              "severe": 0.4375
+            },
+            "confusion_matrix": [
+              [
+                198,
+                16,
+                6
+              ],
+              [
+                21,
+                8,
+                7
+              ],
+              [
+                12,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.3783783783783784,
+            "detection_rate_all_requested": 0.3783783783783784,
+            "missed_all_requested": 23
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 8,
+          "false_severe": 13
+        },
+        "mixed": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5243969392250866,
+            "accuracy": 0.7679180887372014,
+            "precision": {
+              "normal_mild": 0.8701298701298701,
+              "moderate": 0.19230769230769232,
+              "severe": 0.5277777777777778
+            },
+            "recall": {
+              "normal_mild": 0.9136363636363637,
+              "moderate": 0.1388888888888889,
+              "severe": 0.5135135135135135
+            },
+            "f1": {
+              "normal_mild": 0.8913525498891353,
+              "moderate": 0.16129032258064516,
+              "severe": 0.5205479452054794
+            },
+            "confusion_matrix": [
+              [
+                201,
+                13,
+                6
+              ],
+              [
+                20,
+                5,
+                11
+              ],
+              [
+                10,
+                8,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 10,
+            "predicted_moderate": 8,
+            "not_assessed": 0,
+            "recall_conditional": 0.5135135135135135,
+            "detection_rate_all_requested": 0.5135135135135135,
+            "missed_all_requested": 18
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 5,
+          "false_severe": 17
+        },
+        "sagittal": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7146914310522122,
+            "accuracy": 0.8498293515358362,
+            "precision": {
+              "normal_mild": 0.9192825112107623,
+              "moderate": 0.45454545454545453,
+              "severe": 0.7837837837837838
+            },
+            "recall": {
+              "normal_mild": 0.9318181818181818,
+              "moderate": 0.4166666666666667,
+              "severe": 0.7837837837837838
+            },
+            "f1": {
+              "normal_mild": 0.9255079006772009,
+              "moderate": 0.43478260869565216,
+              "severe": 0.7837837837837838
+            },
+            "confusion_matrix": [
+              [
+                205,
+                13,
+                2
+              ],
+              [
+                15,
+                15,
+                6
+              ],
+              [
+                3,
+                5,
+                29
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 29,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.7837837837837838,
+            "detection_rate_all_requested": 0.7837837837837838,
+            "missed_all_requested": 8
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 15,
+          "false_severe": 8
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5136336310546205,
+            "accuracy": 0.7508532423208191,
+            "precision": {
+              "normal_mild": 0.8571428571428571,
+              "moderate": 0.22857142857142856,
+              "severe": 0.5185185185185185
+            },
+            "recall": {
+              "normal_mild": 0.9,
+              "moderate": 0.2222222222222222,
+              "severe": 0.3783783783783784
+            },
+            "f1": {
+              "normal_mild": 0.8780487804878049,
+              "moderate": 0.22535211267605634,
+              "severe": 0.4375
+            },
+            "confusion_matrix": [
+              [
+                198,
+                16,
+                6
+              ],
+              [
+                21,
+                8,
+                7
+              ],
+              [
+                12,
+                11,
+                14
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 14,
+            "predicted_normal_mild": 12,
+            "predicted_moderate": 11,
+            "not_assessed": 0,
+            "recall_conditional": 0.3783783783783784,
+            "detection_rate_all_requested": 0.3783783783783784,
+            "missed_all_requested": 23
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 8,
+          "false_severe": 13
+        },
+        "mixed": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5243969392250866,
+            "accuracy": 0.7679180887372014,
+            "precision": {
+              "normal_mild": 0.8701298701298701,
+              "moderate": 0.19230769230769232,
+              "severe": 0.5277777777777778
+            },
+            "recall": {
+              "normal_mild": 0.9136363636363637,
+              "moderate": 0.1388888888888889,
+              "severe": 0.5135135135135135
+            },
+            "f1": {
+              "normal_mild": 0.8913525498891353,
+              "moderate": 0.16129032258064516,
+              "severe": 0.5205479452054794
+            },
+            "confusion_matrix": [
+              [
+                201,
+                13,
+                6
+              ],
+              [
+                20,
+                5,
+                11
+              ],
+              [
+                10,
+                8,
+                19
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 19,
+            "predicted_normal_mild": 10,
+            "predicted_moderate": 8,
+            "not_assessed": 0,
+            "recall_conditional": 0.5135135135135135,
+            "detection_rate_all_requested": 0.5135135135135135,
+            "missed_all_requested": 18
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 5,
+          "false_severe": 17
+        },
+        "sagittal": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "assessed_class_counts": {
+            "normal_mild": 220,
+            "moderate": 36,
+            "severe": 37
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.7146914310522122,
+            "accuracy": 0.8498293515358362,
+            "precision": {
+              "normal_mild": 0.9192825112107623,
+              "moderate": 0.45454545454545453,
+              "severe": 0.7837837837837838
+            },
+            "recall": {
+              "normal_mild": 0.9318181818181818,
+              "moderate": 0.4166666666666667,
+              "severe": 0.7837837837837838
+            },
+            "f1": {
+              "normal_mild": 0.9255079006772009,
+              "moderate": 0.43478260869565216,
+              "severe": 0.7837837837837838
+            },
+            "confusion_matrix": [
+              [
+                205,
+                13,
+                2
+              ],
+              [
+                15,
+                15,
+                6
+              ],
+              [
+                3,
+                5,
+                29
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 37,
+            "n_assessed": 37,
+            "correctly_predicted_severe": 29,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 5,
+            "not_assessed": 0,
+            "recall_conditional": 0.7837837837837838,
+            "detection_rate_all_requested": 0.7837837837837838,
+            "missed_all_requested": 8
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 15,
+          "false_severe": 8
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 225,
+          "improved": 15,
+          "worsened": 44,
+          "both_correct": 205,
+          "both_wrong": 29,
+          "severe_improved": 1,
+          "severe_worsened": 16,
+          "severe_both_found": 13,
+          "severe_both_missed": 7,
+          "improved_by_reference_class": {
+            "normal_mild": 11,
+            "moderate": 3,
+            "severe": 1
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 232,
+          "improved": 14,
+          "worsened": 38,
+          "both_correct": 211,
+          "both_wrong": 30,
+          "severe_improved": 1,
+          "severe_worsened": 11,
+          "severe_both_found": 18,
+          "severe_both_missed": 7,
+          "improved_by_reference_class": {
+            "normal_mild": 9,
+            "moderate": 4,
+            "severe": 1
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 254,
+          "improved": 18,
+          "worsened": 13,
+          "both_correct": 207,
+          "both_wrong": 55,
+          "severe_improved": 7,
+          "severe_worsened": 2,
+          "severe_both_found": 12,
+          "severe_both_missed": 16,
+          "improved_by_reference_class": {
+            "normal_mild": 10,
+            "moderate": 1,
+            "severe": 7
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 293,
+        "n_targets": 293,
+        "n_assessed": 293,
+        "n_severe_all_requested": 37,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.5136336310546205,
+              "lower_95": 0.4409646686743461,
+              "upper_95": 0.5846472830218827,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.22535211267605634,
+              "lower_95": 0.09230769230769231,
+              "upper_95": 0.3561643835616438,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.3783783783783784,
+              "lower_95": 0.2291517857142857,
+              "upper_95": 0.5357360627177699,
+              "valid_resamples": 2000
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.5243969392250866,
+              "lower_95": 0.4556180546345511,
+              "upper_95": 0.5896727852772267,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.16129032258064516,
+              "lower_95": 0.03636363636363636,
+              "upper_95": 0.2909090909090909,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.5135135135135135,
+              "lower_95": 0.35135135135135137,
+              "upper_95": 0.6764705882352942,
+              "valid_resamples": 2000
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.7146914310522122,
+              "lower_95": 0.6419843499173057,
+              "upper_95": 0.7770524627437657,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.43478260869565216,
+              "lower_95": 0.28125,
+              "upper_95": 0.5758373205741623,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.7837837837837838,
+              "lower_95": 0.65625,
+              "upper_95": 0.9069767441860465,
+              "valid_resamples": 2000
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.20105779999759177,
+                "lower_95": -0.2881157717366431,
+                "upper_95": -0.10888689325152313,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.20943049601959582,
+                "lower_95": -0.3735391865079365,
+                "upper_95": -0.03238002826701459,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.4054054054054054,
+                "lower_95": -0.5769444444444445,
+                "upper_95": -0.23680340557275564,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.19029449182712566,
+                "lower_95": -0.28432609213165494,
+                "upper_95": -0.09643556855868661,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.273492286115007,
+                "lower_95": -0.4801595482442952,
+                "upper_95": -0.06329381922548348,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.2702702702702703,
+                "lower_95": -0.4444444444444445,
+                "upper_95": -0.10810810810810811,
+                "valid_resamples": 2000
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.010763308170466113,
+                "lower_95": -0.058554760506321364,
+                "upper_95": 0.08066211613491939,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.06406179009541119,
+                "lower_95": -0.18775464909821515,
+                "upper_95": 0.04945574162679417,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.1351351351351351,
+                "lower_95": -0.022754329004329037,
+                "upper_95": 0.29729729729729726,
+                "valid_resamples": 2000
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      }
+    },
+    "rsna/L5-S1": {
+      "n_requested": 293,
+      "n_requested_patients": 293,
+      "n_common_labeled_assessed": 293,
+      "n_common_patients": 293,
+      "n_excluded_from_common": 0,
+      "models_full_cohort": {
+        "xml_only": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.39061032863849765,
+            "accuracy": 0.9453924914675768,
+            "precision": {
+              "normal_mild": 0.9787234042553191,
+              "moderate": 0.16666666666666666,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.965034965034965,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.971830985915493,
+              "moderate": 0.2,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                276,
+                5,
+                5
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                3,
+                0,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 5
+        },
+        "mixed": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.43740219092331767,
+            "accuracy": 0.9556313993174061,
+            "precision": {
+              "normal_mild": 0.9858156028368794,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.972027972027972,
+              "moderate": 0.5,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.9788732394366197,
+              "moderate": 0.3333333333333333,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                278,
+                5,
+                3
+              ],
+              [
+                2,
+                2,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 1,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 2,
+          "false_severe": 3
+        },
+        "sagittal": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5054832791260111,
+            "accuracy": 0.962457337883959,
+            "precision": {
+              "normal_mild": 0.9824561403508771,
+              "moderate": 0.25,
+              "severe": 0.25
+            },
+            "recall": {
+              "normal_mild": 0.9790209790209791,
+              "moderate": 0.25,
+              "severe": 0.3333333333333333
+            },
+            "f1": {
+              "normal_mild": 0.9807355516637478,
+              "moderate": 0.25,
+              "severe": 0.2857142857142857
+            },
+            "confusion_matrix": [
+              [
+                280,
+                3,
+                3
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                2,
+                0,
+                1
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 1,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.3333333333333333,
+            "detection_rate_all_requested": 0.3333333333333333,
+            "missed_all_requested": 2
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 3
+        }
+      },
+      "models_common_cohort": {
+        "xml_only": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.39061032863849765,
+            "accuracy": 0.9453924914675768,
+            "precision": {
+              "normal_mild": 0.9787234042553191,
+              "moderate": 0.16666666666666666,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.965034965034965,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.971830985915493,
+              "moderate": 0.2,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                276,
+                5,
+                5
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                3,
+                0,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 3,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 5
+        },
+        "mixed": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.43740219092331767,
+            "accuracy": 0.9556313993174061,
+            "precision": {
+              "normal_mild": 0.9858156028368794,
+              "moderate": 0.25,
+              "severe": 0.0
+            },
+            "recall": {
+              "normal_mild": 0.972027972027972,
+              "moderate": 0.5,
+              "severe": 0.0
+            },
+            "f1": {
+              "normal_mild": 0.9788732394366197,
+              "moderate": 0.3333333333333333,
+              "severe": 0.0
+            },
+            "confusion_matrix": [
+              [
+                278,
+                5,
+                3
+              ],
+              [
+                2,
+                2,
+                0
+              ],
+              [
+                2,
+                1,
+                0
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 0,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 1,
+            "not_assessed": 0,
+            "recall_conditional": 0.0,
+            "detection_rate_all_requested": 0.0,
+            "missed_all_requested": 3
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 2,
+          "false_severe": 3
+        },
+        "sagittal": {
+          "n_requested": 293,
+          "n_labeled": 293,
+          "n_missing_reference_label": 0,
+          "n_assessed": 293,
+          "n_not_assessed": 0,
+          "coverage": 1.0,
+          "class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "assessed_class_counts": {
+            "normal_mild": 286,
+            "moderate": 4,
+            "severe": 3
+          },
+          "not_assessed_class_counts": {
+            "normal_mild": 0,
+            "moderate": 0,
+            "severe": 0
+          },
+          "conditional": {
+            "macro_f1": 0.5054832791260111,
+            "accuracy": 0.962457337883959,
+            "precision": {
+              "normal_mild": 0.9824561403508771,
+              "moderate": 0.25,
+              "severe": 0.25
+            },
+            "recall": {
+              "normal_mild": 0.9790209790209791,
+              "moderate": 0.25,
+              "severe": 0.3333333333333333
+            },
+            "f1": {
+              "normal_mild": 0.9807355516637478,
+              "moderate": 0.25,
+              "severe": 0.2857142857142857
+            },
+            "confusion_matrix": [
+              [
+                280,
+                3,
+                3
+              ],
+              [
+                3,
+                1,
+                0
+              ],
+              [
+                2,
+                0,
+                1
+              ]
+            ],
+            "confusion_axes": "rows=true, columns=predicted; normal_mild,moderate,severe"
+          },
+          "severe": {
+            "n_total": 3,
+            "n_assessed": 3,
+            "correctly_predicted_severe": 1,
+            "predicted_normal_mild": 2,
+            "predicted_moderate": 0,
+            "not_assessed": 0,
+            "recall_conditional": 0.3333333333333333,
+            "detection_rate_all_requested": 0.3333333333333333,
+            "missed_all_requested": 2
+          },
+          "n_patients": 293,
+          "n_predictions_including_missing_reference": 293,
+          "moderate_found": 1,
+          "false_severe": 3
+        }
+      },
+      "paired_changes": {
+        "xml_only_minus_sagittal": {
+          "same_category": 275,
+          "improved": 6,
+          "worsened": 11,
+          "both_correct": 271,
+          "both_wrong": 5,
+          "severe_improved": 0,
+          "severe_worsened": 1,
+          "severe_both_found": 0,
+          "severe_both_missed": 2,
+          "improved_by_reference_class": {
+            "normal_mild": 5,
+            "moderate": 1,
+            "severe": 0
+          }
+        },
+        "mixed_minus_sagittal": {
+          "same_category": 277,
+          "improved": 6,
+          "worsened": 8,
+          "both_correct": 274,
+          "both_wrong": 5,
+          "severe_improved": 0,
+          "severe_worsened": 1,
+          "severe_both_found": 0,
+          "severe_both_missed": 2,
+          "improved_by_reference_class": {
+            "normal_mild": 4,
+            "moderate": 2,
+            "severe": 0
+          }
+        },
+        "mixed_minus_xml_only": {
+          "same_category": 283,
+          "improved": 6,
+          "worsened": 3,
+          "both_correct": 274,
+          "both_wrong": 10,
+          "severe_improved": 0,
+          "severe_worsened": 0,
+          "severe_both_found": 0,
+          "severe_both_missed": 3,
+          "improved_by_reference_class": {
+            "normal_mild": 5,
+            "moderate": 1,
+            "severe": 0
+          }
+        }
+      },
+      "bootstrap": {
+        "method": "Paired patient-level percentile bootstrap; both levels stay together",
+        "resamples": 2000,
+        "seed": 103017,
+        "n_studies": 293,
+        "n_targets": 293,
+        "n_assessed": 293,
+        "n_severe_all_requested": 3,
+        "models": {
+          "xml_only": {
+            "macro_f1": {
+              "point": 0.39061032863849765,
+              "lower_95": 0.3203309692671395,
+              "upper_95": 0.49479730273752004,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.2,
+              "lower_95": 0.0,
+              "upper_95": 0.5,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1884
+            }
+          },
+          "mixed": {
+            "macro_f1": {
+              "point": 0.43740219092331767,
+              "lower_95": 0.32507554988974363,
+              "upper_95": 0.5497201113300183,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.3333333333333333,
+              "lower_95": 0.0,
+              "upper_95": 0.6666666666666666,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.0,
+              "lower_95": 0.0,
+              "upper_95": 0.0,
+              "valid_resamples": 1884
+            }
+          },
+          "sagittal": {
+            "macro_f1": {
+              "point": 0.5054832791260111,
+              "lower_95": 0.32517482517482516,
+              "upper_95": 0.7010239272832474,
+              "valid_resamples": 2000
+            },
+            "moderate_f1": {
+              "point": 0.25,
+              "lower_95": 0.0,
+              "upper_95": 0.6666666666666666,
+              "valid_resamples": 2000
+            },
+            "severe_rate": {
+              "point": 0.3333333333333333,
+              "lower_95": 0.0,
+              "upper_95": 1.0,
+              "valid_resamples": 1884
+            }
+          }
+        },
+        "contrasts": {
+          "xml_only_minus_sagittal": {
+            "left": [
+              "xml_only"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.11487295048751345,
+                "lower_95": -0.3608305195948216,
+                "upper_95": 0.12531557662849976,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": -0.04999999999999999,
+                "lower_95": -0.6,
+                "upper_95": 0.5,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.3333333333333333,
+                "lower_95": -1.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          },
+          "mixed_minus_sagittal": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "sagittal"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": -0.06808108820269343,
+                "lower_95": -0.3222170567399522,
+                "upper_95": 0.17323973875786056,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": 0.08333333333333331,
+                "lower_95": -0.5336363636363636,
+                "upper_95": 0.6153846153846154,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": -0.3333333333333333,
+                "lower_95": -1.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          },
+          "mixed_minus_xml_only": {
+            "left": [
+              "mixed"
+            ],
+            "right": [
+              "xml_only"
+            ],
+            "metrics": {
+              "macro_f1": {
+                "point": 0.04679186228482002,
+                "lower_95": -0.028619451579386054,
+                "upper_95": 0.1561807363419431,
+                "valid_resamples": 2000
+              },
+              "moderate_f1": {
+                "point": 0.1333333333333333,
+                "lower_95": -0.08659722222222224,
+                "upper_95": 0.46153846153846156,
+                "valid_resamples": 2000
+              },
+              "severe_rate": {
+                "point": 0.0,
+                "lower_95": 0.0,
+                "upper_95": 0.0,
+                "valid_resamples": 1884
+              }
+            }
+          }
+        },
+        "limitations": "Intervals condition on these fitted models and this cohort. They do not measure label uncertainty, training-data variation, new-site generalization, or clinical validity. A family mean is not an ensemble. Macro-F1 uses fixed classes [0,1,2], zero F1 for an absent class."
+      }
+    }
+  },
+  "private_input_sha256": {
+    "xml_only": {
+      "ensemble_sha256": "933a79f6a380e35b4e76659f133b8e14ebbaaffa285f18414e50470f67ad6f39",
+      "seeds": {
+        "42": "2c02bc5a80faeabb7444a42a6ca31f0d919027059769e2e7762ac1c968b60bb3",
+        "2024": "d29c4c18212b9451a19924b08ee1804726cffc419dbcc18db46ec2295c9ba133",
+        "3407": "23e9fa6c301fc663378c40df6951e9ec83884ddd3cccffb32345d608c0d96376"
+      }
+    },
+    "mixed": {
+      "ensemble_sha256": "a57f989d6adee55507c78d3f3feff898ebdf3e3f6e46d007578c36f786d5851a",
+      "seeds": {
+        "42": "fcda954537c8477c04483e455b8ca070c8fd4d13aeffc77b023fc7fe3a9507b5",
+        "2024": "ebda263ebeaf8a594e142341bae61505ff3ad9c86e6156c8213014a6fcefeb45",
+        "3407": "950fe0b2af92445ee480239cfffc93adf6b90f044b1d691c6d978868360b93e6"
+      }
+    },
+    "sagittal": {
+      "ensemble_sha256": "0c3c1fcef6fc82cceb80ba70ade394d0f8124483f55afc81ea6e9a2b03aaa075",
+      "seeds": {
+        "42": "3149355441b2fe664366473ee403a5c5410464596530886dc0618957848801ac",
+        "2024": "c7e31c770c5cb719856629a859055f8bb906602193dfb852bcbfc2efe6d6a581",
+        "3407": "1b71b98d42fb0ed9f1bdbc7f874d3f55730e50b2d74f068874f0e80a34dfdd9b"
+      }
+    }
+  },
+  "source_summary_sha256": "0c88f945138ab876dced288e22269fb6249072353babcc77b25c4db945df4802"
+}
