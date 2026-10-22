@@ -275,6 +275,10 @@ def test_full_report_source_checks_and_safe_public_artifacts(comparison, tmp_pat
     assert diagnostic["mean_effective_windows"] == pytest.approx(3)
     assert diagnostic["mean_l1_distance_from_uniform"] < 1e-6
     assert "Что получилось с весами attention" in text
+    l5_section = text.split("## L5–S1 отдельно", 1)[1]
+    assert l5_section.index("| Смешанная локализация | Attention |") < l5_section.index(
+        "L5–S1, XML-only:"
+    )
     for key in ("comparison_image", "confusion_image", "learning_image"):
         pixels = mpimg.imread(args[key])
         assert pixels.shape[0] > 500 and pixels.shape[1] > 1000

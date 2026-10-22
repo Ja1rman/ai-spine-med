@@ -359,6 +359,7 @@ def render_markdown(public, *, comparison_image, confusion_image, learning_image
                 f"{_found(m, 'severe')} | {m['severe']['predicted_normal_mild']} | "
                 f"{m['severe']['predicted_moderate']} | {m['false_severe']} |"
             )
+    for arm in ARMS:
         changes = l5["paired_changes"][f"{arm}_attention_minus_mean"]
         lines += [
             "",
