@@ -265,6 +265,12 @@ def render_markdown(public, *, comparison_image, confusion_image, learning_image
         "| Уровень | Локализация | Замороженная, macro-F1 | layer4, macro-F1 | Разница, 95% ДИ | Умеренные до → после | Тяжёлые до → после |",
         "|---|---|---:|---:|---:|---:|---:|",
     ]
+    if public.get("frozen_control_reproduced_v9") is True:
+        lines[6:6] = [
+            "Замороженный контроль точно повторил прежний опыт v9: совпали выбранные эпохи "
+            "и все вероятности шести запусков. Это проверил отдельно по сохранённым ответам.",
+            "",
+        ]
     for level in ("all", *LEVELS):
         group = groups[f"rsna/{level}"]
         for arm in ARMS:
@@ -304,6 +310,14 @@ def render_markdown(public, *, comparison_image, confusion_image, learning_image
             f"найдено {changes['severe_improved']}, потеряно {changes['severe_worsened']}; "
             f"обе версии пропустили {changes['severe_both_missed']}.",
         ]
+        if (
+            changes["improved"] > 0
+            and changes["improved_by_reference_class"]["normal_mild"] == changes["improved"]
+        ):
+            lines += [
+                "Все исправления относятся к исходной метке «норма/лёгкая степень». "
+                "Число найденных умеренных и тяжёлых случаев не увеличилось.",
+            ]
     lines += [
         "",
         f"![Матрицы ошибок L5–S1]({confusion_image})",
@@ -384,6 +398,18 @@ def render_markdown(public, *, comparison_image, confusion_image, learning_image
         "```",
         "",
     ]
+    overall_intervals = [
+        groups["rsna/all"]["bootstrap"]["contrasts"][f"{arm}_layer4_minus_frozen"]["metrics"][
+            "macro_f1"
+        ]
+        for arm in ARMS
+    ]
+    if all(value["lower_95"] <= 0 <= value["upper_95"] for value in overall_intervals):
+        lines[4:4] = [
+            "Уверенного общего прироста от layer4 в этом опыте не получил: у обеих "
+            "локализаций парный интервал разницы macro-F1 включает ноль.",
+            "",
+        ]
     return "\n".join(lines)
 
 
@@ -531,6 +557,7 @@ def report_roi_layer4(
     summary = json.loads(summary_path.read_text())
     checksums = summary.get("input_files", {})
     tables, seed_tables, histories, hashes = {}, {}, {}, {}
+    frozen_audits = []
     for arm in ARMS:
         for variant in VARIANTS:
             name = f"{arm}_{variant}"
@@ -557,11 +584,26 @@ def report_roi_layer4(
                     score,
                 )
                 files[str(seed)] = {"predictions_sha256": seed_sha, "history_sha256": history_sha}
+                if variant == "frozen":
+                    relative_audit = (
+                        Path(source["histories"][str(seed)]).parent / "audit.json"
+                    ).as_posix()
+                    if relative_audit in checksums:
+                        audit_path, audit_sha = _source(summary_path, relative_audit, checksums)
+                        audit = json.loads(audit_path.read_text())
+                        frozen_audits.append(
+                            audit.get("v9_reproduced") is True
+                            and type(audit.get("maximum_probability_error")) in (int, float)
+                            and audit["maximum_probability_error"] == 0.0
+                        )
+                        files[str(seed)]["control_audit_sha256"] = audit_sha
             verify_ensemble(tables[name], seeds)
             seed_tables[name], histories[name], hashes[name] = seeds, runs, files
     public = public_snapshot(summary, tables, resamples=resamples)
     public["training"] = public_training(summary)
     public["runs"] = histories
+    if len(frozen_audits) == len(ARMS) * len(SEEDS) and all(frozen_audits):
+        public["frozen_control_reproduced_v9"] = True
     for arm in ARMS:
         for seed in SEEDS:
             scores = [

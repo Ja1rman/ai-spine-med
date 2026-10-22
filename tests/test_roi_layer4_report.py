@@ -113,6 +113,14 @@ def write_run(tmp_path, summary, tables):
                     )
                     selected = 1
                 history_path.write_text(json.dumps(history))
+                if variant == "frozen":
+                    audit_path = history_path.parent / "audit.json"
+                    audit_path.write_text(
+                        json.dumps({"v9_reproduced": True, "maximum_probability_error": 0.0})
+                    )
+                    summary["input_files"][audit_path.relative_to(tmp_path).as_posix()] = (
+                        sha256_file(audit_path)
+                    )
                 source["seed_predictions"][str(seed)] = path.relative_to(tmp_path).as_posix()
                 source["histories"][str(seed)] = history_path.relative_to(tmp_path).as_posix()
                 source["selected_epochs"][str(seed)] = selected
@@ -248,6 +256,8 @@ def test_full_report_source_checks_and_safe_public_artifacts(comparison, tmp_pat
     assert "не исправляют смещение" in text and "Эпоха 0" in text
     assert "Ложный тяжёлый" in text and "Тяжёлый → норма" in text
     assert public["runs"]["mixed_layer4"]["42"]["selected_epoch"] == 1
+    assert public["frozen_control_reproduced_v9"] is True
+    assert "точно повторил прежний опыт v9" in text
     for key in ("comparison_image", "confusion_image", "learning_image"):
         pixels = mpimg.imread(args[key])
         assert pixels.shape[0] > 500 and pixels.shape[1] > 1000
