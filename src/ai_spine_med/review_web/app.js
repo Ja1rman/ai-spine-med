@@ -140,7 +140,7 @@
   }
 
   function renderPredictions(item) {
-    $("predictions").replaceChildren(predictionCard(item.predictions?.sagittal || {}, "Сагиттальная модель", item.label));
+    $("predictions").replaceChildren(predictionCard(item.predictions?.sagittal || {}, item.level || "Уровень не указан", item.label));
     const reason = item.processing_reason || "";
     $("processing-reason").hidden = !reason;
     $("processing-reason").textContent = reason ? processingExplanation(reason) : "";
@@ -219,6 +219,7 @@
     $("case-context").textContent = `${patientName(item)} · случай для проверки`;
     $("case-title").textContent = `Случай ${caseNumber(item)} · ${item.level}`;
     $("case-id").textContent = `Идентификатор случая: ${item.case_id}`;
+    $("reference-title").textContent = `RSNA · ${item.level} · центральный стеноз`;
     $("reference-grade").textContent = grade(item.label);
     addBadges($("case-badges"), item);
     renderPredictions(item);
