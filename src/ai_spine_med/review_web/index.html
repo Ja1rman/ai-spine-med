@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="color-scheme" content="dark">
+  <title>Исследования · МРТ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="source-tabs" aria-label="Разделы"><button id="tab-cohort" class="source-tab active" type="button" aria-pressed="true">Выборка RSNA <span id="cohort-total"></span></button><button id="tab-uploads" class="source-tab" type="button" aria-pressed="false">Загрузки <span id="uploads-total"></span></button></nav>
+    <span id="collection-count" class="collection-count">Загрузка подборки…</span>
+  </header>
+  <main class="shell">
+    <aside class="sidebar" aria-label="Случаи для разбора">
+      <div class="sidebar-tools">
+        <div id="sidebar-label" class="section-eyebrow">Случаи · валидация</div>
+        <label class="search-label"><span class="sr-only">Поиск случая</span><input id="search" type="search" placeholder="Поиск по номеру или уровню" autocomplete="off"></label>
+        <div id="filters" class="filters" role="group" aria-label="Фильтр случаев">
+          <button type="button" data-filter="all" class="filter active" aria-pressed="true">Все</button>
+          <button type="button" data-filter="errors" class="filter" aria-pressed="false">Расхождения с RSNA</button>
+          <button type="button" data-filter="correct" class="filter" aria-pressed="false">Совпало с RSNA</button>
+          <button type="button" data-filter="unassessed" class="filter" aria-pressed="false">Не оценено</button>
+        </div>
+        <button id="refresh-uploads" type="button" class="filter" hidden>Обновить список ↻</button>
+        <p id="list-count" class="list-count" aria-live="polite"></p>
+      </div>
+      <nav id="case-list" class="case-list" aria-label="Список случаев"><p class="empty">Загрузка…</p></nav>
+      <p id="sidebar-footnote" class="sidebar-footnote">Полная валидационная выборка: правильные ответы, расхождения и отказы обработки. Метки RSNA ещё требуют врачебной проверки.</p>
+    </aside>
+    <section id="workspace" class="workspace" aria-busy="true">
+      <div id="fatal-error" class="fatal-error" role="alert" hidden></div>
+      <section id="upload-panel" class="upload-panel" aria-labelledby="upload-heading" hidden>
+        <div class="section-eyebrow">Новое исследование</div>
+        <h1 id="upload-heading">Добавить свою серию</h1>
+        <p class="upload-description">Одна полная сагиттальная T2-серия МРТ поясницы в ZIP. Внутри — исходные DICOM-файлы одной серии; папки допустимы. JPG, скриншот или одиночный срез для этой модели не подходят. Обработка может занять несколько минут.</p>
+        <form id="upload-form">
+          <label class="upload-file"><span>Выбрать ZIP с DICOM <span aria-hidden="true">↗</span></span><input id="upload-file" name="series" type="file" accept=".zip,application/zip" required><span id="upload-file-name" class="small-muted">Файл не выбран</span></label>
+          <label class="upload-consent"><input id="upload-consent" type="checkbox" required><span>Исследование обезличено; оно будет храниться на сервере и станет доступно по этой закрытой ссылке.</span></label>
+          <div class="upload-actions"><button id="upload-submit" class="button" type="submit" disabled>Загрузить и проанализировать</button><span id="upload-limits" class="small-muted">Проверяю доступность анализа…</span></div>
+        </form>
+        <div id="upload-feedback" class="upload-feedback" role="status" aria-live="polite" hidden></div>
+        <progress id="upload-progress" max="100" value="0" aria-label="Передача архива" hidden></progress>
+        <p class="small-muted upload-storage">Архив и результат сохраняются в разделе «Загрузки» и доступны всем, у кого есть эта закрытая ссылка. Загружайте обезличенные исследования. Имя файла и текст из DICOM-заголовков в списке не показываются.</p>
+      </section>
+      <div id="upload-empty" class="empty upload-empty" hidden>Пока нет загруженных исследований. Выберите архив выше, чтобы получить оценку L4–L5 и L5–S1.</div>
+      <div id="case-content" hidden>
+        <header class="case-header">
+          <div><div id="case-context" class="section-eyebrow"></div><h1 id="case-title"></h1><div id="case-badges" class="badges"></div></div>
+          <div class="case-step"><button id="previous-case" type="button" class="icon-button" aria-label="Предыдущий случай">↑</button><button id="next-case" type="button" class="icon-button" aria-label="Следующий случай">↓</button></div>
+        </header>
+        <section id="upload-status" class="upload-status" aria-live="polite" hidden><span id="upload-status-label" class="status-label"></span><p id="upload-status-message"></p><a id="download-report" class="button button-quiet" download hidden>Результат · JSON ↓</a></section>
+        <div id="case-loading" class="loading-line" role="status" hidden>Загружаю серии пациента…</div>
+        <div id="case-grid" class="case-grid">
+          <section id="viewer-card" class="viewer-card" aria-labelledby="viewer-title">
+            <div class="card-heading"><div><div class="section-eyebrow">Изображения</div><h2 id="viewer-title">Серии пациента</h2></div><span id="series-count" class="small-muted"></span></div>
+            <div class="series-control"><label class="series-label" for="series-picker">Серия</label><select id="series-picker" aria-label="Выбрать МР-серию"></select></div>
+            <div class="viewer-toolbar"><span id="slice-caption"></span><div class="zoom-tools"><button id="zoom-out" type="button" class="dark-button" aria-label="Уменьшить изображение">−</button><span id="zoom-value">100%</span><button id="zoom-in" type="button" class="dark-button" aria-label="Увеличить изображение">+</button><button id="zoom-reset" type="button" class="dark-button" title="Показать всё изображение">Сброс</button></div></div>
+            <div id="viewport" class="viewport" tabindex="0" role="region" aria-label="Изображение МРТ. Стрелки влево и вправо меняют срез; плюс и минус меняют масштаб; ноль сбрасывает масштаб.">
+              <img id="slice-image" alt="Полный МР-срез" draggable="false" referrerpolicy="no-referrer">
+              <div id="image-message" class="image-message">Выберите серию</div>
+            </div>
+            <div class="viewer-bottom">
+            <div class="slice-navigation"><button id="previous-slice" type="button" class="icon-button" aria-label="Предыдущий срез">←</button><input id="slice-slider" type="range" min="0" max="0" value="0" step="1" aria-label="Номер среза"><button id="next-slice" type="button" class="icon-button" aria-label="Следующий срез">→</button></div>
+            <p id="slice-details" class="slice-details"></p>
+            <p class="keyboard-hint">← → срезы · + − масштаб · 0 сброс · потяните изображение при увеличении</p>
+            <div class="download-row"><a id="download-dicom" class="button" download>Исходный DICOM ↓</a><a id="download-zip" class="button button-quiet" download>Вся серия · ZIP ↓</a></div>
+            <div id="quick-links" class="quick-links" hidden><h3>Сохранённые срезы</h3><div id="view-links" class="view-links"></div></div>
+            </div>
+          </section>
+          <aside class="review-column">
+            <section id="reference-card" class="card reference-card" aria-labelledby="reference-title"><div class="section-eyebrow">Метка набора данных</div><h2 id="reference-title">RSNA / центральный стеноз</h2><div id="reference-grade" class="reference-grade"></div></section>
+            <section class="card" aria-labelledby="prediction-title"><h2 id="prediction-title">Ответ модели</h2><p id="model-name" class="model-name">SpineNet · frozen-head v1 · ансамбль 3 запусков</p><div id="predictions" class="prediction-list"></div><p class="small-muted">Вероятности не откалиброваны. «Не оценено» не означает норму.</p><p class="small-muted">Модель находит уровни по сагиттальной серии и оценивает каждый по области из 9 соседних срезов. Полные серии доступны для просмотра; остальные срезы не входят в оценку степени. Результат — исследовательская оценка, требующая проверки врачом.</p><p id="processing-reason" class="processing-reason" hidden></p></section>
+            <section id="overview-card" class="card overview-card"><details><summary><span>Область модели</span><span class="summary-arrow" aria-hidden="true">↗</span></summary><a id="overview-link" target="_blank" rel="noopener noreferrer"><img id="overview-image" alt="Область, использованная моделью" loading="lazy" referrerpolicy="no-referrer"></a><p class="small-muted">Обзор входной области модели. Полные серии можно перелистывать в просмотрщике.</p></details></section>
+            <p id="case-id" class="case-id"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

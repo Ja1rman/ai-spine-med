@@ -30,12 +30,13 @@ dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
 
 [project.scripts]
 ai-spine = "ai_spine_med.cli:main"
+ai-spine-review = "ai_spine_med.review_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-ai_spine_med = ["assets.lock.json"]
+ai_spine_med = ["assets.lock.json", "review_web/*.html", "review_web/*.js", "review_web/*.css"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

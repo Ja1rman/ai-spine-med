@@ -1,0 +1,22 @@
+[Unit]
+Description=Private SSH connection to the spine review service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+ExecStart=/usr/bin/ssh -F /srv/spine-review-v3/tunnel/ssh_config -NT -L 127.0.0.1:8769:127.0.0.1:8768 spine-mine-test
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryMax=64M
+TasksMax=16
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
