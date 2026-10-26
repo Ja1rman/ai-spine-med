@@ -135,6 +135,15 @@ input[type=range] { width: 100%; height: 2px; accent-color: var(--accent); curso
 .comparison-label.match { color: var(--green); }
 .comparison-label.mismatch { color: var(--red); }
 .prediction-grade { margin-bottom: 13px; font-size: 18px; font-weight: 450; letter-spacing: -.3px; }
+.prediction-reference { margin: -4px 0 12px; color: #b9b7a9; font-size: 11px; line-height: 1.6; }
+.level-focus-panel { margin: 0 0 20px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+.level-focus-panel > .section-eyebrow { display: block; margin-bottom: 9px; font-size: 8px; }
+.level-focus { display: flex; gap: 8px; }
+.level-focus-button { flex: 1; padding: 8px 12px; color: #aeb9b3; border: 1px solid #35413b; background: transparent; cursor: pointer; font: 11px/1.4 var(--mono); }
+.level-focus-button.active { color: #f1d1ad; border-color: #967653; background: #342d24; }
+.level-focus-button:disabled { opacity: .45; cursor: default; }
+.level-focus-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.level-focus-panel .small-muted { margin: 9px 0 0; font-size: 9px; }
 .prediction-probs { display: grid; gap: 4px; }
 .prob { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 28px; padding: 5px 9px; background: #1a2020; overflow: hidden; }
 .prob::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--score, 0%); background: #313a35; pointer-events: none; }

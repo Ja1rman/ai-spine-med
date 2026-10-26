@@ -4,10 +4,11 @@
   const root = new URL("./", window.location.href);
   const $ = (id) => document.getElementById(id);
   const grades = ["Норма / лёгкая степень", "Умеренный стеноз", "Тяжёлый стеноз"];
+  const levels = ["L4-L5", "L5-S1"];
   const probabilityNames = ["Норма / лёгкий", "Умеренный", "Тяжёлый"];
   const statusNames = {queued: "В очереди", processing: "Анализируется", completed: "Готово", partial: "Оценено частично", failed: "Не удалось оценить"};
   const pending = (item) => ["queued", "processing"].includes(item?.status);
-  const state = {mode: "cohort", index: null, cases: new Map(), patients: new Map(), patientNumbers: new Map(), patientCache: new Map(), uploads: [], activeUpload: null, api: null, apiAvailable: false, poll: null, sending: false, detailLoading: false, detailRetry: false, navigation: 0, listRequest: 0, active: null, patient: null, series: null, slice: 0, filter: "all", search: "", zoom: 1, panX: 0, panY: 0, pointer: null, request: 0};
+  const state = {mode: "cohort", index: null, cases: new Map(), patientCases: new Map(), patients: new Map(), patientNumbers: new Map(), patientCache: new Map(), uploads: [], activeUpload: null, api: null, apiAvailable: false, poll: null, sending: false, detailLoading: false, detailRetry: false, navigation: 0, listRequest: 0, active: null, patient: null, series: null, slice: 0, filter: "all", search: "", zoom: 1, panX: 0, panY: 0, pointer: null, request: 0};
   const plural = (n, words) => words[(n % 100 > 10 && n % 100 < 20) ? 2 : n % 10 === 1 ? 0 : (n % 10 > 1 && n % 10 < 5) ? 1 : 2];
   const caseNumber = (item) => String(item.review_order ?? (state.index.cases.indexOf(item) + 1)).padStart(3, "0");
   const patientName = (item) => `Пациент ${String(state.patientNumbers.get(item.patient_id) || "—").padStart(3, "0")}`;
@@ -117,7 +118,7 @@
     return `Не удалось получить оценку: ${explanation}. Такой результат не означает отсутствие стеноза.`;
   }
 
-  function predictionCard(prediction, label, reference = null) {
+  function predictionCard(prediction, label, reference = null, {cohort = false, issue = ""} = {}) {
       const ok = validPrediction(prediction);
       const hasReference = Number.isInteger(reference) && reference >= 0 && reference < 3;
       const match = ok && prediction.prediction === reference;
@@ -134,16 +135,61 @@
         field.append(node("span", "", probabilityNames[i]), node("strong", "", ok && Number.isFinite(value) ? `${(value * 100).toFixed(1).replace(".", ",")}%` : "—"));
         probabilities.append(field);
       }
-      card.append(top, node("div", "prediction-grade", ok ? grade(prediction.prediction) : "Не оценено"), probabilities);
-      if (!ok && prediction.reason) card.append(node("p", "small-muted", processingExplanation(prediction.reason)));
+      card.append(top, node("div", "prediction-grade", ok ? grade(prediction.prediction) : "Не оценено"));
+      if (cohort) card.append(node("p", "prediction-reference", `RSNA: ${hasReference ? grade(reference) : "метка недоступна"}`));
+      card.append(probabilities);
+      if (issue) card.append(node("p", "small-muted", issue));
+      else if (!ok && prediction.reason) card.append(node("p", "small-muted", processingExplanation(prediction.reason)));
       return card;
   }
 
+  function patientLevels(item) {
+    const samePatient = state.patientCases.get(item.patient_id) || [];
+    return levels.map((level) => {
+      const matches = samePatient.filter((candidate) => candidate.level === level);
+      return {
+        level,
+        item: matches.length === 1 ? matches[0] : null,
+        issue: matches.length === 1 ? "" : matches.length ? "В подборке несколько записей этого уровня; оценка не выбрана." : "В подборке нет записи для этого уровня."
+      };
+    });
+  }
+
+  function renderPatientBadges(container, entries) {
+    container.replaceChildren();
+    const results = entries.map((entry) => flags(entry.item || {}));
+    if (results.some((result) => result.errors)) container.append(node("span", "badge error", "Есть расхождение с RSNA"));
+    if (results.some((result) => result.unassessed)) container.append(node("span", "badge unassessed", "Есть неоценённый уровень"));
+    if (results.every((result) => result.correct)) container.append(node("span", "badge control", "Оба уровня совпали с RSNA"));
+  }
+
+  function renderLevelFocus(item, entries) {
+    $("level-focus-panel").hidden = false;
+    const container = $("level-focus");
+    container.replaceChildren();
+    for (const entry of entries) {
+      const button = node("button", "level-focus-button" + (entry.item?.case_id === item.case_id ? " active" : ""), entry.level);
+      button.type = "button";
+      button.dataset.level = entry.level;
+      button.disabled = !entry.item;
+      button.setAttribute("aria-pressed", entry.item?.case_id === item.case_id ? "true" : "false");
+      if (entry.item) button.addEventListener("click", () => activateCase(entry.item.case_id, {history: "push"}));
+      container.append(button);
+    }
+    $("level-focus-label").textContent = `Ссылки и обзор: ${item.level} · случай ${caseNumber(item)}`;
+  }
+
   function renderPredictions(item) {
-    $("predictions").replaceChildren(predictionCard(item.predictions?.sagittal || {}, item.level || "Уровень не указан", item.label));
-    const reason = item.processing_reason || "";
-    $("processing-reason").hidden = !reason;
-    $("processing-reason").textContent = reason ? processingExplanation(reason) : "";
+    const entries = patientLevels(item);
+    $("predictions").replaceChildren();
+    for (const entry of entries) {
+      const prediction = entry.item ? {...entry.item.predictions?.sagittal, reason: entry.item.processing_reason || entry.item.predictions?.sagittal?.reason || ""} : {};
+      $("predictions").append(predictionCard(prediction, entry.level, entry.item?.label, {cohort: true, issue: entry.issue}));
+    }
+    renderPatientBadges($("case-badges"), entries);
+    renderLevelFocus(item, entries);
+    $("processing-reason").hidden = true;
+    $("processing-reason").textContent = "";
   }
 
   function seriesName(series) {
@@ -209,19 +255,18 @@
     $("case-content").hidden = false;
     $("upload-empty").hidden = true;
     $("upload-status").hidden = true;
-    $("reference-card").hidden = false;
+    $("reference-card").hidden = true;
     $("viewer-card").hidden = false;
     $("case-grid").hidden = false;
     $("case-grid").classList.remove("without-images");
-    $("prediction-title").textContent = "Ответ модели";
+    $("prediction-title").textContent = "Степень центрального стеноза";
     $("model-name").textContent = state.index.model?.title || "SpineNet · frozen-head v1 · ансамбль 3 запусков";
     $("case-loading").hidden = false;
-    $("case-context").textContent = `${patientName(item)} · случай для проверки`;
-    $("case-title").textContent = `Случай ${caseNumber(item)} · ${item.level}`;
+    $("case-context").textContent = `${patientName(item)} · исследование RSNA`;
+    $("case-title").textContent = "Оценки L4–L5 и L5–S1";
     $("case-id").textContent = `Идентификатор случая: ${item.case_id}`;
     $("reference-title").textContent = `RSNA · ${item.level} · центральный стеноз`;
     $("reference-grade").textContent = grade(item.label);
-    addBadges($("case-badges"), item);
     renderPredictions(item);
     renderShortcuts(item);
     $("overview-image").removeAttribute("src");
@@ -523,6 +568,7 @@
       $("case-id").textContent = `Идентификатор исследования: ${id}`;
       $("case-badges").replaceChildren(node("span", `badge ${item.status === "completed" ? "control" : item.status === "failed" ? "error" : "unassessed"}`, statusNames[item.status] || "Статус неизвестен"));
       $("reference-card").hidden = true;
+      $("level-focus-panel").hidden = true;
       $("overview-card").hidden = true;
       $("quick-links").hidden = true;
       $("upload-status").hidden = false;
@@ -535,7 +581,7 @@
       $("prediction-title").textContent = "Степень центрального стеноза";
       $("model-name").textContent = state.api?.model?.name || "SpineNet · frozen-head v1 · ансамбль 3 запусков";
       $("predictions").replaceChildren();
-      for (const level of ["L4-L5", "L5-S1"]) {
+      for (const level of levels) {
         const prediction = (item.targets || []).find((target) => target.level === level) || {};
         $("predictions").append(predictionCard(prediction, level));
       }
@@ -709,7 +755,13 @@
       const index = await fetchJSON("data/index.json");
       if (!Array.isArray(index.cases) || !index.cases.length || !Array.isArray(index.patients)) throw new Error("Invalid collection");
       state.index = index;
-      for (const item of index.cases) state.cases.set(item.case_id, item);
+      for (const item of index.cases) {
+        state.cases.set(item.case_id, item);
+        if (typeof item.patient_id === "string") {
+          if (!state.patientCases.has(item.patient_id)) state.patientCases.set(item.patient_id, []);
+          state.patientCases.get(item.patient_id).push(item);
+        }
+      }
       index.patients.forEach((patient, i) => { state.patients.set(patient.patient_id, patient); state.patientNumbers.set(patient.patient_id, i + 1); });
       $("cohort-total").textContent = String(index.cases.length);
       if (state.mode === "cohort") updateCohortCount();

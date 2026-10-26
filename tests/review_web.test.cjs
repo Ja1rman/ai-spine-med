@@ -133,7 +133,7 @@ test("malformed model grades remain unassessed and cannot count as correct", asy
   const app = harness({"data/index.json": data, "api/uploads": library, "data/patients/patient-one.json": patient("patient-one")});
   try {
     await settle();
-    assert.match(app.elements.get("case-badges").textContent, /Не оценено/);
+    assert.match(app.elements.get("case-badges").textContent, /неоцен[ёе]нный уровень/i);
     assert.doesNotMatch(app.elements.get("predictions").textContent, /120|Совпало с RSNA/);
     const correctFilter = app.elements.get("filters").children.find((child) => child.dataset.filter === "correct");
     await correctFilter.fire("click");
@@ -178,5 +178,141 @@ test("an explicit source slice URL overrides the central model input default", a
     await settle();
     assert.equal(new URL(app.window.location.href).searchParams.get("slice"), "s8");
     assert.equal(app.elements.get("slice-caption").textContent, "Срез 8 / 9");
+  } finally { app.close(); }
+});
+
+function pairedCollection() {
+  const data = collection(4);
+  data.cases[0].label = 1;
+  data.cases[0].predictions.sagittal = {status: "ok", prediction: 2, probabilities: [0.05, 0.15, 0.8]};
+  data.cases[1].label = 0;
+  data.cases[2].level = "L5-S1";
+  data.cases[2].label = 0;
+  data.cases[3].level = "L5-S1";
+  data.cases[3].label = 1;
+  data.cases[3].predictions.sagittal = {status: "ok", prediction: 1, probabilities: [0.1, 0.8, 0.1]};
+  return data;
+}
+
+function descendant(element, className) {
+  if (String(element.className || "").split(" ").includes(className)) return element;
+  for (const child of element.children || []) {
+    const match = descendant(child, className);
+    if (match) return match;
+  }
+  return null;
+}
+
+function levelCards(app) {
+  return new Map(app.elements.get("predictions").children.map((card) => [descendant(card, "prediction-model").textContent, card]));
+}
+
+test("RSNA shows each patient's two independent predictions and their own references", async () => {
+  const app = harness({"data/index.json": pairedCollection(), "api/uploads": library, "data/patients/patient-one.json": patient("patient-one")});
+  try {
+    await settle();
+    const cards = levelCards(app);
+    assert.deepEqual([...cards.keys()], ["L4-L5", "L5-S1"]);
+    assert.equal(descendant(cards.get("L4-L5"), "prediction-grade").textContent, "Тяжёлый стеноз");
+    assert.match(cards.get("L4-L5").textContent, /RSNA.*Умеренный стеноз/);
+    assert.match(cards.get("L4-L5").textContent, /Не совпало с RSNA/);
+    assert.equal(descendant(cards.get("L5-S1"), "prediction-grade").textContent, "Норма / лёгкая степень");
+    assert.match(cards.get("L5-S1").textContent, /RSNA.*Норма \/ лёгкая степень/);
+    assert.match(cards.get("L5-S1").textContent, /Совпало с RSNA/);
+  } finally { app.close(); }
+});
+
+test("changing patient replaces both level predictions without taking adjacent patient's data", async () => {
+  const app = harness({"data/index.json": pairedCollection(), "api/uploads": library, "data/patients/patient-one.json": patient("patient-one"), "data/patients/patient-two.json": patient("patient-two")});
+  try {
+    await settle();
+    await app.elements.get("case-list").children.find((child) => child.dataset.case === "case-1").fire("click");
+    const cards = levelCards(app);
+    assert.equal(descendant(cards.get("L4-L5"), "prediction-grade").textContent, "Норма / лёгкая степень");
+    assert.equal(descendant(cards.get("L5-S1"), "prediction-grade").textContent, "Умеренный стеноз");
+    assert.doesNotMatch(app.elements.get("predictions").textContent, /Тяжёлый стеноз/);
+  } finally { app.close(); }
+});
+
+test("a failed second level remains unassessed while the first retains its own prediction", async () => {
+  const data = pairedCollection();
+  data.cases[2].predictions.sagittal = {status: "not_assessed", prediction: null, probabilities: null};
+  data.cases[2].processing_reason = "missing_vertebra:S1";
+  const app = harness({"data/index.json": data, "api/uploads": library, "data/patients/patient-one.json": patient("patient-one")});
+  try {
+    await settle();
+    const cards = levelCards(app);
+    assert.equal(descendant(cards.get("L4-L5"), "prediction-grade").textContent, "Тяжёлый стеноз");
+    assert.equal(descendant(cards.get("L5-S1"), "prediction-grade").textContent, "Не оценено");
+    assert.match(cards.get("L5-S1").textContent, /S1/);
+    assert.doesNotMatch(cards.get("L5-S1").textContent, /Совпало с RSNA/);
+  } finally { app.close(); }
+});
+
+test("missing or ambiguous level records cannot silently become a normal second prediction", async () => {
+  for (const ambiguous of [false, true]) {
+    const data = pairedCollection();
+    if (ambiguous) data.cases.push({...data.cases[2], case_id: "duplicate-level"});
+    else data.cases = data.cases.filter((item) => item.case_id !== "case-2");
+    const app = harness({"data/index.json": data, "api/uploads": library, "data/patients/patient-one.json": patient("patient-one")});
+    try {
+      await settle();
+      assert.equal(descendant(levelCards(app).get("L5-S1"), "prediction-grade").textContent, "Не оценено");
+    } finally { app.close(); }
+  }
+});
+
+test("changing the displayed slice preserves both study-level conclusions", async () => {
+  const data = pairedCollection(), scan = patient("patient-one");
+  scan.series[0].slices.push({...scan.series[0].slices[0], slice_key: "s1", image_url: "images/s1.jpg", dicom_url: "dicom/s1.dcm", instance_number: 2});
+  const app = harness({"data/index.json": data, "api/uploads": library, "data/patients/patient-one.json": scan});
+  try {
+    await settle();
+    const before = app.elements.get("predictions").textContent;
+    app.elements.get("slice-slider").value = "0";
+    await app.elements.get("slice-slider").fire("input");
+    assert.equal(app.elements.get("slice-caption").textContent, "Срез 1 / 2");
+    assert.equal(app.elements.get("predictions").textContent, before);
+    assert.equal(levelCards(app).size, 2);
+  } finally { app.close(); }
+});
+
+test("level focus changes the correct ROI and case URL while retaining both conclusions", async () => {
+  const data = pairedCollection(), scan = patient("patient-one");
+  scan.series[0].slices.push({...scan.series[0].slices[0], slice_key: "s1", image_url: "images/s1.jpg", dicom_url: "dicom/s1.dcm", instance_number: 2});
+  for (const [index, slice] of [[0, "s0"], [2, "s1"]]) {
+    data.cases[index].model_input = {series_key: "sag", layers: [{roi_layer: 5, slice_key: slice, padding: false}]};
+    data.cases[index].overview_url = `overviews/${slice}.jpg`;
+  }
+  const app = harness({"data/index.json": data, "api/uploads": library, "data/patients/patient-one.json": scan});
+  try {
+    await settle();
+    const before = app.elements.get("predictions").textContent;
+    await app.elements.get("level-focus").children.find((child) => child.dataset.level === "L5-S1").fire("click");
+    const query = new URL(app.window.location.href).searchParams;
+    assert.equal(query.get("case"), "case-2");
+    assert.equal(query.get("slice"), "s1");
+    assert.match(app.elements.get("overview-link").href, /overviews\/s1\.jpg$/);
+    assert.equal(app.elements.get("level-focus").children.find((child) => child.dataset.level === "L5-S1").attributes["aria-pressed"], "true");
+    assert.equal(app.elements.get("predictions").textContent, before);
+  } finally { app.close(); }
+});
+
+test("uploaded studies keep their own two targets without inheriting RSNA reference labels", async () => {
+  const uploaded = {upload_id: "upload-synthetic", status: "completed", created_at_utc: "2026-10-26T13:57:00Z", n_slices: 1};
+  const detail = {...uploaded, patient: patient("uploaded-patient"), targets: [
+    {level: "L4-L5", status: "ok", prediction: 1, probabilities: [0.1, 0.8, 0.1]},
+    {level: "L5-S1", status: "not_assessed", prediction: null, probabilities: null, reason: "missing_vertebra:S1"}
+  ]};
+  const app = harness({"data/index.json": pairedCollection(), "api/uploads": {...library, uploads: [uploaded]}, "api/uploads/upload-synthetic": detail}, "https://review.example/r/private-token/?view=uploads&upload=upload-synthetic");
+  try {
+    await settle();
+    const cards = levelCards(app);
+    assert.deepEqual([...cards.keys()], ["L4-L5", "L5-S1"]);
+    assert.equal(descendant(cards.get("L4-L5"), "prediction-grade").textContent, "Умеренный стеноз");
+    assert.equal(descendant(cards.get("L5-S1"), "prediction-grade").textContent, "Не оценено");
+    assert.doesNotMatch(app.elements.get("predictions").textContent, /RSNA/);
+    assert.equal(app.elements.get("reference-card").hidden, true);
+    assert.equal(app.elements.get("level-focus-panel").hidden, true);
   } finally { app.close(); }
 });
