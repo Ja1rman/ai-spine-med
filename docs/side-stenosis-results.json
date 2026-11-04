@@ -1,0 +1,5725 @@
+{
+  "protocol_sha256": "77eb404c3fff5251baf092323c89aad03afbce33085d1b13ca01bd58125b7d51",
+  "test_evaluated": false,
+  "conditions": {
+    "foraminal": {
+      "majority_train": {
+        "overall": {
+          "requested": 1188,
+          "assessed": 1176,
+          "known_references": 1186,
+          "known_and_assessed": 1174,
+          "class_counts_known": [
+            737,
+            343,
+            106
+          ],
+          "macro_f1": 0.25538623226484497,
+          "confusion": [
+            [
+              729,
+              0,
+              0
+            ],
+            [
+              341,
+              0,
+              0
+            ],
+            [
+              104,
+              0,
+              0
+            ]
+          ],
+          "severe_total": 106,
+          "severe_correct": 0,
+          "severe_to_normal": 104,
+          "severe_to_moderate": 0,
+          "severe_unassessed": 2,
+          "failure_reasons": {
+            "missing_vertebra:S1": 8,
+            "missing_vertebra:L4,L5": 2,
+            "missing_vertebra:L5,S1": 2
+          }
+        },
+        "by_level": {
+          "L4-L5": {
+            "requested": 594,
+            "assessed": 592,
+            "known_references": 593,
+            "known_and_assessed": 591,
+            "class_counts_known": [
+              357,
+              192,
+              44
+            ],
+            "macro_f1": 0.2501761804087385,
+            "confusion": [
+              [
+                355,
+                0,
+                0
+              ],
+              [
+                192,
+                0,
+                0
+              ],
+              [
+                44,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 44,
+            "severe_correct": 0,
+            "severe_to_normal": 44,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "missing_vertebra:L4,L5": 2
+            }
+          },
+          "L5-S1": {
+            "requested": 594,
+            "assessed": 584,
+            "known_references": 593,
+            "known_and_assessed": 583,
+            "class_counts_known": [
+              380,
+              151,
+              62
+            ],
+            "macro_f1": 0.260536398467433,
+            "confusion": [
+              [
+                374,
+                0,
+                0
+              ],
+              [
+                149,
+                0,
+                0
+              ],
+              [
+                60,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 62,
+            "severe_correct": 0,
+            "severe_to_normal": 60,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 2,
+            "failure_reasons": {
+              "missing_vertebra:S1": 8,
+              "missing_vertebra:L5,S1": 2
+            }
+          }
+        },
+        "by_level_side": {
+          "L4-L5:left": {
+            "requested": 297,
+            "assessed": 296,
+            "known_references": 297,
+            "known_and_assessed": 296,
+            "class_counts_known": [
+              177,
+              102,
+              18
+            ],
+            "macro_f1": 0.24858757062146894,
+            "confusion": [
+              [
+                176,
+                0,
+                0
+              ],
+              [
+                102,
+                0,
+                0
+              ],
+              [
+                18,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 18,
+            "severe_correct": 0,
+            "severe_to_normal": 18,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "missing_vertebra:L4,L5": 1
+            }
+          },
+          "L4-L5:right": {
+            "requested": 297,
+            "assessed": 296,
+            "known_references": 296,
+            "known_and_assessed": 295,
+            "class_counts_known": [
+              180,
+              90,
+              26
+            ],
+            "macro_f1": 0.2517580872011252,
+            "confusion": [
+              [
+                179,
+                0,
+                0
+              ],
+              [
+                90,
+                0,
+                0
+              ],
+              [
+                26,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 26,
+            "severe_correct": 0,
+            "severe_to_normal": 26,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "missing_vertebra:L4,L5": 1
+            }
+          },
+          "L5-S1:left": {
+            "requested": 297,
+            "assessed": 292,
+            "known_references": 297,
+            "known_and_assessed": 292,
+            "class_counts_known": [
+              180,
+              85,
+              32
+            ],
+            "macro_f1": 0.2515991471215352,
+            "confusion": [
+              [
+                177,
+                0,
+                0
+              ],
+              [
+                85,
+                0,
+                0
+              ],
+              [
+                30,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 32,
+            "severe_correct": 0,
+            "severe_to_normal": 30,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 2,
+            "failure_reasons": {
+              "missing_vertebra:S1": 4,
+              "missing_vertebra:L5,S1": 1
+            }
+          },
+          "L5-S1:right": {
+            "requested": 297,
+            "assessed": 292,
+            "known_references": 296,
+            "known_and_assessed": 291,
+            "class_counts_known": [
+              200,
+              66,
+              30
+            ],
+            "macro_f1": 0.26912568306010926,
+            "confusion": [
+              [
+                197,
+                0,
+                0
+              ],
+              [
+                64,
+                0,
+                0
+              ],
+              [
+                30,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 30,
+            "severe_correct": 0,
+            "severe_to_normal": 30,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "missing_vertebra:S1": 4,
+              "missing_vertebra:L5,S1": 1
+            }
+          }
+        }
+      },
+      "architectures": {
+        "linear": {
+          "seeds": [
+            {
+              "seed": 42,
+              "best_epoch": 5,
+              "trained_epochs": 10,
+              "training_seconds": 0.19175358302891254,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.5049429776129899,
+                  "confusion": [
+                    [
+                      552,
+                      134,
+                      43
+                    ],
+                    [
+                      143,
+                      150,
+                      48
+                    ],
+                    [
+                      26,
+                      43,
+                      35
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 35,
+                  "severe_to_normal": 26,
+                  "severe_to_moderate": 43,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.4761020328308707,
+                    "confusion": [
+                      [
+                        253,
+                        81,
+                        21
+                      ],
+                      [
+                        80,
+                        89,
+                        23
+                      ],
+                      [
+                        9,
+                        23,
+                        12
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 12,
+                    "severe_to_normal": 9,
+                    "severe_to_moderate": 23,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5263660889046273,
+                    "confusion": [
+                      [
+                        299,
+                        53,
+                        22
+                      ],
+                      [
+                        63,
+                        61,
+                        25
+                      ],
+                      [
+                        17,
+                        20,
+                        23
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 23,
+                    "severe_to_normal": 17,
+                    "severe_to_moderate": 20,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.47209028538951814,
+                    "confusion": [
+                      [
+                        129,
+                        34,
+                        13
+                      ],
+                      [
+                        47,
+                        45,
+                        10
+                      ],
+                      [
+                        5,
+                        8,
+                        5
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 5,
+                    "severe_to_normal": 5,
+                    "severe_to_moderate": 8,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.47921687193395873,
+                    "confusion": [
+                      [
+                        124,
+                        47,
+                        8
+                      ],
+                      [
+                        33,
+                        44,
+                        13
+                      ],
+                      [
+                        4,
+                        15,
+                        7
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 7,
+                    "severe_to_normal": 4,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.5436380042013845,
+                    "confusion": [
+                      [
+                        149,
+                        18,
+                        10
+                      ],
+                      [
+                        36,
+                        31,
+                        18
+                      ],
+                      [
+                        8,
+                        8,
+                        14
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 14,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 8,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.5063888532374,
+                    "confusion": [
+                      [
+                        150,
+                        35,
+                        12
+                      ],
+                      [
+                        27,
+                        30,
+                        7
+                      ],
+                      [
+                        9,
+                        12,
+                        9
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 9,
+                    "severe_to_normal": 9,
+                    "severe_to_moderate": 12,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.4824507661768276
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.47940234905666124
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.4620871604694214
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.4671557925961953
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5049429776129899
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.4902404032641268
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.4858247883890979
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.4890406205479329
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.4884173801260007
+                },
+                {
+                  "epoch": 10,
+                  "validation_macro_f1": 0.5015629680903876
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "9f7da774c934a6b4a677c5d0fb243d985c44332eaaf56193eb2dc0b01a182a17",
+              "predictions_sha256": "9702f3dd785d6d4880becfca9f5c726f511b623b94a2b265ce366f090eaa5fa6",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 2024,
+              "best_epoch": 7,
+              "trained_epochs": 12,
+              "training_seconds": 0.20548724988475442,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.5072865333953199,
+                  "confusion": [
+                    [
+                      540,
+                      152,
+                      37
+                    ],
+                    [
+                      148,
+                      138,
+                      55
+                    ],
+                    [
+                      17,
+                      44,
+                      43
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 43,
+                  "severe_to_normal": 17,
+                  "severe_to_moderate": 44,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.4950065864044359,
+                    "confusion": [
+                      [
+                        256,
+                        78,
+                        21
+                      ],
+                      [
+                        84,
+                        82,
+                        26
+                      ],
+                      [
+                        7,
+                        20,
+                        17
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 17,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 20,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5141799375782904,
+                    "confusion": [
+                      [
+                        284,
+                        74,
+                        16
+                      ],
+                      [
+                        64,
+                        56,
+                        29
+                      ],
+                      [
+                        10,
+                        24,
+                        26
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 26,
+                    "severe_to_normal": 10,
+                    "severe_to_moderate": 24,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.5069308333724672,
+                    "confusion": [
+                      [
+                        129,
+                        37,
+                        10
+                      ],
+                      [
+                        50,
+                        40,
+                        12
+                      ],
+                      [
+                        4,
+                        5,
+                        9
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 9,
+                    "severe_to_normal": 4,
+                    "severe_to_moderate": 5,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.48617324421912395,
+                    "confusion": [
+                      [
+                        127,
+                        41,
+                        11
+                      ],
+                      [
+                        34,
+                        42,
+                        14
+                      ],
+                      [
+                        3,
+                        15,
+                        8
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 8,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.5477957981001907,
+                    "confusion": [
+                      [
+                        144,
+                        24,
+                        9
+                      ],
+                      [
+                        35,
+                        34,
+                        16
+                      ],
+                      [
+                        2,
+                        14,
+                        14
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 14,
+                    "severe_to_normal": 2,
+                    "severe_to_moderate": 14,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.4790432462705083,
+                    "confusion": [
+                      [
+                        140,
+                        50,
+                        7
+                      ],
+                      [
+                        29,
+                        22,
+                        13
+                      ],
+                      [
+                        8,
+                        10,
+                        12
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 12,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 10,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.47145450631391506
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.4698688152577575
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.478712227485413
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.4935801656336267
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.48369969612300906
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.48988371084353427
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.5072865333953199
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.48715541065187723
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.486476917457446
+                },
+                {
+                  "epoch": 10,
+                  "validation_macro_f1": 0.4945194866836548
+                },
+                {
+                  "epoch": 11,
+                  "validation_macro_f1": 0.47651487213673843
+                },
+                {
+                  "epoch": 12,
+                  "validation_macro_f1": 0.48282695052884944
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "b68498a9ce8d7df87286331b0e101a2b6061088fd337c7e3dbd97cd8f21deed1",
+              "predictions_sha256": "e2bea8f0156ba32c1b60fa8d9e148ce47f21d0cbbac7e79299f92e48cae329d4",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 3407,
+              "best_epoch": 4,
+              "trained_epochs": 9,
+              "training_seconds": 0.15253004198893905,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.49447335229209877,
+                  "confusion": [
+                    [
+                      526,
+                      166,
+                      37
+                    ],
+                    [
+                      129,
+                      169,
+                      43
+                    ],
+                    [
+                      14,
+                      61,
+                      29
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 29,
+                  "severe_to_normal": 14,
+                  "severe_to_moderate": 61,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.48239103652921117,
+                    "confusion": [
+                      [
+                        242,
+                        95,
+                        18
+                      ],
+                      [
+                        70,
+                        99,
+                        23
+                      ],
+                      [
+                        6,
+                        26,
+                        12
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 12,
+                    "severe_to_normal": 6,
+                    "severe_to_moderate": 26,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5024403183023872,
+                    "confusion": [
+                      [
+                        284,
+                        71,
+                        19
+                      ],
+                      [
+                        59,
+                        70,
+                        20
+                      ],
+                      [
+                        8,
+                        35,
+                        17
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 17,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 35,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.5064429353906622,
+                    "confusion": [
+                      [
+                        115,
+                        52,
+                        9
+                      ],
+                      [
+                        34,
+                        56,
+                        12
+                      ],
+                      [
+                        3,
+                        8,
+                        7
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 7,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 8,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.4585364281675617,
+                    "confusion": [
+                      [
+                        127,
+                        43,
+                        9
+                      ],
+                      [
+                        36,
+                        43,
+                        11
+                      ],
+                      [
+                        3,
+                        18,
+                        5
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 5,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 18,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.5121056710683918,
+                    "confusion": [
+                      [
+                        144,
+                        24,
+                        9
+                      ],
+                      [
+                        37,
+                        38,
+                        10
+                      ],
+                      [
+                        3,
+                        19,
+                        8
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 8,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 19,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.49227707942130716,
+                    "confusion": [
+                      [
+                        140,
+                        47,
+                        10
+                      ],
+                      [
+                        22,
+                        32,
+                        10
+                      ],
+                      [
+                        5,
+                        16,
+                        9
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 9,
+                    "severe_to_normal": 5,
+                    "severe_to_moderate": 16,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.46242187528231815
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.4670153784842151
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.47430442026962166
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.49447335229209877
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.4890444361744532
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.48807972775552216
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.4709928655821816
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.44882201246970466
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.4842861287519584
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "b1c11728bd16aaae1db6da0d1cd2ef4fee1d036770c5fa90f27023d2fc81e4f1",
+              "predictions_sha256": "cf1370b075439292bb10d14b3f5658a16342e51bcf50e2b607d225dc42c8bbd7",
+              "checkpoint_reload_max_abs_error": 0
+            }
+          ],
+          "ensemble": {
+            "overall": {
+              "requested": 1188,
+              "assessed": 1176,
+              "known_references": 1186,
+              "known_and_assessed": 1174,
+              "class_counts_known": [
+                737,
+                343,
+                106
+              ],
+              "macro_f1": 0.5022597582157705,
+              "confusion": [
+                [
+                  545,
+                  151,
+                  33
+                ],
+                [
+                  145,
+                  153,
+                  43
+                ],
+                [
+                  18,
+                  53,
+                  33
+                ]
+              ],
+              "severe_total": 106,
+              "severe_correct": 33,
+              "severe_to_normal": 18,
+              "severe_to_moderate": 53,
+              "severe_unassessed": 2,
+              "failure_reasons": {
+                "missing_vertebra:S1": 8,
+                "missing_vertebra:L4,L5": 2,
+                "missing_vertebra:L5,S1": 2
+              }
+            },
+            "by_level": {
+              "L4-L5": {
+                "requested": 594,
+                "assessed": 592,
+                "known_references": 593,
+                "known_and_assessed": 591,
+                "class_counts_known": [
+                  357,
+                  192,
+                  44
+                ],
+                "macro_f1": 0.47521983516244637,
+                "confusion": [
+                  [
+                    249,
+                    88,
+                    18
+                  ],
+                  [
+                    85,
+                    83,
+                    24
+                  ],
+                  [
+                    8,
+                    22,
+                    14
+                  ]
+                ],
+                "severe_total": 44,
+                "severe_correct": 14,
+                "severe_to_normal": 8,
+                "severe_to_moderate": 22,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 2
+                }
+              },
+              "L5-S1": {
+                "requested": 594,
+                "assessed": 584,
+                "known_references": 593,
+                "known_and_assessed": 583,
+                "class_counts_known": [
+                  380,
+                  151,
+                  62
+                ],
+                "macro_f1": 0.5278558436295439,
+                "confusion": [
+                  [
+                    296,
+                    63,
+                    15
+                  ],
+                  [
+                    60,
+                    70,
+                    19
+                  ],
+                  [
+                    10,
+                    31,
+                    19
+                  ]
+                ],
+                "severe_total": 62,
+                "severe_correct": 19,
+                "severe_to_normal": 10,
+                "severe_to_moderate": 31,
+                "severe_unassessed": 2,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 8,
+                  "missing_vertebra:L5,S1": 2
+                }
+              }
+            },
+            "by_level_side": {
+              "L4-L5:left": {
+                "requested": 297,
+                "assessed": 296,
+                "known_references": 297,
+                "known_and_assessed": 296,
+                "class_counts_known": [
+                  177,
+                  102,
+                  18
+                ],
+                "macro_f1": 0.4909599147897021,
+                "confusion": [
+                  [
+                    121,
+                    44,
+                    11
+                  ],
+                  [
+                    49,
+                    43,
+                    10
+                  ],
+                  [
+                    4,
+                    6,
+                    8
+                  ]
+                ],
+                "severe_total": 18,
+                "severe_correct": 8,
+                "severe_to_normal": 4,
+                "severe_to_moderate": 6,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 1
+                }
+              },
+              "L4-L5:right": {
+                "requested": 297,
+                "assessed": 296,
+                "known_references": 296,
+                "known_and_assessed": 295,
+                "class_counts_known": [
+                  180,
+                  90,
+                  26
+                ],
+                "macro_f1": 0.46173996243395177,
+                "confusion": [
+                  [
+                    128,
+                    44,
+                    7
+                  ],
+                  [
+                    36,
+                    40,
+                    14
+                  ],
+                  [
+                    4,
+                    16,
+                    6
+                  ]
+                ],
+                "severe_total": 26,
+                "severe_correct": 6,
+                "severe_to_normal": 4,
+                "severe_to_moderate": 16,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 1
+                }
+              },
+              "L5-S1:left": {
+                "requested": 297,
+                "assessed": 292,
+                "known_references": 297,
+                "known_and_assessed": 292,
+                "class_counts_known": [
+                  180,
+                  85,
+                  32
+                ],
+                "macro_f1": 0.5524274945089852,
+                "confusion": [
+                  [
+                    147,
+                    21,
+                    9
+                  ],
+                  [
+                    35,
+                    39,
+                    11
+                  ],
+                  [
+                    3,
+                    16,
+                    11
+                  ]
+                ],
+                "severe_total": 32,
+                "severe_correct": 11,
+                "severe_to_normal": 3,
+                "severe_to_moderate": 16,
+                "severe_unassessed": 2,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 4,
+                  "missing_vertebra:L5,S1": 1
+                }
+              },
+              "L5-S1:right": {
+                "requested": 297,
+                "assessed": 292,
+                "known_references": 296,
+                "known_and_assessed": 291,
+                "class_counts_known": [
+                  200,
+                  66,
+                  30
+                ],
+                "macro_f1": 0.5013156109647338,
+                "confusion": [
+                  [
+                    149,
+                    42,
+                    6
+                  ],
+                  [
+                    25,
+                    31,
+                    8
+                  ],
+                  [
+                    7,
+                    15,
+                    8
+                  ]
+                ],
+                "severe_total": 30,
+                "severe_correct": 8,
+                "severe_to_normal": 7,
+                "severe_to_moderate": 15,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 4,
+                  "missing_vertebra:L5,S1": 1
+                }
+              }
+            }
+          },
+          "mean_seed_macro_f1": 0.5022342877668029,
+          "std_seed_macro_f1": 0.006822547398744365,
+          "ensemble_sha256": "04fbed598b5bf3177c2ec3cf6da87e494cae8dfaded8c7a4f056f6014eb2486b"
+        },
+        "mlp": {
+          "seeds": [
+            {
+              "seed": 42,
+              "best_epoch": 1,
+              "trained_epochs": 6,
+              "training_seconds": 0.13247366598807275,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.5043113936569755,
+                  "confusion": [
+                    [
+                      563,
+                      131,
+                      35
+                    ],
+                    [
+                      155,
+                      141,
+                      45
+                    ],
+                    [
+                      18,
+                      51,
+                      35
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 35,
+                  "severe_to_normal": 18,
+                  "severe_to_moderate": 51,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.4924269522807648,
+                    "confusion": [
+                      [
+                        287,
+                        51,
+                        17
+                      ],
+                      [
+                        103,
+                        63,
+                        26
+                      ],
+                      [
+                        10,
+                        17,
+                        17
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 17,
+                    "severe_to_normal": 10,
+                    "severe_to_moderate": 17,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5159954242861221,
+                    "confusion": [
+                      [
+                        276,
+                        80,
+                        18
+                      ],
+                      [
+                        52,
+                        78,
+                        19
+                      ],
+                      [
+                        8,
+                        34,
+                        18
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 18,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 34,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.5146206896551724,
+                    "confusion": [
+                      [
+                        144,
+                        29,
+                        3
+                      ],
+                      [
+                        51,
+                        47,
+                        4
+                      ],
+                      [
+                        4,
+                        10,
+                        4
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 4,
+                    "severe_to_normal": 4,
+                    "severe_to_moderate": 10,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.44544509421702405,
+                    "confusion": [
+                      [
+                        143,
+                        22,
+                        14
+                      ],
+                      [
+                        52,
+                        16,
+                        22
+                      ],
+                      [
+                        6,
+                        7,
+                        13
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 13,
+                    "severe_to_normal": 6,
+                    "severe_to_moderate": 7,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.525451327288258,
+                    "confusion": [
+                      [
+                        132,
+                        35,
+                        10
+                      ],
+                      [
+                        31,
+                        41,
+                        13
+                      ],
+                      [
+                        2,
+                        17,
+                        11
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 11,
+                    "severe_to_normal": 2,
+                    "severe_to_moderate": 17,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.5037020765450307,
+                    "confusion": [
+                      [
+                        144,
+                        45,
+                        8
+                      ],
+                      [
+                        21,
+                        37,
+                        6
+                      ],
+                      [
+                        6,
+                        17,
+                        7
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 7,
+                    "severe_to_normal": 6,
+                    "severe_to_moderate": 17,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.5043113936569755
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.4846590333620326
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.46422610971998785
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.4769732030822998
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.48019175660020735
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.4862555449657006
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "97c4e60aaf44215425adfef32568f6605f958ef24cc4a5de0793d1c787b03e2a",
+              "predictions_sha256": "2cd81834b183bc9ab903bf4817468342e1bce692cf0d5501537a62bb69ad5595",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 2024,
+              "best_epoch": 14,
+              "trained_epochs": 19,
+              "training_seconds": 0.4305431249085814,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.5052897054802933,
+                  "confusion": [
+                    [
+                      543,
+                      155,
+                      31
+                    ],
+                    [
+                      144,
+                      156,
+                      41
+                    ],
+                    [
+                      20,
+                      51,
+                      33
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 33,
+                  "severe_to_normal": 20,
+                  "severe_to_moderate": 51,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.5024905193683652,
+                    "confusion": [
+                      [
+                        251,
+                        96,
+                        8
+                      ],
+                      [
+                        85,
+                        93,
+                        14
+                      ],
+                      [
+                        6,
+                        25,
+                        13
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 13,
+                    "severe_to_normal": 6,
+                    "severe_to_moderate": 25,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5073972787098633,
+                    "confusion": [
+                      [
+                        292,
+                        59,
+                        23
+                      ],
+                      [
+                        59,
+                        63,
+                        27
+                      ],
+                      [
+                        14,
+                        26,
+                        20
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 20,
+                    "severe_to_normal": 14,
+                    "severe_to_moderate": 26,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.4773824479958097,
+                    "confusion": [
+                      [
+                        117,
+                        54,
+                        5
+                      ],
+                      [
+                        47,
+                        49,
+                        6
+                      ],
+                      [
+                        3,
+                        10,
+                        5
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 5,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 10,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.5244502289138016,
+                    "confusion": [
+                      [
+                        134,
+                        42,
+                        3
+                      ],
+                      [
+                        38,
+                        44,
+                        8
+                      ],
+                      [
+                        3,
+                        15,
+                        8
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 8,
+                    "severe_to_normal": 3,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.5196013597391899,
+                    "confusion": [
+                      [
+                        146,
+                        24,
+                        7
+                      ],
+                      [
+                        37,
+                        34,
+                        14
+                      ],
+                      [
+                        6,
+                        14,
+                        10
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 10,
+                    "severe_to_normal": 6,
+                    "severe_to_moderate": 14,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.4956608699352609,
+                    "confusion": [
+                      [
+                        146,
+                        35,
+                        16
+                      ],
+                      [
+                        22,
+                        29,
+                        13
+                      ],
+                      [
+                        8,
+                        12,
+                        10
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 10,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 12,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.4761704135133125
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.4704330512043544
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.4775457310679316
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.4813098128970165
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.47772370773739903
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.4842377595414032
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.4740860073625484
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.4832941135239748
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.4710865800053368
+                },
+                {
+                  "epoch": 10,
+                  "validation_macro_f1": 0.49108181328386485
+                },
+                {
+                  "epoch": 11,
+                  "validation_macro_f1": 0.4799095423929303
+                },
+                {
+                  "epoch": 12,
+                  "validation_macro_f1": 0.48517798278387597
+                },
+                {
+                  "epoch": 13,
+                  "validation_macro_f1": 0.5025295497035439
+                },
+                {
+                  "epoch": 14,
+                  "validation_macro_f1": 0.5052897054802933
+                },
+                {
+                  "epoch": 15,
+                  "validation_macro_f1": 0.49083171799866104
+                },
+                {
+                  "epoch": 16,
+                  "validation_macro_f1": 0.4976961090852403
+                },
+                {
+                  "epoch": 17,
+                  "validation_macro_f1": 0.4830162653438516
+                },
+                {
+                  "epoch": 18,
+                  "validation_macro_f1": 0.49219016657571624
+                },
+                {
+                  "epoch": 19,
+                  "validation_macro_f1": 0.500139300428526
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "44c0e6eca09c9e4683034133b17410eaa8698186285472b9994fec30d439ce5d",
+              "predictions_sha256": "578825e6f3419b0a65ad9426fc6e5df30d99681f4c448d05d5a1135562197f20",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 3407,
+              "best_epoch": 1,
+              "trained_epochs": 6,
+              "training_seconds": 0.13247324991971254,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1186,
+                  "known_and_assessed": 1174,
+                  "class_counts_known": [
+                    737,
+                    343,
+                    106
+                  ],
+                  "macro_f1": 0.4925968208607833,
+                  "confusion": [
+                    [
+                      566,
+                      138,
+                      25
+                    ],
+                    [
+                      160,
+                      141,
+                      40
+                    ],
+                    [
+                      16,
+                      59,
+                      29
+                    ]
+                  ],
+                  "severe_total": 106,
+                  "severe_correct": 29,
+                  "severe_to_normal": 16,
+                  "severe_to_moderate": 59,
+                  "severe_unassessed": 2,
+                  "failure_reasons": {
+                    "missing_vertebra:S1": 8,
+                    "missing_vertebra:L4,L5": 2,
+                    "missing_vertebra:L5,S1": 2
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 592,
+                    "known_references": 593,
+                    "known_and_assessed": 591,
+                    "class_counts_known": [
+                      357,
+                      192,
+                      44
+                    ],
+                    "macro_f1": 0.47256347150953615,
+                    "confusion": [
+                      [
+                        284,
+                        63,
+                        8
+                      ],
+                      [
+                        103,
+                        69,
+                        20
+                      ],
+                      [
+                        7,
+                        26,
+                        11
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 11,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 26,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 2
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 584,
+                    "known_references": 593,
+                    "known_and_assessed": 583,
+                    "class_counts_known": [
+                      380,
+                      151,
+                      62
+                    ],
+                    "macro_f1": 0.5106322942562599,
+                    "confusion": [
+                      [
+                        282,
+                        75,
+                        17
+                      ],
+                      [
+                        57,
+                        72,
+                        20
+                      ],
+                      [
+                        9,
+                        33,
+                        18
+                      ]
+                    ],
+                    "severe_total": 62,
+                    "severe_correct": 18,
+                    "severe_to_normal": 9,
+                    "severe_to_moderate": 33,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 8,
+                      "missing_vertebra:L5,S1": 2
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 297,
+                    "known_and_assessed": 296,
+                    "class_counts_known": [
+                      177,
+                      102,
+                      18
+                    ],
+                    "macro_f1": 0.4628211195012814,
+                    "confusion": [
+                      [
+                        146,
+                        25,
+                        5
+                      ],
+                      [
+                        61,
+                        31,
+                        10
+                      ],
+                      [
+                        2,
+                        11,
+                        5
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 5,
+                    "severe_to_normal": 2,
+                    "severe_to_moderate": 11,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 296,
+                    "known_references": 296,
+                    "known_and_assessed": 295,
+                    "class_counts_known": [
+                      180,
+                      90,
+                      26
+                    ],
+                    "macro_f1": 0.4815993092236186,
+                    "confusion": [
+                      [
+                        138,
+                        38,
+                        3
+                      ],
+                      [
+                        42,
+                        38,
+                        10
+                      ],
+                      [
+                        5,
+                        15,
+                        6
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 6,
+                    "severe_to_normal": 5,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:L4,L5": 1
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 297,
+                    "known_and_assessed": 292,
+                    "class_counts_known": [
+                      180,
+                      85,
+                      32
+                    ],
+                    "macro_f1": 0.5333926038822209,
+                    "confusion": [
+                      [
+                        144,
+                        30,
+                        3
+                      ],
+                      [
+                        37,
+                        41,
+                        7
+                      ],
+                      [
+                        4,
+                        18,
+                        8
+                      ]
+                    ],
+                    "severe_total": 32,
+                    "severe_correct": 8,
+                    "severe_to_normal": 4,
+                    "severe_to_moderate": 18,
+                    "severe_unassessed": 2,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 292,
+                    "known_references": 296,
+                    "known_and_assessed": 291,
+                    "class_counts_known": [
+                      200,
+                      66,
+                      30
+                    ],
+                    "macro_f1": 0.48839137645107794,
+                    "confusion": [
+                      [
+                        138,
+                        45,
+                        14
+                      ],
+                      [
+                        20,
+                        31,
+                        13
+                      ],
+                      [
+                        5,
+                        15,
+                        10
+                      ]
+                    ],
+                    "severe_total": 30,
+                    "severe_correct": 10,
+                    "severe_to_normal": 5,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "missing_vertebra:S1": 4,
+                      "missing_vertebra:L5,S1": 1
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.4925968208607833
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.48760574527086736
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.48240307797682364
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.48594950489725974
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.48093917382052975
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.47783366785359843
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  845,
+                  433,
+                  101
+                ],
+                [
+                  842,
+                  444,
+                  88
+                ],
+                [
+                  858,
+                  359,
+                  134
+                ],
+                [
+                  878,
+                  332,
+                  136
+                ]
+              ],
+              "checkpoint_sha256": "cc4acadf7df7825655c54007635e2b8bdcb342da401bb9b6b3104f000d5e2f15",
+              "predictions_sha256": "befc65ff72a0caee825869ce490f115a875ae2da95b6d9a453a05caea34e6d41",
+              "checkpoint_reload_max_abs_error": 0
+            }
+          ],
+          "ensemble": {
+            "overall": {
+              "requested": 1188,
+              "assessed": 1176,
+              "known_references": 1186,
+              "known_and_assessed": 1174,
+              "class_counts_known": [
+                737,
+                343,
+                106
+              ],
+              "macro_f1": 0.5007727217631992,
+              "confusion": [
+                [
+                  566,
+                  143,
+                  20
+                ],
+                [
+                  155,
+                  150,
+                  36
+                ],
+                [
+                  16,
+                  60,
+                  28
+                ]
+              ],
+              "severe_total": 106,
+              "severe_correct": 28,
+              "severe_to_normal": 16,
+              "severe_to_moderate": 60,
+              "severe_unassessed": 2,
+              "failure_reasons": {
+                "missing_vertebra:S1": 8,
+                "missing_vertebra:L4,L5": 2,
+                "missing_vertebra:L5,S1": 2
+              }
+            },
+            "by_level": {
+              "L4-L5": {
+                "requested": 594,
+                "assessed": 592,
+                "known_references": 593,
+                "known_and_assessed": 591,
+                "class_counts_known": [
+                  357,
+                  192,
+                  44
+                ],
+                "macro_f1": 0.4723079429196982,
+                "confusion": [
+                  [
+                    277,
+                    71,
+                    7
+                  ],
+                  [
+                    100,
+                    75,
+                    17
+                  ],
+                  [
+                    6,
+                    28,
+                    10
+                  ]
+                ],
+                "severe_total": 44,
+                "severe_correct": 10,
+                "severe_to_normal": 6,
+                "severe_to_moderate": 28,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 2
+                }
+              },
+              "L5-S1": {
+                "requested": 594,
+                "assessed": 584,
+                "known_references": 593,
+                "known_and_assessed": 583,
+                "class_counts_known": [
+                  380,
+                  151,
+                  62
+                ],
+                "macro_f1": 0.5261819481331677,
+                "confusion": [
+                  [
+                    289,
+                    72,
+                    13
+                  ],
+                  [
+                    55,
+                    75,
+                    19
+                  ],
+                  [
+                    10,
+                    32,
+                    18
+                  ]
+                ],
+                "severe_total": 62,
+                "severe_correct": 18,
+                "severe_to_normal": 10,
+                "severe_to_moderate": 32,
+                "severe_unassessed": 2,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 8,
+                  "missing_vertebra:L5,S1": 2
+                }
+              }
+            },
+            "by_level_side": {
+              "L4-L5:left": {
+                "requested": 297,
+                "assessed": 296,
+                "known_references": 297,
+                "known_and_assessed": 296,
+                "class_counts_known": [
+                  177,
+                  102,
+                  18
+                ],
+                "macro_f1": 0.47756396246758165,
+                "confusion": [
+                  [
+                    136,
+                    36,
+                    4
+                  ],
+                  [
+                    55,
+                    42,
+                    5
+                  ],
+                  [
+                    2,
+                    12,
+                    4
+                  ]
+                ],
+                "severe_total": 18,
+                "severe_correct": 4,
+                "severe_to_normal": 2,
+                "severe_to_moderate": 12,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 1
+                }
+              },
+              "L4-L5:right": {
+                "requested": 297,
+                "assessed": 296,
+                "known_references": 296,
+                "known_and_assessed": 295,
+                "class_counts_known": [
+                  180,
+                  90,
+                  26
+                ],
+                "macro_f1": 0.46628571201339303,
+                "confusion": [
+                  [
+                    141,
+                    35,
+                    3
+                  ],
+                  [
+                    45,
+                    33,
+                    12
+                  ],
+                  [
+                    4,
+                    16,
+                    6
+                  ]
+                ],
+                "severe_total": 26,
+                "severe_correct": 6,
+                "severe_to_normal": 4,
+                "severe_to_moderate": 16,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:L4,L5": 1
+                }
+              },
+              "L5-S1:left": {
+                "requested": 297,
+                "assessed": 292,
+                "known_references": 297,
+                "known_and_assessed": 292,
+                "class_counts_known": [
+                  180,
+                  85,
+                  32
+                ],
+                "macro_f1": 0.5726727720769428,
+                "confusion": [
+                  [
+                    144,
+                    29,
+                    4
+                  ],
+                  [
+                    34,
+                    43,
+                    8
+                  ],
+                  [
+                    5,
+                    14,
+                    11
+                  ]
+                ],
+                "severe_total": 32,
+                "severe_correct": 11,
+                "severe_to_normal": 5,
+                "severe_to_moderate": 14,
+                "severe_unassessed": 2,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 4,
+                  "missing_vertebra:L5,S1": 1
+                }
+              },
+              "L5-S1:right": {
+                "requested": 297,
+                "assessed": 292,
+                "known_references": 296,
+                "known_and_assessed": 291,
+                "class_counts_known": [
+                  200,
+                  66,
+                  30
+                ],
+                "macro_f1": 0.48043360848349986,
+                "confusion": [
+                  [
+                    145,
+                    43,
+                    9
+                  ],
+                  [
+                    21,
+                    32,
+                    11
+                  ],
+                  [
+                    5,
+                    18,
+                    7
+                  ]
+                ],
+                "severe_total": 30,
+                "severe_correct": 7,
+                "severe_to_normal": 5,
+                "severe_to_moderate": 18,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "missing_vertebra:S1": 4,
+                  "missing_vertebra:L5,S1": 1
+                }
+              }
+            }
+          },
+          "mean_seed_macro_f1": 0.5007326399993507,
+          "std_seed_macro_f1": 0.007062785448923134,
+          "ensemble_sha256": "221a43bb0c7d051f913b83bdcff0a931a18c80c6a5c48515365bc0d75f227780"
+        }
+      }
+    },
+    "subarticular": {
+      "majority_train": {
+        "overall": {
+          "requested": 1188,
+          "assessed": 1176,
+          "known_references": 1185,
+          "known_and_assessed": 1176,
+          "class_counts_known": [
+            684,
+            316,
+            185
+          ],
+          "macro_f1": 0.24470757086472908,
+          "confusion": [
+            [
+              682,
+              0,
+              0
+            ],
+            [
+              309,
+              0,
+              0
+            ],
+            [
+              185,
+              0,
+              0
+            ]
+          ],
+          "severe_total": 185,
+          "severe_correct": 0,
+          "severe_to_normal": 185,
+          "severe_to_moderate": 0,
+          "severe_unassessed": 0,
+          "failure_reasons": {
+            "not_axial_within_supported_obliquity": 12
+          }
+        },
+        "by_level": {
+          "L4-L5": {
+            "requested": 594,
+            "assessed": 588,
+            "known_references": 594,
+            "known_and_assessed": 588,
+            "class_counts_known": [
+              253,
+              200,
+              141
+            ],
+            "macro_f1": 0.19999999999999998,
+            "confusion": [
+              [
+                252,
+                0,
+                0
+              ],
+              [
+                195,
+                0,
+                0
+              ],
+              [
+                141,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 141,
+            "severe_correct": 0,
+            "severe_to_normal": 141,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 6
+            }
+          },
+          "L5-S1": {
+            "requested": 594,
+            "assessed": 588,
+            "known_references": 591,
+            "known_and_assessed": 588,
+            "class_counts_known": [
+              431,
+              116,
+              44
+            ],
+            "macro_f1": 0.2815979043876883,
+            "confusion": [
+              [
+                430,
+                0,
+                0
+              ],
+              [
+                114,
+                0,
+                0
+              ],
+              [
+                44,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 44,
+            "severe_correct": 0,
+            "severe_to_normal": 44,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 6
+            }
+          }
+        },
+        "by_level_side": {
+          "L4-L5:left": {
+            "requested": 297,
+            "assessed": 294,
+            "known_references": 297,
+            "known_and_assessed": 294,
+            "class_counts_known": [
+              132,
+              88,
+              77
+            ],
+            "macro_f1": 0.20549019607843136,
+            "confusion": [
+              [
+                131,
+                0,
+                0
+              ],
+              [
+                86,
+                0,
+                0
+              ],
+              [
+                77,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 77,
+            "severe_correct": 0,
+            "severe_to_normal": 77,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 3
+            }
+          },
+          "L4-L5:right": {
+            "requested": 297,
+            "assessed": 294,
+            "known_references": 297,
+            "known_and_assessed": 294,
+            "class_counts_known": [
+              121,
+              112,
+              64
+            ],
+            "macro_f1": 0.19437751004016066,
+            "confusion": [
+              [
+                121,
+                0,
+                0
+              ],
+              [
+                109,
+                0,
+                0
+              ],
+              [
+                64,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 64,
+            "severe_correct": 0,
+            "severe_to_normal": 64,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 3
+            }
+          },
+          "L5-S1:left": {
+            "requested": 297,
+            "assessed": 294,
+            "known_references": 295,
+            "known_and_assessed": 294,
+            "class_counts_known": [
+              215,
+              62,
+              18
+            ],
+            "macro_f1": 0.2815979043876883,
+            "confusion": [
+              [
+                215,
+                0,
+                0
+              ],
+              [
+                61,
+                0,
+                0
+              ],
+              [
+                18,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 18,
+            "severe_correct": 0,
+            "severe_to_normal": 18,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 3
+            }
+          },
+          "L5-S1:right": {
+            "requested": 297,
+            "assessed": 294,
+            "known_references": 296,
+            "known_and_assessed": 294,
+            "class_counts_known": [
+              216,
+              54,
+              26
+            ],
+            "macro_f1": 0.2815979043876883,
+            "confusion": [
+              [
+                215,
+                0,
+                0
+              ],
+              [
+                53,
+                0,
+                0
+              ],
+              [
+                26,
+                0,
+                0
+              ]
+            ],
+            "severe_total": 26,
+            "severe_correct": 0,
+            "severe_to_normal": 26,
+            "severe_to_moderate": 0,
+            "severe_unassessed": 0,
+            "failure_reasons": {
+              "not_axial_within_supported_obliquity": 3
+            }
+          }
+        }
+      },
+      "architectures": {
+        "linear": {
+          "seeds": [
+            {
+              "seed": 42,
+              "best_epoch": 4,
+              "trained_epochs": 9,
+              "training_seconds": 0.17227700003422797,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5064420367535593,
+                  "confusion": [
+                    [
+                      471,
+                      136,
+                      75
+                    ],
+                    [
+                      110,
+                      116,
+                      83
+                    ],
+                    [
+                      36,
+                      58,
+                      91
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 91,
+                  "severe_to_normal": 36,
+                  "severe_to_moderate": 58,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5407318114684067,
+                    "confusion": [
+                      [
+                        171,
+                        55,
+                        26
+                      ],
+                      [
+                        57,
+                        77,
+                        61
+                      ],
+                      [
+                        19,
+                        42,
+                        80
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 80,
+                    "severe_to_normal": 19,
+                    "severe_to_moderate": 42,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.41220105820105823,
+                    "confusion": [
+                      [
+                        300,
+                        81,
+                        49
+                      ],
+                      [
+                        53,
+                        39,
+                        22
+                      ],
+                      [
+                        17,
+                        16,
+                        11
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 11,
+                    "severe_to_normal": 17,
+                    "severe_to_moderate": 16,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.5510634068773603,
+                    "confusion": [
+                      [
+                        91,
+                        25,
+                        15
+                      ],
+                      [
+                        27,
+                        29,
+                        30
+                      ],
+                      [
+                        11,
+                        16,
+                        50
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 50,
+                    "severe_to_normal": 11,
+                    "severe_to_moderate": 16,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.5204455876286516,
+                    "confusion": [
+                      [
+                        80,
+                        30,
+                        11
+                      ],
+                      [
+                        30,
+                        48,
+                        31
+                      ],
+                      [
+                        8,
+                        26,
+                        30
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 30,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 26,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.4223661112550002,
+                    "confusion": [
+                      [
+                        154,
+                        32,
+                        29
+                      ],
+                      [
+                        29,
+                        19,
+                        13
+                      ],
+                      [
+                        7,
+                        5,
+                        6
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 6,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 5,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.40221968423167626,
+                    "confusion": [
+                      [
+                        146,
+                        49,
+                        20
+                      ],
+                      [
+                        24,
+                        20,
+                        9
+                      ],
+                      [
+                        10,
+                        11,
+                        5
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 5,
+                    "severe_to_normal": 10,
+                    "severe_to_moderate": 11,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.4985841475517329
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.48847756288977634
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.5052358986215411
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.5064420367535593
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5048541504612799
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.5042962744905636
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.49440435608373295
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.4905558052371391
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.4841348543861244
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "528dab29cc0ce207aaae5b6bfac58e39b0463983858d6dc4998a16194f0ea8a2",
+              "predictions_sha256": "cd5a4ddc4c7146d2c87035741448260a67876b64bee4361443e05168ed5ba890",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 2024,
+              "best_epoch": 4,
+              "trained_epochs": 9,
+              "training_seconds": 0.1685422088485211,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5209575863683283,
+                  "confusion": [
+                    [
+                      475,
+                      132,
+                      75
+                    ],
+                    [
+                      114,
+                      111,
+                      84
+                    ],
+                    [
+                      34,
+                      47,
+                      104
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 104,
+                  "severe_to_normal": 34,
+                  "severe_to_moderate": 47,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5556677180010853,
+                    "confusion": [
+                      [
+                        174,
+                        49,
+                        29
+                      ],
+                      [
+                        63,
+                        72,
+                        60
+                      ],
+                      [
+                        19,
+                        31,
+                        91
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 91,
+                    "severe_to_normal": 19,
+                    "severe_to_moderate": 31,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.42319357194528856,
+                    "confusion": [
+                      [
+                        301,
+                        83,
+                        46
+                      ],
+                      [
+                        51,
+                        39,
+                        24
+                      ],
+                      [
+                        15,
+                        16,
+                        13
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 13,
+                    "severe_to_normal": 15,
+                    "severe_to_moderate": 16,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.6028909123224369,
+                    "confusion": [
+                      [
+                        93,
+                        23,
+                        15
+                      ],
+                      [
+                        26,
+                        37,
+                        23
+                      ],
+                      [
+                        8,
+                        16,
+                        53
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 53,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 16,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.5077034681740564,
+                    "confusion": [
+                      [
+                        81,
+                        26,
+                        14
+                      ],
+                      [
+                        37,
+                        35,
+                        37
+                      ],
+                      [
+                        11,
+                        15,
+                        38
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 38,
+                    "severe_to_normal": 11,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.43372918389323695,
+                    "confusion": [
+                      [
+                        144,
+                        45,
+                        26
+                      ],
+                      [
+                        25,
+                        23,
+                        13
+                      ],
+                      [
+                        7,
+                        4,
+                        7
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 7,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 4,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.4109275894265752,
+                    "confusion": [
+                      [
+                        157,
+                        38,
+                        20
+                      ],
+                      [
+                        26,
+                        16,
+                        11
+                      ],
+                      [
+                        8,
+                        12,
+                        6
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 6,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 12,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.4932198386030559
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.4999762490678598
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.510272737252384
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.5209575863683283
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5041086503498912
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.497215819716833
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.5112975338670193
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.4878501076990003
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.5176866489465092
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "064140e5ed843da7b3f59183a6cd7854d4fe13b10080a1345b93e68f9e1cd0cf",
+              "predictions_sha256": "8ee78e3f62cdeeaa684f92a8b45e39a5e97e417b0711511d875e6a1f75fd6de6",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 3407,
+              "best_epoch": 6,
+              "trained_epochs": 11,
+              "training_seconds": 0.2052217081654817,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5104066925532161,
+                  "confusion": [
+                    [
+                      472,
+                      150,
+                      60
+                    ],
+                    [
+                      107,
+                      120,
+                      82
+                    ],
+                    [
+                      32,
+                      64,
+                      89
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 89,
+                  "severe_to_normal": 32,
+                  "severe_to_moderate": 64,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5301173201013857,
+                    "confusion": [
+                      [
+                        166,
+                        65,
+                        21
+                      ],
+                      [
+                        60,
+                        76,
+                        59
+                      ],
+                      [
+                        17,
+                        46,
+                        78
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 78,
+                    "severe_to_normal": 17,
+                    "severe_to_moderate": 46,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.43070541074170837,
+                    "confusion": [
+                      [
+                        306,
+                        85,
+                        39
+                      ],
+                      [
+                        47,
+                        44,
+                        23
+                      ],
+                      [
+                        15,
+                        18,
+                        11
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 11,
+                    "severe_to_normal": 15,
+                    "severe_to_moderate": 18,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.5322787243600914,
+                    "confusion": [
+                      [
+                        83,
+                        35,
+                        13
+                      ],
+                      [
+                        27,
+                        34,
+                        25
+                      ],
+                      [
+                        10,
+                        23,
+                        44
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 44,
+                    "severe_to_normal": 10,
+                    "severe_to_moderate": 23,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.5259356201496992,
+                    "confusion": [
+                      [
+                        83,
+                        30,
+                        8
+                      ],
+                      [
+                        33,
+                        42,
+                        34
+                      ],
+                      [
+                        7,
+                        23,
+                        34
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 34,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 23,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.4381528177148615,
+                    "confusion": [
+                      [
+                        152,
+                        43,
+                        20
+                      ],
+                      [
+                        24,
+                        25,
+                        12
+                      ],
+                      [
+                        5,
+                        8,
+                        5
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 5,
+                    "severe_to_normal": 5,
+                    "severe_to_moderate": 8,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.42205638474295193,
+                    "confusion": [
+                      [
+                        154,
+                        42,
+                        19
+                      ],
+                      [
+                        23,
+                        19,
+                        11
+                      ],
+                      [
+                        10,
+                        10,
+                        6
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 6,
+                    "severe_to_normal": 10,
+                    "severe_to_moderate": 10,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.5082964332653773
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.5013643903627316
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.5101018670435312
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.5101967979601661
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.501372302598526
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.5104066925532161
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.5045223260643822
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.5094736295258043
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.5001612635916781
+                },
+                {
+                  "epoch": 10,
+                  "validation_macro_f1": 0.4970794042589999
+                },
+                {
+                  "epoch": 11,
+                  "validation_macro_f1": 0.4962167329382951
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "8a5339b908cbbca9b165edc137c87b7b418d3818cc9771048bb8fe965b7da155",
+              "predictions_sha256": "566d374c3adc1d34b57a0c069c9a13dfc004473702c27dc3dfd8a651f2b9b23e",
+              "checkpoint_reload_max_abs_error": 0
+            }
+          ],
+          "ensemble": {
+            "overall": {
+              "requested": 1188,
+              "assessed": 1176,
+              "known_references": 1185,
+              "known_and_assessed": 1176,
+              "class_counts_known": [
+                684,
+                316,
+                185
+              ],
+              "macro_f1": 0.5118770030806586,
+              "confusion": [
+                [
+                  475,
+                  145,
+                  62
+                ],
+                [
+                  111,
+                  116,
+                  82
+                ],
+                [
+                  37,
+                  56,
+                  92
+                ]
+              ],
+              "severe_total": 185,
+              "severe_correct": 92,
+              "severe_to_normal": 37,
+              "severe_to_moderate": 56,
+              "severe_unassessed": 0,
+              "failure_reasons": {
+                "not_axial_within_supported_obliquity": 12
+              }
+            },
+            "by_level": {
+              "L4-L5": {
+                "requested": 594,
+                "assessed": 588,
+                "known_references": 594,
+                "known_and_assessed": 588,
+                "class_counts_known": [
+                  253,
+                  200,
+                  141
+                ],
+                "macro_f1": 0.5411361406919711,
+                "confusion": [
+                  [
+                    169,
+                    61,
+                    22
+                  ],
+                  [
+                    59,
+                    76,
+                    60
+                  ],
+                  [
+                    20,
+                    39,
+                    82
+                  ]
+                ],
+                "severe_total": 141,
+                "severe_correct": 82,
+                "severe_to_normal": 20,
+                "severe_to_moderate": 39,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 6
+                }
+              },
+              "L5-S1": {
+                "requested": 594,
+                "assessed": 588,
+                "known_references": 591,
+                "known_and_assessed": 588,
+                "class_counts_known": [
+                  431,
+                  116,
+                  44
+                ],
+                "macro_f1": 0.41546257683483195,
+                "confusion": [
+                  [
+                    306,
+                    84,
+                    40
+                  ],
+                  [
+                    52,
+                    40,
+                    22
+                  ],
+                  [
+                    17,
+                    17,
+                    10
+                  ]
+                ],
+                "severe_total": 44,
+                "severe_correct": 10,
+                "severe_to_normal": 17,
+                "severe_to_moderate": 17,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 6
+                }
+              }
+            },
+            "by_level_side": {
+              "L4-L5:left": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 297,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  132,
+                  88,
+                  77
+                ],
+                "macro_f1": 0.5554457262295688,
+                "confusion": [
+                  [
+                    88,
+                    31,
+                    12
+                  ],
+                  [
+                    27,
+                    33,
+                    26
+                  ],
+                  [
+                    12,
+                    17,
+                    48
+                  ]
+                ],
+                "severe_total": 77,
+                "severe_correct": 48,
+                "severe_to_normal": 12,
+                "severe_to_moderate": 17,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L4-L5:right": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 297,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  121,
+                  112,
+                  64
+                ],
+                "macro_f1": 0.523287784830302,
+                "confusion": [
+                  [
+                    81,
+                    30,
+                    10
+                  ],
+                  [
+                    32,
+                    43,
+                    34
+                  ],
+                  [
+                    8,
+                    22,
+                    34
+                  ]
+                ],
+                "severe_total": 64,
+                "severe_correct": 34,
+                "severe_to_normal": 8,
+                "severe_to_moderate": 22,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L5-S1:left": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 295,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  215,
+                  62,
+                  18
+                ],
+                "macro_f1": 0.42693855851750584,
+                "confusion": [
+                  [
+                    151,
+                    42,
+                    22
+                  ],
+                  [
+                    26,
+                    23,
+                    12
+                  ],
+                  [
+                    7,
+                    6,
+                    5
+                  ]
+                ],
+                "severe_total": 18,
+                "severe_correct": 5,
+                "severe_to_normal": 7,
+                "severe_to_moderate": 6,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L5-S1:right": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 296,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  216,
+                  54,
+                  26
+                ],
+                "macro_f1": 0.4031536958936426,
+                "confusion": [
+                  [
+                    155,
+                    42,
+                    18
+                  ],
+                  [
+                    26,
+                    17,
+                    10
+                  ],
+                  [
+                    10,
+                    11,
+                    5
+                  ]
+                ],
+                "severe_total": 26,
+                "severe_correct": 5,
+                "severe_to_normal": 10,
+                "severe_to_moderate": 11,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              }
+            }
+          },
+          "mean_seed_macro_f1": 0.5126021052250346,
+          "std_seed_macro_f1": 0.00750267770561894,
+          "ensemble_sha256": "0b409de0d043a0168da74667aa3d89b34d6dde3d09891c25176ba440df6f26c2"
+        },
+        "mlp": {
+          "seeds": [
+            {
+              "seed": 42,
+              "best_epoch": 2,
+              "trained_epochs": 7,
+              "training_seconds": 0.19873474980704486,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5348821129579223,
+                  "confusion": [
+                    [
+                      528,
+                      111,
+                      43
+                    ],
+                    [
+                      133,
+                      101,
+                      75
+                    ],
+                    [
+                      52,
+                      36,
+                      97
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 97,
+                  "severe_to_normal": 52,
+                  "severe_to_moderate": 36,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5635392594986461,
+                    "confusion": [
+                      [
+                        182,
+                        48,
+                        22
+                      ],
+                      [
+                        69,
+                        70,
+                        56
+                      ],
+                      [
+                        26,
+                        24,
+                        91
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 91,
+                    "severe_to_normal": 26,
+                    "severe_to_moderate": 24,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.4047425758742156,
+                    "confusion": [
+                      [
+                        346,
+                        63,
+                        21
+                      ],
+                      [
+                        64,
+                        31,
+                        19
+                      ],
+                      [
+                        26,
+                        12,
+                        6
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 6,
+                    "severe_to_normal": 26,
+                    "severe_to_moderate": 12,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.5970315449116619,
+                    "confusion": [
+                      [
+                        96,
+                        24,
+                        11
+                      ],
+                      [
+                        26,
+                        37,
+                        23
+                      ],
+                      [
+                        13,
+                        15,
+                        49
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 49,
+                    "severe_to_normal": 13,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.5303784175267066,
+                    "confusion": [
+                      [
+                        86,
+                        24,
+                        11
+                      ],
+                      [
+                        43,
+                        33,
+                        33
+                      ],
+                      [
+                        13,
+                        9,
+                        42
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 42,
+                    "severe_to_normal": 13,
+                    "severe_to_moderate": 9,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.38998743192291574,
+                    "confusion": [
+                      [
+                        173,
+                        27,
+                        15
+                      ],
+                      [
+                        33,
+                        18,
+                        10
+                      ],
+                      [
+                        13,
+                        4,
+                        1
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 1,
+                    "severe_to_normal": 13,
+                    "severe_to_moderate": 4,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.4182269555457962,
+                    "confusion": [
+                      [
+                        173,
+                        36,
+                        6
+                      ],
+                      [
+                        31,
+                        13,
+                        9
+                      ],
+                      [
+                        13,
+                        8,
+                        5
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 5,
+                    "severe_to_normal": 13,
+                    "severe_to_moderate": 8,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.5104808359077743
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.5348821129579223
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.5259659300877939
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.5213907760754812
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5293208615175963
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.5287691828907443
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.5216139772216849
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "f467de7e61baadd04ee9dc12e75551ce2358705011e11a690f48f08155861372",
+              "predictions_sha256": "5e469ce14a82f429687131159d50d162029a9ab3b9cc05f115c7cf8f86bf6294",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 2024,
+              "best_epoch": 7,
+              "trained_epochs": 12,
+              "training_seconds": 0.32088574999943376,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5346993785439392,
+                  "confusion": [
+                    [
+                      532,
+                      113,
+                      37
+                    ],
+                    [
+                      144,
+                      108,
+                      57
+                    ],
+                    [
+                      43,
+                      55,
+                      87
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 87,
+                  "severe_to_normal": 43,
+                  "severe_to_moderate": 55,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5368718912293069,
+                    "confusion": [
+                      [
+                        185,
+                        47,
+                        20
+                      ],
+                      [
+                        87,
+                        66,
+                        42
+                      ],
+                      [
+                        25,
+                        38,
+                        78
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 78,
+                    "severe_to_normal": 25,
+                    "severe_to_moderate": 38,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.4592610438797083,
+                    "confusion": [
+                      [
+                        347,
+                        66,
+                        17
+                      ],
+                      [
+                        57,
+                        42,
+                        15
+                      ],
+                      [
+                        18,
+                        17,
+                        9
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 9,
+                    "severe_to_normal": 18,
+                    "severe_to_moderate": 17,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.5598717393596324,
+                    "confusion": [
+                      [
+                        95,
+                        29,
+                        7
+                      ],
+                      [
+                        35,
+                        35,
+                        16
+                      ],
+                      [
+                        13,
+                        23,
+                        41
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 41,
+                    "severe_to_normal": 13,
+                    "severe_to_moderate": 23,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.5138327953356855,
+                    "confusion": [
+                      [
+                        90,
+                        18,
+                        13
+                      ],
+                      [
+                        52,
+                        31,
+                        26
+                      ],
+                      [
+                        12,
+                        15,
+                        37
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 37,
+                    "severe_to_normal": 12,
+                    "severe_to_moderate": 15,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.4789907683037454,
+                    "confusion": [
+                      [
+                        173,
+                        37,
+                        5
+                      ],
+                      [
+                        25,
+                        26,
+                        10
+                      ],
+                      [
+                        7,
+                        7,
+                        4
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 4,
+                    "severe_to_normal": 7,
+                    "severe_to_moderate": 7,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.4367283950617284,
+                    "confusion": [
+                      [
+                        174,
+                        29,
+                        12
+                      ],
+                      [
+                        32,
+                        16,
+                        5
+                      ],
+                      [
+                        11,
+                        10,
+                        5
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 5,
+                    "severe_to_normal": 11,
+                    "severe_to_moderate": 10,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.5210007797771234
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.5257765637537443
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.5212537342644145
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.525087436557586
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5219195436719902
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.5128137101259821
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.5346993785439392
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.5156866046193119
+                },
+                {
+                  "epoch": 9,
+                  "validation_macro_f1": 0.5189799249441112
+                },
+                {
+                  "epoch": 10,
+                  "validation_macro_f1": 0.5129857460033067
+                },
+                {
+                  "epoch": 11,
+                  "validation_macro_f1": 0.5058330558028601
+                },
+                {
+                  "epoch": 12,
+                  "validation_macro_f1": 0.5075482852467662
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "dc4f68e6ed90743008933d41e63a57bdf7d3de65e9ca0ab61c97cb71d4e0e30f",
+              "predictions_sha256": "f6c770443896a88be4f2a7d9eb62b8ae750dd8339fd876d73b650e66b7498198",
+              "checkpoint_reload_max_abs_error": 0
+            },
+            {
+              "seed": 3407,
+              "best_epoch": 3,
+              "trained_epochs": 8,
+              "training_seconds": 0.2576594580896199,
+              "metrics": {
+                "overall": {
+                  "requested": 1188,
+                  "assessed": 1176,
+                  "known_references": 1185,
+                  "known_and_assessed": 1176,
+                  "class_counts_known": [
+                    684,
+                    316,
+                    185
+                  ],
+                  "macro_f1": 0.5450249299414055,
+                  "confusion": [
+                    [
+                      507,
+                      144,
+                      31
+                    ],
+                    [
+                      124,
+                      131,
+                      54
+                    ],
+                    [
+                      39,
+                      61,
+                      85
+                    ]
+                  ],
+                  "severe_total": 185,
+                  "severe_correct": 85,
+                  "severe_to_normal": 39,
+                  "severe_to_moderate": 61,
+                  "severe_unassessed": 0,
+                  "failure_reasons": {
+                    "not_axial_within_supported_obliquity": 12
+                  }
+                },
+                "by_level": {
+                  "L4-L5": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 594,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      253,
+                      200,
+                      141
+                    ],
+                    "macro_f1": 0.5642359777692438,
+                    "confusion": [
+                      [
+                        175,
+                        58,
+                        19
+                      ],
+                      [
+                        65,
+                        88,
+                        42
+                      ],
+                      [
+                        20,
+                        44,
+                        77
+                      ]
+                    ],
+                    "severe_total": 141,
+                    "severe_correct": 77,
+                    "severe_to_normal": 20,
+                    "severe_to_moderate": 44,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  },
+                  "L5-S1": {
+                    "requested": 594,
+                    "assessed": 588,
+                    "known_references": 591,
+                    "known_and_assessed": 588,
+                    "class_counts_known": [
+                      431,
+                      116,
+                      44
+                    ],
+                    "macro_f1": 0.443923912344965,
+                    "confusion": [
+                      [
+                        332,
+                        86,
+                        12
+                      ],
+                      [
+                        59,
+                        43,
+                        12
+                      ],
+                      [
+                        19,
+                        17,
+                        8
+                      ]
+                    ],
+                    "severe_total": 44,
+                    "severe_correct": 8,
+                    "severe_to_normal": 19,
+                    "severe_to_moderate": 17,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 6
+                    }
+                  }
+                },
+                "by_level_side": {
+                  "L4-L5:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      132,
+                      88,
+                      77
+                    ],
+                    "macro_f1": 0.5892881476149038,
+                    "confusion": [
+                      [
+                        92,
+                        30,
+                        9
+                      ],
+                      [
+                        25,
+                        43,
+                        18
+                      ],
+                      [
+                        12,
+                        22,
+                        43
+                      ]
+                    ],
+                    "severe_total": 77,
+                    "severe_correct": 43,
+                    "severe_to_normal": 12,
+                    "severe_to_moderate": 22,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L4-L5:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 297,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      121,
+                      112,
+                      64
+                    ],
+                    "macro_f1": 0.538352714823303,
+                    "confusion": [
+                      [
+                        83,
+                        28,
+                        10
+                      ],
+                      [
+                        40,
+                        45,
+                        24
+                      ],
+                      [
+                        8,
+                        22,
+                        34
+                      ]
+                    ],
+                    "severe_total": 64,
+                    "severe_correct": 34,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 22,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:left": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 295,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      215,
+                      62,
+                      18
+                    ],
+                    "macro_f1": 0.4804842011570984,
+                    "confusion": [
+                      [
+                        172,
+                        37,
+                        6
+                      ],
+                      [
+                        33,
+                        22,
+                        6
+                      ],
+                      [
+                        8,
+                        5,
+                        5
+                      ]
+                    ],
+                    "severe_total": 18,
+                    "severe_correct": 5,
+                    "severe_to_normal": 8,
+                    "severe_to_moderate": 5,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  },
+                  "L5-S1:right": {
+                    "requested": 297,
+                    "assessed": 294,
+                    "known_references": 296,
+                    "known_and_assessed": 294,
+                    "class_counts_known": [
+                      216,
+                      54,
+                      26
+                    ],
+                    "macro_f1": 0.41138386788398623,
+                    "confusion": [
+                      [
+                        160,
+                        49,
+                        6
+                      ],
+                      [
+                        26,
+                        21,
+                        6
+                      ],
+                      [
+                        11,
+                        12,
+                        3
+                      ]
+                    ],
+                    "severe_total": 26,
+                    "severe_correct": 3,
+                    "severe_to_normal": 11,
+                    "severe_to_moderate": 12,
+                    "severe_unassessed": 0,
+                    "failure_reasons": {
+                      "not_axial_within_supported_obliquity": 3
+                    }
+                  }
+                }
+              },
+              "history": [
+                {
+                  "epoch": 1,
+                  "validation_macro_f1": 0.5331200549764454
+                },
+                {
+                  "epoch": 2,
+                  "validation_macro_f1": 0.5365426161042482
+                },
+                {
+                  "epoch": 3,
+                  "validation_macro_f1": 0.5450249299414055
+                },
+                {
+                  "epoch": 4,
+                  "validation_macro_f1": 0.5368351762325526
+                },
+                {
+                  "epoch": 5,
+                  "validation_macro_f1": 0.5209127979514392
+                },
+                {
+                  "epoch": 6,
+                  "validation_macro_f1": 0.5171919866396154
+                },
+                {
+                  "epoch": 7,
+                  "validation_macro_f1": 0.52781456420104
+                },
+                {
+                  "epoch": 8,
+                  "validation_macro_f1": 0.5332153914197258
+                }
+              ],
+              "train_class_counts_by_task": [
+                [
+                  621,
+                  434,
+                  323
+                ],
+                [
+                  635,
+                  424,
+                  320
+                ],
+                [
+                  971,
+                  291,
+                  109
+                ],
+                [
+                  977,
+                  278,
+                  119
+                ]
+              ],
+              "checkpoint_sha256": "969d799459852d74059c39ef325ba8a594444ad6aa66168b632fdd54fcfc425e",
+              "predictions_sha256": "ca96477a9ecd78523a361fd2b2e695fd75d7900276ddd0c41bf702b099d9a0e2",
+              "checkpoint_reload_max_abs_error": 0
+            }
+          ],
+          "ensemble": {
+            "overall": {
+              "requested": 1188,
+              "assessed": 1176,
+              "known_references": 1185,
+              "known_and_assessed": 1176,
+              "class_counts_known": [
+                684,
+                316,
+                185
+              ],
+              "macro_f1": 0.5414705660918179,
+              "confusion": [
+                [
+                  533,
+                  116,
+                  33
+                ],
+                [
+                  136,
+                  110,
+                  63
+                ],
+                [
+                  40,
+                  55,
+                  90
+                ]
+              ],
+              "severe_total": 185,
+              "severe_correct": 90,
+              "severe_to_normal": 40,
+              "severe_to_moderate": 55,
+              "severe_unassessed": 0,
+              "failure_reasons": {
+                "not_axial_within_supported_obliquity": 12
+              }
+            },
+            "by_level": {
+              "L4-L5": {
+                "requested": 594,
+                "assessed": 588,
+                "known_references": 594,
+                "known_and_assessed": 588,
+                "class_counts_known": [
+                  253,
+                  200,
+                  141
+                ],
+                "macro_f1": 0.5493933851478726,
+                "confusion": [
+                  [
+                    182,
+                    49,
+                    21
+                  ],
+                  [
+                    74,
+                    71,
+                    50
+                  ],
+                  [
+                    21,
+                    38,
+                    82
+                  ]
+                ],
+                "severe_total": 141,
+                "severe_correct": 82,
+                "severe_to_normal": 21,
+                "severe_to_moderate": 38,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 6
+                }
+              },
+              "L5-S1": {
+                "requested": 594,
+                "assessed": 588,
+                "known_references": 591,
+                "known_and_assessed": 588,
+                "class_counts_known": [
+                  431,
+                  116,
+                  44
+                ],
+                "macro_f1": 0.45043042755163526,
+                "confusion": [
+                  [
+                    351,
+                    67,
+                    12
+                  ],
+                  [
+                    62,
+                    39,
+                    13
+                  ],
+                  [
+                    19,
+                    17,
+                    8
+                  ]
+                ],
+                "severe_total": 44,
+                "severe_correct": 8,
+                "severe_to_normal": 19,
+                "severe_to_moderate": 17,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 6
+                }
+              }
+            },
+            "by_level_side": {
+              "L4-L5:left": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 297,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  132,
+                  88,
+                  77
+                ],
+                "macro_f1": 0.5705628719149352,
+                "confusion": [
+                  [
+                    94,
+                    27,
+                    10
+                  ],
+                  [
+                    31,
+                    36,
+                    19
+                  ],
+                  [
+                    12,
+                    21,
+                    44
+                  ]
+                ],
+                "severe_total": 77,
+                "severe_correct": 44,
+                "severe_to_normal": 12,
+                "severe_to_moderate": 21,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L4-L5:right": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 297,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  121,
+                  112,
+                  64
+                ],
+                "macro_f1": 0.5282069802985574,
+                "confusion": [
+                  [
+                    88,
+                    22,
+                    11
+                  ],
+                  [
+                    43,
+                    35,
+                    31
+                  ],
+                  [
+                    9,
+                    17,
+                    38
+                  ]
+                ],
+                "severe_total": 64,
+                "severe_correct": 38,
+                "severe_to_normal": 9,
+                "severe_to_moderate": 17,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L5-S1:left": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 295,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  215,
+                  62,
+                  18
+                ],
+                "macro_f1": 0.48819971406576484,
+                "confusion": [
+                  [
+                    181,
+                    28,
+                    6
+                  ],
+                  [
+                    30,
+                    24,
+                    7
+                  ],
+                  [
+                    7,
+                    7,
+                    4
+                  ]
+                ],
+                "severe_total": 18,
+                "severe_correct": 4,
+                "severe_to_normal": 7,
+                "severe_to_moderate": 7,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              },
+              "L5-S1:right": {
+                "requested": 297,
+                "assessed": 294,
+                "known_references": 296,
+                "known_and_assessed": 294,
+                "class_counts_known": [
+                  216,
+                  54,
+                  26
+                ],
+                "macro_f1": 0.4131424131424131,
+                "confusion": [
+                  [
+                    170,
+                    39,
+                    6
+                  ],
+                  [
+                    32,
+                    15,
+                    6
+                  ],
+                  [
+                    12,
+                    10,
+                    4
+                  ]
+                ],
+                "severe_total": 26,
+                "severe_correct": 4,
+                "severe_to_normal": 12,
+                "severe_to_moderate": 10,
+                "severe_unassessed": 0,
+                "failure_reasons": {
+                  "not_axial_within_supported_obliquity": 3
+                }
+              }
+            }
+          },
+          "mean_seed_macro_f1": 0.538202140481089,
+          "std_seed_macro_f1": 0.005909415367138082,
+          "ensemble_sha256": "71328305559899b580c67468eefa14bb941e28183ab0f795676a60a0c5504da5"
+        }
+      }
+    }
+  }
+}

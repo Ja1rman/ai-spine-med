@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "experiment": "rsna_bilateral_foraminal_subarticular_v15",
+  "phase": "validation",
+  "splits": [
+    "train",
+    "validation"
+  ],
+  "test_evaluated": false,
+  "levels": [
+    "L4-L5",
+    "L5-S1"
+  ],
+  "sides": [
+    "left",
+    "right"
+  ],
+  "classes": [
+    "normal_mild",
+    "moderate",
+    "severe"
+  ],
+  "architectures": [
+    "linear",
+    "mlp"
+  ],
+  "seeds": [
+    42,
+    2024,
+    3407
+  ],
+  "frozen_files": {
+    "data/rsna/train.csv": "f0c9e06486bcddcd83b1ee1d95ab9db8e028d7c3c9fcbada950f0b8e4d828528",
+    "artifacts/rsna-v1/studies.csv": "1fc2705dc36ce97179fb1b38e08a5c7c1e3e8f8852d5cb1d82874e9f19d46004",
+    "artifacts/features-v1/features.npz": "c99b613471060fa1184f3595b7b50492003a34be38f781f2e5ee99a36c6ff202",
+    "artifacts/features-v1/target_manifest.csv": "5e606164ae3ef3d12474cbf7571d856a172082fd8f2fb7ffbb089836e109cd6f",
+    "artifacts/features-v1/metadata.json": "2b58576c59ddad0be8328d79166acc7b218f7608d2017b0264b0174077440ed2",
+    "artifacts/roi-layer4-v11/summary.json": "d425c3b02ee079d7660daf427949cb30deeec283033e69164476f389abf3cdc0",
+    ".cache/axial-v3/resnet18-f37072fd.pth": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec",
+    "src/ai_spine_med/side_stenosis_data.py": "480bf88ee19dd8118510894e4b61898d0739b149081d3edaf86d2467896ad012",
+    "src/ai_spine_med/side_stenosis.py": "208c5b2c8e5d47ce13902aa0d30c0c861541520787fead876a1e289a67e70523",
+    "src/ai_spine_med/axial_features.py": "eedfcf35d3616887cb6b87b544a2f76d4fb2da0abf3d8f583116e23d54fdc67d",
+    "src/ai_spine_med/axial_localizer_crops.py": "0eb7b1a04753f2cf6cd6f356e75ebdce2dbaa4ba1c25ba4915b47cb9623b4159",
+    "artifacts/roi-layer4-v11/mixed/train/prefix.npy": "e3a6de7eff65203333b51aa78655ff26f3ce3b96037068e782d2307189436407",
+    "artifacts/roi-layer4-v11/mixed/train/offsets.npy": "6589440cd6fd83f9709c91a153b4bb6340b2687f05c1074849b7304325fef101",
+    "artifacts/roi-layer4-v11/mixed/train/frozen_features.npy": "55f5db069f90af3128d95be29bd12e1257e512b17fb74e343b5e18b640a573ef",
+    "artifacts/roi-layer4-v11/mixed/train/rows.json": "29bb1abd851bf04259e8c17871a8e1e59951cc5f0b3a6ed56d175ffd9e0ab969",
+    "artifacts/roi-layer4-v11/mixed/train/images-manifest.json": "f76389f209bf96638e82bf70f302efb523eebe069c09974a2756afe62f073ccc",
+    "artifacts/roi-layer4-v11/mixed/validation/prefix.npy": "ecefa5b50ecf9c0c3cd66cfe4a747f75c2aeba4bc38d169bba2044475ac2331b",
+    "artifacts/roi-layer4-v11/mixed/validation/offsets.npy": "212bd9bd2a222ce887db01fc53aa9813bed5ed2bf72ab40f91108db8596f2b8e",
+    "artifacts/roi-layer4-v11/mixed/validation/frozen_features.npy": "4a59c19f90a0d9064b9074d00210c5fd0694f4b13d101d1e68a3fc095be5286b",
+    "artifacts/roi-layer4-v11/mixed/validation/rows.json": "cef22ee5b4ea797c352e79bcd9f19683e362a015aa3e88cb67104b4b48bcbd58",
+    "artifacts/roi-layer4-v11/mixed/validation/images-manifest.json": "7b6355f512985fe4ef9815e51c0013d83fad25cddf1a4e945a35e85af948595f"
+  },
+  "foraminal_input": "Original frozen SpineNet 512-vector per automatically localized sagittal T2/STIR nine-plane ROI. NOT sagittal T1; no reference coordinates. Identical vector for two independent side heads.",
+  "subarticular_input": "Sealed mixed-localizer v7 predicted 50mm axial T2 canal ROI; unchanged ResNet18; mean of up to three same-series centre/context bags. Concatenate global, anatomicalLEFT (map columns4:7) and anatomicalRIGHT (columns0:3) layer4 averages. Middle column excluded from side-specific pools; no claim of root segmentation.",
+  "head": "Four independent 3-class level/side readouts; linear or shared64-ReLU-dropout0.2 plus12-output layer. No backbone updates.",
+  "normalization": "Mean and std fitted only on assessed TRAIN vectors; standard deviation floor1e-5; standardized features clipped to [-10,10].",
+  "class_weights": "Per-head inverse sqrt TRAIN known-grade frequencies, normalized to mean1.",
+  "optimizer": "AdamW",
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "batch_size": 128,
+  "max_epochs": 25,
+  "patience": 5,
+  "selection": "Best pooled fixed-three-class validation macro-F1 within each predeclared run; earliest epoch on ties. Both architectures and all seeds reported. No architecture selection claimed as independent improvement.",
+  "baseline": "Majority TRAIN class independently for each level and side. Same image-assessment coverage, failure remains explicit.",
+  "evaluation": "All requested levels/sides incl image failures and missing references. MacroF1 on known and assessed; severe recall denominator all known severe including failures; level-side breakdown. Mean-probability ensemble per architecture; no TEST.",
+  "interpretation": "Development validation repeatedly used, including epoch selection. SagT2 for foramina is a restricted first experiment; cannot infer Lee0-3 or root compression. Existing central-stenosis model/site not replaced."
+}

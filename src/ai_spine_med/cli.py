@@ -277,6 +277,15 @@ def main(argv: list[str] | None = None) -> int:
     transfer.add_argument("stage", choices=["prepare", "cache", "train", "evaluate", "report"])
     transfer.add_argument("--device", default="auto", choices=["auto", "cpu", "mps"])
     transfer.add_argument("--workers", type=int, default=4)
+    side_stenosis = sub.add_parser(
+        "side-stenosis", help="Сравнить фораминальный стеноз и стеноз рецессусов по сторонам"
+    )
+    side_stenosis.add_argument("stage", choices=["prepare", "train", "report", "all"])
+    side_stenosis.add_argument(
+        "--protocol", type=Path, default=Path("configs/side-stenosis-v15.json")
+    )
+    side_stenosis.add_argument("--cache", type=Path, default=Path("artifacts/side-stenosis-v15"))
+    side_stenosis.add_argument("--out", type=Path, default=Path("reports/runs/side-stenosis-v15"))
     args = parser.parse_args(argv)
     try:
         if args.command == "doctor":
@@ -599,6 +608,20 @@ def main(argv: list[str] | None = None) -> int:
             from .axial_transfer_workflow import main as transfer_main
 
             transfer_main([args.stage, "--device", args.device, "--workers", str(args.workers)])
+        elif args.command == "side-stenosis":
+            from .side_stenosis import main as side_stenosis_main
+
+            side_stenosis_main(
+                [
+                    args.stage,
+                    "--protocol",
+                    str(args.protocol),
+                    "--cache",
+                    str(args.cache),
+                    "--out",
+                    str(args.out),
+                ]
+            )
         elif args.command == "report-probability-mean":
             from .probability_mean_report import draw_probability_mean_report
 
