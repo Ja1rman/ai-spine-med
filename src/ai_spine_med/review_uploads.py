@@ -40,6 +40,7 @@ MODEL_NAME = "SpineNet · frozen-head v1 · ансамбль 3 запусков"
 _ASSETS = re.compile(
     r"^(?:images/slice-[0-9]{4}\.jpg|dicom/slice-[0-9]{4}\.dcm|series\.zip|result\.json)$"
 )
+_AUXILIARY_SUFFIXES = {".xml", ".json", ".txt", ".md", ".csv"}
 
 
 class UploadRejected(ValueError):
@@ -83,7 +84,7 @@ def _extract(job: Path):
     """Manually copy allowed members; never use ZipFile.extract/all."""
     dicom = job / "dicom"
     dicom.mkdir(mode=0o700)
-    count, expanded = 0, 0
+    count, expanded, auxiliary = 0, 0, 0
     try:
         with zipfile.ZipFile(job / "source.zip") as archive:
             infos = archive.infolist()
@@ -109,6 +110,11 @@ def _extract(job: Path):
                         "unsafe_archive", "Архив содержит неподдерживаемые или небезопасные записи."
                     )
                 if entry.is_dir() or any(p == "__MACOSX" or p.startswith(".") for p in parts):
+                    continue
+                # Research exports may include annotation XML and manifests.
+                # Never interpret these as model input or execute their content.
+                if PurePosixPath(entry.filename).suffix.lower() in _AUXILIARY_SUFFIXES:
+                    auxiliary += 1
                     continue
                 count += 1
                 expanded += entry.file_size
@@ -140,12 +146,40 @@ def _extract(job: Path):
         raise _rejected(
             "invalid_zip", "Файл не является поддерживаемым ZIP-архивом DICOM."
         ) from None
+    _update(job, ignored_auxiliary_files=auxiliary)
     if count < 2:
         raise _rejected(
             "single_image",
             "Нужна полная сагиттальная T2-серия минимум из двух DICOM-срезов; одиночная картинка не поддерживается.",
         )
     return dicom
+
+
+def _input_plane(headers):
+    """Classify clear acquisition planes from numeric geometry, not names."""
+    import numpy as np
+
+    planes = []
+    for dataset in headers:
+        try:
+            orientation = np.asarray(dataset.ImageOrientationPatient, dtype=float)
+            if orientation.shape != (6,) or not np.isfinite(orientation).all():
+                return "unknown"
+            column, row = orientation[:3], orientation[3:]
+            if (
+                not np.isclose(np.linalg.norm(column), 1, atol=1e-3)
+                or not np.isclose(np.linalg.norm(row), 1, atol=1e-3)
+                or abs(float(column @ row)) > 1e-3
+            ):
+                return "unknown"
+            normal = np.abs(np.cross(column, row))
+            normal /= np.linalg.norm(normal)
+            if normal.max() < np.cos(np.deg2rad(40)):
+                return "oblique_or_mixed"
+            planes.append(("sagittal", "coronal", "axial")[int(normal.argmax())])
+        except (AttributeError, TypeError, ValueError):
+            return "unknown"
+    return planes[0] if planes and len(set(planes)) == 1 else "oblique_or_mixed"
 
 
 def _prepare_series(job: Path):
@@ -187,6 +221,14 @@ def _prepare_series(job: Path):
             raise _rejected(
                 "multiple_series",
                 "В архиве несколько серий. Выберите одну сагиттальную T2-серию и загрузите её отдельно.",
+            )
+        plane = _input_plane(headers)
+        _update(job, input_plane=plane, n_dicom_files=len(headers))
+        if plane in {"axial", "coronal"}:
+            name = "аксиальные" if plane == "axial" else "корональные"
+            raise _rejected(
+                f"unsupported_plane_{plane}",
+                f"В архиве {name} снимки. Для анализа нужна полная сагиттальная T2-серия поясницы в ZIP. Аксиальные и корональные серии здесь пока не анализируются.",
             )
         # No arbitrary description, dates or patient fields enter browser JSON.
         # Acquisition geometry is checked strictly before any model execution.

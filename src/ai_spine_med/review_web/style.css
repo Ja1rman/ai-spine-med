@@ -64,6 +64,7 @@ input::placeholder { color: #8a9695; }
 .case-option-patient { margin: 5px 0 10px; color: var(--muted); font-size: 10px; }
 .case-option .badges { gap: 5px 12px; }
 .case-option .badge { font-size: 8px; }
+.upload-failure-reason { margin-top: 9px; color: #c1c6c5; font-size: 10px; line-height: 1.55; overflow-wrap: anywhere; }
 .sidebar-footnote { margin: auto 0 0; padding: 16px 20px; border-top: 1px solid var(--line); color: #8b9695; font-size: 9px; line-height: 1.6; }
 .empty { color: var(--muted); text-align: center; padding: 30px 12px; font-size: 12px; }
 

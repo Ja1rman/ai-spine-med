@@ -64,6 +64,23 @@ function collection(count = 2) {
 const patient = (id) => ({patient_id: id, series: [{series_key: "sag", series_description: "Sagittal T2", zip_url: "originals/series.zip", slices: [{slice_key: "s0", image_url: "images/s0.jpg", dicom_url: "dicom/s0.dcm", rows: 100, columns: 100, instance_number: 1}]}]});
 const library = {uploads: [], limits: {max_upload_bytes: 268435456}, model: {configured: true}};
 
+test("failed upload reason is visible in both library and detail without implying a grade", async () => {
+  const record = {upload_id: "upload-axial", created_at_utc: "2026-10-26T20:07:00+00:00", status: "failed", error_code: "unsupported_plane_axial", targets: [], message: "В архиве аксиальные снимки. Для анализа нужна полная сагиттальная T2-серия поясницы в ZIP."};
+  const app = harness({"data/index.json": collection(), "api/uploads": {...library, uploads: [record]}, "api/uploads/upload-axial": record}, "https://review.example/r/private-token/?view=uploads&upload=upload-axial");
+  try {
+    await settle();
+    assert.match(app.elements.get("case-list").textContent, /аксиальные снимки/);
+    assert.match(app.elements.get("upload-status-message").textContent, /сагиттальная T2-серия/);
+    assert.equal(app.elements.get("viewer-card").hidden, true);
+    assert.match(app.elements.get("predictions").textContent, /L4-L5Не оценено/);
+    assert.match(app.elements.get("predictions").textContent, /L5-S1Не оценено/);
+    assert.doesNotMatch(app.elements.get("predictions").textContent, /[0-9]%/);
+    app.elements.get("search").value = "аксиальные";
+    await app.elements.get("search").fire("input");
+    assert.equal(app.elements.get("case-list").children.length, 1);
+  } finally { app.close(); }
+});
+
 function harness(routes, href = "https://review.example/r/private-token/") {
   const elements = new Map([...html.matchAll(/<([a-z][\w-]*)\b[^>]*\bid="([^"]+)"[^>]*>/gi)].map((match) => {
     const item = new Element(match[1]); item.hidden = /\bhidden\b/.test(match[0]);

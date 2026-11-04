@@ -414,7 +414,7 @@
 
   function filteredUploads() {
     const needle = state.search.trim().toLocaleLowerCase("ru");
-    return state.uploads.filter((item) => !needle || `${uploadName(item)} ${item.upload_id} ${uploadDate(item)} ${statusNames[item.status] || ""}`.toLocaleLowerCase("ru").includes(needle));
+    return state.uploads.filter((item) => !needle || `${uploadName(item)} ${item.upload_id} ${uploadDate(item)} ${statusNames[item.status] || ""} ${item.message || ""}`.toLocaleLowerCase("ru").includes(needle));
   }
 
   function renderUploadsList() {
@@ -429,6 +429,7 @@
       const title = node("span", "case-option-title");
       title.append(node("span", "case-number", uploadName(item)), node("span", "case-level", item.n_slices ? `${item.n_slices} ср.` : ""));
       button.append(title, node("div", "case-option-patient", uploadDate(item)), node("span", `badge ${item.status === "completed" ? "control" : item.status === "failed" ? "error" : "unassessed"}`, statusNames[item.status] || "Статус неизвестен"));
+      if (item.status === "failed" && item.message) button.append(node("div", "upload-failure-reason", item.message));
       button.addEventListener("click", () => activateUpload(item.upload_id, {history: "push"}));
       list.append(button);
     }

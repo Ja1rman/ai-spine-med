@@ -167,7 +167,7 @@ def test_active_job_reservation_prevents_disk_overcommit(store):
     [
         ({"series_count": 2}, "multiple_series"),
         ({"count": 1}, "single_image"),
-        ({"axial": True}, "invalid_geometry"),
+        ({"axial": True}, "unsupported_plane_axial"),
     ],
 )
 def test_unsupported_series_fails_explicitly(store, kwargs, code):
@@ -178,6 +178,64 @@ def test_unsupported_series_fails_explicitly(store, kwargs, code):
     assert finished["error_code"] == code
     assert finished["targets"] == []
     assert "SECRET" not in json.dumps(finished)
+
+
+def test_auxiliary_annotation_files_are_ignored_not_read_as_dicom(store):
+    output = io.BytesIO()
+    with zipfile.ZipFile(io.BytesIO(synthetic_zip())) as original:
+        with zipfile.ZipFile(output, "w") as archive:
+            for entry in original.infolist():
+                archive.writestr(entry.filename, original.read(entry))
+            archive.writestr("annotations/labels.xml", "<annotation>SECRET</annotation>")
+            archive.writestr("case.json", '{"name":"SECRET"}')
+            archive.writestr("README.txt", "SECRET")
+    raw = output.getvalue()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    record = await_record(store, accepted["upload_id"])
+    assert record["status"] == "completed"
+    assert record["ignored_auxiliary_files"] == 3
+    assert record["input_plane"] == "sagittal"
+    assert record["n_dicom_files"] == 3
+    assert "SECRET" not in json.dumps(record)
+
+
+def test_axial_export_with_xml_gets_actionable_plane_error_without_inference(store):
+    def unexpected_inference(*args, **kwargs):
+        pytest.fail("Sagittal model must not be applied to axial input")
+
+    store.runner = unexpected_inference
+    output = io.BytesIO()
+    with zipfile.ZipFile(io.BytesIO(synthetic_zip(axial=True))) as original:
+        with zipfile.ZipFile(output, "w") as archive:
+            for entry in original.infolist():
+                archive.writestr(entry.filename, original.read(entry))
+            archive.writestr("annotations/labels.xml", "<xml>SECRET</xml>")
+    raw = output.getvalue()
+    record = store.receive(io.BytesIO(raw), len(raw))
+    finished = await_record(store, record["upload_id"])
+    assert finished["error_code"] == "unsupported_plane_axial"
+    assert "аксиальные" in finished["message"]
+    assert "сагиттальная T2-серия" in finished["message"]
+    assert finished["input_plane"] == "axial"
+    assert finished["ignored_auxiliary_files"] == 1
+    assert finished["targets"] == []
+
+
+@pytest.mark.parametrize(
+    "orientations,expected",
+    [
+        ([[1, 0, 0, 0, 0, -1]], "coronal"),
+        ([[0, 1, 0, 0, 0, -1], [1, 0, 0, 0, 1, 0]], "oblique_or_mixed"),
+        ([[0, 0, 0, 0, 0, 0]], "unknown"),
+        ([[float("nan"), 0, 0, 0, 1, 0]], "unknown"),
+        ([[1, 0, 0]], "unknown"),
+    ],
+)
+def test_input_plane_does_not_guess_from_invalid_or_mixed_geometry(orientations, expected):
+    from types import SimpleNamespace
+
+    headers = [SimpleNamespace(ImageOrientationPatient=value) for value in orientations]
+    assert module._input_plane(headers) == expected
 
 
 @pytest.mark.parametrize(
