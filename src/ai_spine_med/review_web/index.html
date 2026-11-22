@@ -55,6 +55,7 @@
         </header>
         <section id="upload-status" class="upload-status" aria-live="polite" hidden><span id="upload-status-label" class="status-label"></span><p id="upload-status-message"></p><a id="download-report" class="button button-quiet" download hidden>Результат · JSON ↓</a></section>
         <div id="case-loading" class="loading-line" role="status" hidden>Загружаю серии пациента…</div>
+        <section id="patient-summary" class="patient-summary" aria-labelledby="patient-summary-title" hidden><div class="section-eyebrow">По результатам анализа</div><h2 id="patient-summary-title">Сводка исследования</h2><p id="patient-summary-text"></p><ul id="patient-summary-findings"></ul><p id="patient-summary-unassessed" class="small-muted"></p></section>
         <div id="case-grid" class="case-grid">
           <section id="viewer-card" class="viewer-card" aria-labelledby="viewer-title">
             <div class="card-heading"><div><div class="section-eyebrow">Изображения</div><h2 id="viewer-title">Серии пациента</h2></div><span id="series-count" class="small-muted"></span></div>
@@ -62,6 +63,7 @@
             <div class="viewer-toolbar"><span id="slice-caption"></span><div class="zoom-tools"><button id="zoom-out" type="button" class="dark-button" aria-label="Уменьшить изображение">−</button><span id="zoom-value">100%</span><button id="zoom-in" type="button" class="dark-button" aria-label="Увеличить изображение">+</button><button id="zoom-reset" type="button" class="dark-button" title="Показать всё изображение">Сброс</button></div></div>
             <div id="viewport" class="viewport" tabindex="0" role="region" aria-label="Изображение МРТ. Стрелки влево и вправо меняют срез; плюс и минус меняют масштаб; ноль сбрасывает масштаб.">
               <img id="slice-image" alt="Полный МР-срез" draggable="false" referrerpolicy="no-referrer">
+              <canvas id="morphology-overlay" class="morphology-overlay" aria-hidden="true" hidden></canvas>
               <div id="image-message" class="image-message">Выберите серию</div>
             </div>
             <div class="viewer-bottom">
@@ -76,6 +78,7 @@
             <section id="reference-card" class="card reference-card" aria-labelledby="reference-title"><div class="section-eyebrow">Метка набора данных</div><h2 id="reference-title">RSNA / центральный стеноз</h2><div id="reference-grade" class="reference-grade"></div></section>
             <section class="card" aria-labelledby="prediction-title"><h2 id="prediction-title">Степень центрального стеноза</h2><p id="model-name" class="model-name">SpineNet · frozen-head v1 · ансамбль 3 запусков</p><div id="level-focus-panel" class="level-focus-panel" hidden><span class="section-eyebrow">Область модели</span><div id="level-focus" class="level-focus" role="group" aria-label="Уровень области модели"></div><p id="level-focus-label" class="small-muted"></p></div><div id="predictions" class="prediction-list"></div><p class="small-muted">Вероятности не откалиброваны. «Не оценено» не означает норму.</p><p class="small-muted">Модель находит уровни по сагиттальной серии и оценивает каждый по области из 9 соседних срезов. Полные серии доступны для просмотра; остальные срезы не входят в оценку степени. Результат — исследовательская оценка, требующая проверки врачом.</p><p id="processing-reason" class="processing-reason" hidden></p></section>
             <section id="overview-card" class="card overview-card"><details><summary><span>Область модели</span><span class="summary-arrow" aria-hidden="true">↗</span></summary><a id="overview-link" target="_blank" rel="noopener noreferrer"><img id="overview-image" alt="Область, использованная моделью" loading="lazy" referrerpolicy="no-referrer"></a><p class="small-muted">Обзор входной области модели. Полные серии можно перелистывать в просмотрщике.</p></details></section>
+            <section id="analysis-modules" class="card analysis-modules" aria-labelledby="analysis-modules-title" hidden><h2 id="analysis-modules-title">Подключённые модули</h2><div id="module-tabs" class="module-tabs" role="group" aria-label="Модуль анализа"></div><div id="module-content" aria-live="polite"></div><button id="run-analysis-modules" class="button button-quiet" type="button" hidden>Оценить морфологию</button><p id="module-feedback" class="small-muted" role="status" hidden></p></section>
             <p id="case-id" class="case-id"></p>
           </aside>
         </div>

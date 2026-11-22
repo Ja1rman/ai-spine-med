@@ -7,12 +7,16 @@
   const levels = ["L4-L5", "L5-S1"];
   const probabilityNames = ["Норма / лёгкий", "Умеренный", "Тяжёлый"];
   const statusNames = {queued: "В очереди", processing: "Анализируется", completed: "Готово", partial: "Оценено частично", failed: "Не удалось оценить"};
-  const pending = (item) => ["queued", "processing"].includes(item?.status);
+  const pending = (item) => ["queued", "processing"].includes(item?.status) || Object.values(item?.modules || {}).some((module) => ["queued", "processing"].includes(module?.status));
   const state = {mode: "cohort", index: null, cases: new Map(), patientCases: new Map(), patients: new Map(), patientNumbers: new Map(), patientCache: new Map(), uploads: [], activeUpload: null, api: null, apiAvailable: false, poll: null, sending: false, detailLoading: false, detailRetry: false, navigation: 0, listRequest: 0, active: null, patient: null, series: null, slice: 0, filter: "all", search: "", zoom: 1, panX: 0, panY: 0, pointer: null, request: 0};
   const plural = (n, words) => words[(n % 100 > 10 && n % 100 < 20) ? 2 : n % 10 === 1 ? 0 : (n % 10 > 1 && n % 10 < 5) ? 1 : 2];
   const caseNumber = (item) => String(item.review_order ?? (state.index.cases.indexOf(item) + 1)).padStart(3, "0");
   const patientName = (item) => `Пациент ${String(state.patientNumbers.get(item.patient_id) || "—").padStart(3, "0")}`;
   const grade = (value) => Number.isInteger(value) && value >= 0 && value < 3 ? grades[value] : "Не оценено";
+  let morphologyLevel = null;
+  let showMorphologyContour = true;
+  let activeAnalysisModule = null;
+  let moduleSubmitting = false;
 
   function safeURL(relative) {
     const value = new URL(relative, root);
@@ -190,6 +194,227 @@
     renderLevelFocus(item, entries);
     $("processing-reason").hidden = true;
     $("processing-reason").textContent = "";
+    renderPatientSummary(entries.map((entry) => ({level: entry.level, ...(entry.item?.predictions?.sagittal || {})})), null, true);
+  }
+
+  function renderPatientSummary(targets, summary = null, cohort = false) {
+    const findings = $("patient-summary-findings");
+    findings.replaceChildren();
+    const knownFindings = Array.isArray(summary?.findings) ? summary.findings.filter((value) => typeof value === "string") : targets.filter(validPrediction).map((target) => `${target.level} · центральный стеноз по модели — ${grade(target.prediction).toLocaleLowerCase("ru")}.`);
+    for (const text of knownFindings) findings.append(node("li", "", text));
+    const unassessed = Array.isArray(summary?.unassessed) ? summary.unassessed.filter((value) => typeof value === "string") : targets.filter((target) => !validPrediction(target)).map((target) => `${target.level} — центральный стеноз не оценён.`);
+    $("patient-summary-text").textContent = typeof summary?.text === "string" ? summary.text : cohort ? "Автоматические оценки двух уровней исследования RSNA. Исходные метки набора приведены в карточках ниже." : "Оценки моделей по доступным сериям исследования.";
+    $("patient-summary-unassessed").textContent = unassessed.join(" ");
+    $("patient-summary-unassessed").hidden = !unassessed.length;
+    $("patient-summary").hidden = !knownFindings.length && !unassessed.length && !summary?.text;
+  }
+
+  function clearAnalysisModules() {
+    morphologyLevel = null;
+    showMorphologyContour = true;
+    activeAnalysisModule = null;
+    $("analysis-modules").hidden = true;
+    $("module-tabs").replaceChildren();
+    $("module-content").replaceChildren();
+    $("module-feedback").hidden = true;
+    $("module-feedback").textContent = "";
+    $("run-analysis-modules").hidden = true;
+    $("morphology-overlay").hidden = true;
+    $("patient-summary").hidden = true;
+    $("patient-summary-findings").replaceChildren();
+    $("patient-summary-text").textContent = "";
+    $("patient-summary-unassessed").textContent = "";
+  }
+
+  const morphologyNames = {extrusion: "Экструзия", protrusion: "Протрузия", indeterminate: "Не определена"};
+
+  function selectedMorphology() {
+    if (state.mode !== "uploads") return null;
+    const module = state.activeUpload?.modules?.disc_morphology;
+    if (module?.status !== "completed" || !Array.isArray(module.levels)) return null;
+    return module.levels.find((level) => level.level === morphologyLevel) || null;
+  }
+
+  function morphologyFrame(level) {
+    const key = state.series?.slices[state.slice]?.slice_key;
+    return level?.frames?.find((frame) => frame.slice_key === key && frame.plane === "sagittal") || null;
+  }
+
+  function openMorphologySlice(level) {
+    if (!state.patient) return;
+    const series = state.patient.series.find((value) => value.slices?.some((slice) => slice.slice_key === level.representative_slice_key));
+    if (series) setSeries(series, level.representative_slice_key, "push");
+  }
+
+  function drawMorphologyOverlay(frame) {
+    const canvas = $("morphology-overlay");
+    canvas.hidden = true;
+    if (!showMorphologyContour || !frame || !Number.isInteger(frame.width) || !Number.isInteger(frame.height) || frame.width < 1 || frame.height < 1 || frame.width > 2048 || frame.height > 2048) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    canvas.width = frame.width;
+    canvas.height = frame.height;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    const validPoint = (point) => Array.isArray(point) && point.length === 2 && point.every(Number.isFinite) && point[0] >= 0 && point[0] <= frame.width && point[1] >= 0 && point[1] <= frame.height;
+    context.lineWidth = Math.max(1.2, frame.width / 380);
+    context.strokeStyle = "#7ce3ce";
+    for (const polygon of frame.mask_polygons_xy || []) {
+      if (!Array.isArray(polygon) || polygon.length < 3 || !polygon.every(validPoint)) continue;
+      context.beginPath();
+      polygon.forEach((point, i) => i ? context.lineTo(...point) : context.moveTo(...point));
+      context.closePath();
+      context.stroke();
+    }
+    if (Array.isArray(frame.reference_line_xy) && frame.reference_line_xy.length === 2 && frame.reference_line_xy.every(validPoint)) {
+      context.strokeStyle = "#e9b887";
+      context.setLineDash([5, 4]);
+      context.beginPath();
+      context.moveTo(...frame.reference_line_xy[0]);
+      context.lineTo(...frame.reference_line_xy[1]);
+      context.stroke();
+      context.setLineDash([]);
+    }
+    context.font = `${Math.max(8, frame.width / 44)}px sans-serif`;
+    for (const [name, symbol, color] of [["base", "B", "#e9b887"], ["displaced", "D", "#e6a4b4"], ["depth", "H", "#a6b9ed"]]) {
+      const segment = frame.segments_xy?.[name];
+      if (!Array.isArray(segment) || segment.length !== 2 || !segment.every(validPoint)) continue;
+      context.strokeStyle = color;
+      context.fillStyle = color;
+      context.beginPath();
+      context.moveTo(...segment[0]);
+      context.lineTo(...segment[1]);
+      context.stroke();
+      context.fillText(symbol, Math.min(frame.width - 10, segment[1][0] + 3), Math.max(10, segment[1][1] - 3));
+    }
+    canvas.hidden = false;
+    canvas.style.transform = $("slice-image").style.transform;
+  }
+
+  function renderDiscMorphology(module) {
+    const content = $("module-content");
+    content.replaceChildren();
+    $("morphology-overlay").hidden = true;
+    if (module.status !== "completed") {
+      const status = {processing: "Морфология дисков анализируется…", queued: "Морфология дисков в очереди", disabled: "Модуль морфологии не подключён", failed: "Не удалось оценить морфологию"};
+      content.append(node("p", "module-status", status[module.status] || "Морфология ещё не оценена"));
+      if (module.message) content.append(node("p", "small-muted", module.message));
+      return;
+    }
+    const choices = Array.isArray(module.levels) ? module.levels.filter((level) => /^L[1-5]-(?:L[2-5]|S1)$/.test(level.level)) : [];
+    if (!choices.length) { content.append(node("p", "small-muted", "Для этого исследования нет результатов по уровням.")); return; }
+    if (!choices.some((level) => level.level === morphologyLevel)) morphologyLevel = (choices.find((level) => levels.includes(level.level) && level.candidate_voxels > 0) || choices.find((level) => level.candidate_voxels > 0) || choices[0]).level;
+    const picker = node("div", "morphology-levels");
+    for (const level of choices) {
+      const button = node("button", "level-focus-button" + (level.level === morphologyLevel ? " active" : ""), level.level);
+      button.type = "button";
+      button.dataset.level = level.level;
+      button.setAttribute("aria-pressed", String(level.level === morphologyLevel));
+      button.addEventListener("click", () => { morphologyLevel = level.level; renderDiscMorphology(module); });
+      picker.append(button);
+    }
+    content.append(picker);
+    const level = selectedMorphology(), frame = morphologyFrame(level);
+    const hasCandidate = level?.candidate_voxels > 0;
+    content.append(node("p", "module-status", hasCandidate ? "Есть кандидатная маска диска" : "Кандидатная маска не получена"));
+    if (hasCandidate) {
+      content.append(node("p", "morphology-hypothesis", `Геометрическая гипотеза · ${morphologyNames[level.geometric_candidate] || "Не определена"}`));
+      content.append(node("p", "small-muted", "Морфологический тип требует проверки. Контур и опорная линия предложены автоматически."));
+    } else content.append(node("p", "small-muted", "Для этого уровня нет кандидатной маски. Наличие грыжи остаётся неоценённым."));
+    const caption = frame ? `Измерения текущего среза · ${state.slice + 1} / ${state.series.slices.length}` : "Измерения текущего среза";
+    content.append(node("h3", "morphology-slice-caption", caption));
+    const metrics = node("dl", "morphology-metrics");
+    for (const [symbol, field, description, unit] of [["B", "B_mm", "Основание", " мм"], ["D", "D_mm", "Наружная ширина", " мм"], ["H", "H_mm", "Глубина", " мм"], ["D/B", "D_over_B", "Отношение ширин", ""]]) {
+      const value = frame?.[field];
+      const entry = node("div", "morphology-metric");
+      entry.append(node("dt", "", symbol), node("dd", "", Number.isFinite(value) && value >= 0 ? value.toFixed(2).replace(".", ",") + unit : "—"), node("span", "", description));
+      metrics.append(entry);
+    }
+    content.append(metrics);
+    if (frame?.geometry_measurable === false) content.append(node("p", "small-muted morphology-quality", "Геометрия этого среза не прошла проверку пригодности. Доступные числа относятся к кандидатной маске."));
+    const qualityLabels = {empty_mask: "На этом срезе маска пуста.", too_few_mask_pixels: "В маске слишком мало пикселей.", disconnected_mask: "Маска содержит раздельные компоненты.", touches_frame_edge: "Маска достигает края снимка.", multiple_base_intervals: "Опорная линия пересекает несколько участков маски.", base_not_intersecting_reference: "Основание не пересекает опорную линию.", missing_base: "Основание не удалось определить.", no_resolved_displaced_tissue: "Наружная часть не разрешается на этом срезе.", reference_unavailable: "Опорная линия недоступна."};
+    const qualityNotes = (Array.isArray(frame?.quality_flags) ? frame.quality_flags : []).map((flag) => qualityLabels[flag]).filter(Boolean);
+    if (qualityNotes.length) content.append(node("p", "small-muted morphology-quality", qualityNotes.join(" ")));
+    if (Number.isFinite(frame?.uncertainty_mm) && frame.uncertainty_mm >= 0) content.append(node("p", "small-muted", `Нижняя оценка неопределённости · ±${frame.uncertainty_mm.toFixed(2).replace(".", ",")} мм`));
+    if (!frame) content.append(node("p", "small-muted", "Для открытого среза измерений нет. Выберите срез с маской или перелистайте серию."));
+    const actions = node("div", "morphology-actions");
+    const jump = node("button", "button button-quiet", "К срезу с маской ↗");
+    jump.type = "button";
+    jump.disabled = !level?.representative_slice_key || !state.patient?.series?.some((series) => series.slices?.some((slice) => slice.slice_key === level.representative_slice_key));
+    jump.addEventListener("click", () => openMorphologySlice(level));
+    actions.append(jump);
+    const toggle = node("button", "button button-quiet", showMorphologyContour ? "Скрыть контур" : "Показать контур");
+    toggle.type = "button";
+    toggle.setAttribute("aria-pressed", String(showMorphologyContour));
+    toggle.addEventListener("click", () => { showMorphologyContour = !showMorphologyContour; renderDiscMorphology(module); });
+    actions.append(toggle);
+    content.append(actions, node("p", "small-muted morphology-legend", "Зелёный контур · кандидатная маска. Пунктир · опорная линия. B, D и H рассчитаны относительно этой линии."));
+    if (["L1-L2", "L2-L3", "L3-L4"].includes(level.level)) content.append(node("p", "small-muted", "Обучающее покрытие весов для этого уровня не подтверждено."));
+    drawMorphologyOverlay(frame);
+  }
+
+  const moduleRenderers = {disc_morphology: {title: "Морфология дисков", render: renderDiscMorphology}};
+
+  function renderAnalysisModules(item) {
+    const tabs = $("module-tabs");
+    tabs.replaceChildren();
+    const available = Object.entries(moduleRenderers).filter(([id]) => item.modules?.[id]);
+    $("analysis-modules").hidden = !available.length && !item.modules_available;
+    $("run-analysis-modules").hidden = !item.modules_available;
+    $("run-analysis-modules").disabled = moduleSubmitting || pending(item) || !item.patient?.series?.some((series) => series.slices?.length);
+    $("run-analysis-modules").textContent = item.modules?.disc_morphology?.status === "completed" ? "Повторить анализ морфологии" : "Оценить морфологию";
+    if (!available.length) {
+      $("module-content").replaceChildren(...(item.modules_available ? [node("p", "small-muted", "Морфология этого исследования ещё не оценена. Можно запустить подключённый модуль отдельно.")] : []));
+      $("morphology-overlay").hidden = true;
+      return;
+    }
+    if (!available.some(([id]) => id === activeAnalysisModule)) activeAnalysisModule = available[0][0];
+    for (const [id, renderer] of available) {
+      const selected = id === activeAnalysisModule;
+      const tab = node("button", "module-tab" + (selected ? " active" : ""), renderer.title);
+      tab.type = "button";
+      tab.setAttribute("aria-pressed", String(selected));
+      tab.addEventListener("click", () => { activeAnalysisModule = id; renderAnalysisModules(item); });
+      tabs.append(tab);
+    }
+    const [id, renderer] = available.find(([id]) => id === activeAnalysisModule);
+    renderer.render(item.modules[id]);
+  }
+
+  async function runAnalysisModules() {
+    const item = state.activeUpload;
+    if (state.mode !== "uploads" || !item?.modules_available || moduleSubmitting || pending(item)) return;
+    const id = item.upload_id;
+    const navigation = state.navigation;
+    moduleSubmitting = true;
+    $("run-analysis-modules").disabled = true;
+    $("module-feedback").hidden = false;
+    $("module-feedback").textContent = "Добавляю анализ в очередь…";
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    try {
+      const response = await fetch(safeURL(`api/uploads/${encodeURIComponent(id)}/modules`), {method: "POST", headers: {"X-Upload-Intent": "dicom-series"}, body: "", credentials: "same-origin", referrerPolicy: "no-referrer", signal: controller.signal});
+      if (!response.ok) throw new Error("Module request rejected");
+      const queued = await response.json();
+      if (queued.upload_id !== id) throw new Error("Invalid module job");
+      const index = state.uploads.findIndex((value) => value.upload_id === id);
+      if (index >= 0) state.uploads[index] = queued;
+      if (navigation === state.navigation && state.mode === "uploads" && state.activeUpload?.upload_id === id) {
+        state.activeUpload = queued;
+        renderAnalysisModules(queued);
+        $("module-feedback").textContent = "Анализ морфологии добавлен в очередь.";
+        await refreshUploads({quiet: true, refreshActive: true});
+      }
+      schedulePoll();
+    } catch (_) {
+      if (navigation === state.navigation && state.mode === "uploads" && state.activeUpload?.upload_id === id) {
+        $("module-feedback").hidden = false;
+        $("module-feedback").textContent = "Не удалось подтвердить запуск. Обновите список перед повторной попыткой.";
+      }
+    } finally {
+      clearTimeout(timer);
+      moduleSubmitting = false;
+      if (state.mode === "uploads" && state.activeUpload) renderAnalysisModules(state.activeUpload);
+    }
   }
 
   function seriesName(series) {
@@ -247,6 +472,7 @@
     state.patient = null;
     state.detailLoading = false;
     state.detailRetry = false;
+    clearAnalysisModules();
     $("series-picker").disabled = true;
     disableDownloads();
     updateHistory(options);
@@ -372,6 +598,7 @@
     $("slice-details").textContent = [`${seriesName(series)}`, `InstanceNumber: ${slice.instance_number ?? "—"}`, size].filter(Boolean).join(" · ");
     downloadLink("download-dicom", slice.dicom_url);
     downloadLink("download-zip", series.zip_url);
+    if (state.mode === "uploads") renderAnalysisModules(state.activeUpload);
     if (historyMode !== "none") {
       const urlState = new URL(root);
       if (state.mode === "uploads") { urlState.searchParams.set("view", "uploads"); urlState.searchParams.set("upload", state.activeUpload.upload_id); }
@@ -391,6 +618,7 @@
 
   function applyZoom() {
     $("slice-image").style.transform = `translate(${state.panX}px, ${state.panY}px) scale(${state.zoom})`;
+    $("morphology-overlay").style.transform = $("slice-image").style.transform;
     $("zoom-value").textContent = `${Math.round(state.zoom * 100)}%`;
   }
 
@@ -450,6 +678,7 @@
     state.detailRetry = false;
     state.series = null;
     state.patient = null;
+    clearAnalysisModules();
     $("series-picker").disabled = true;
     disableDownloads();
     state.search = "";
@@ -547,6 +776,7 @@
     if (!options.refresh) {
       state.series = null;
       state.patient = null;
+      clearAnalysisModules();
       $("series-picker").disabled = true;
       disableDownloads();
       $("case-content").hidden = true;
@@ -586,6 +816,7 @@
         const prediction = (item.targets || []).find((target) => target.level === level) || {};
         $("predictions").append(predictionCard(prediction, level));
       }
+      renderPatientSummary(item.targets || [], item.patient_summary);
       $("processing-reason").hidden = true;
       const hasImages = item.patient?.series?.some((series) => series.slices?.length);
       $("case-grid").hidden = pending(item) && !hasImages;
@@ -601,6 +832,7 @@
         state.patient = null;
         disableDownloads();
       }
+      renderAnalysisModules(item);
       renderUploadsList();
     } catch (_) {
       if (request !== state.request) return;
@@ -683,6 +915,7 @@
       if (navigation === state.navigation && state.mode === "uploads" && state.uploads.length) activateUpload(state.activeUpload?.upload_id || state.uploads[0].upload_id, {history: "replace"});
     });
     $("refresh-uploads").addEventListener("click", () => refreshUploads({refreshActive: true}));
+    $("run-analysis-modules").addEventListener("click", runAnalysisModules);
     $("upload-file").addEventListener("change", checkUploadFile);
     $("upload-consent").addEventListener("change", checkUploadFile);
     $("upload-form").addEventListener("submit", submitUpload);

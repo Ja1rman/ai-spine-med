@@ -267,7 +267,8 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if parsed is None:
             return
         relative, _ = parsed
-        if relative != "api/uploads" or self.server.uploads is None:
+        module_route = re.fullmatch(r"api/uploads/(upload-[0-9a-f]{32})/modules", relative)
+        if (relative != "api/uploads" and not module_route) or self.server.uploads is None:
             self._error(405)
             return
         if (
@@ -282,6 +283,22 @@ class ReviewHandler(BaseHTTPRequestHandler):
                     "message": "Загрузка разрешена только со страницы этого сайта.",
                 },
             )
+            return
+        if module_route:
+            if (
+                len(self.headers.get_all("Content-Length", [])) > 1
+                or self.headers.get("Content-Length", "0") != "0"
+                or self.headers.get("Transfer-Encoding")
+            ):
+                self._json(
+                    400,
+                    {"error": "invalid_request", "message": "Запрос модуля должен быть без тела."},
+                )
+                return
+            try:
+                self._json(202, self.server.uploads.run_modules(module_route[1]))
+            except UploadRejected as error:
+                self._json(error.status, {"error": error.code, "message": error.message})
             return
         if (
             self.headers.get("Transfer-Encoding")
@@ -437,6 +454,7 @@ def main():
                 cache=Path(os.environ.get("REVIEW_MODEL_CACHE", ".cache")),
                 device=os.environ.get("REVIEW_INFERENCE_DEVICE", "cpu"),
                 threads=int(os.environ.get("REVIEW_INFERENCE_THREADS", "1")),
+                modules=json.loads(os.environ.get("REVIEW_ANALYSIS_MODULES", "{}")),
             )
         server = ReviewServer(
             root,

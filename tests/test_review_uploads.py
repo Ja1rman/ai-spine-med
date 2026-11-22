@@ -9,6 +9,7 @@ import time
 import zipfile
 from http.server import ThreadingHTTPServer
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pydicom
@@ -17,6 +18,7 @@ from pydicom.dataset import FileDataset, FileMetaDataset
 from pydicom.uid import EnhancedMRImageStorage, ExplicitVRLittleEndian, MRImageStorage, generate_uid
 
 from ai_spine_med import review_uploads as module
+from ai_spine_med.analysis_modules import _source_slices
 from ai_spine_med.review_server import ReviewServer
 
 
@@ -136,7 +138,8 @@ def test_complete_private_upload_preview_and_persistence(store):
         reopened.close()
 
 
-def test_rsna_style_missing_modality_and_sop_class_uses_mr_file_meta(store):
+@pytest.mark.parametrize("storage_class", [MRImageStorage, EnhancedMRImageStorage])
+def test_rsna_style_missing_modality_and_sop_class_uses_mr_file_meta(store, storage_class):
     raw = synthetic_zip()
     output = io.BytesIO()
     with zipfile.ZipFile(io.BytesIO(raw)) as original, zipfile.ZipFile(output, "w") as archive:
@@ -144,12 +147,14 @@ def test_rsna_style_missing_modality_and_sop_class_uses_mr_file_meta(store):
             dataset = pydicom.dcmread(io.BytesIO(original.read(entry)))
             del dataset.Modality
             del dataset.SOPClassUID
-            dataset.file_meta.MediaStorageSOPClassUID = EnhancedMRImageStorage
+            dataset.file_meta.MediaStorageSOPClassUID = storage_class
             stream = io.BytesIO()
             dataset.save_as(stream, enforce_file_format=True)
             archive.writestr(entry.filename, stream.getvalue())
     record = store.receive(io.BytesIO(output.getvalue()), len(output.getvalue()))
     assert await_record(store, record["upload_id"])["status"] == "completed"
+    sources, _ = _source_slices(store.root / record["upload_id"] / "dicom")
+    assert len(sources) == 3 and all(s["missing_modality"] for s in sources.values())
 
 
 def test_active_job_reservation_prevents_disk_overcommit(store):
@@ -459,3 +464,264 @@ def test_http_slot_released_when_handler_fails(server, monkeypatch):
         time.sleep(0.01)
     assert server.http_slots._value == 2
     assert request(server, server.prefix)[0] == 200
+
+
+def test_optional_module_failure_preserves_stenosis_and_summary(store, monkeypatch):
+    result = {
+        "disc_morphology": {"status": "failed", "levels": [], "message": "Серия не обработана."}
+    }
+    monkeypatch.setattr(module, "run_analysis_modules", lambda *args: result)
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    record = await_record(store, accepted["upload_id"])
+    assert record["status"] == "completed"
+    assert record["modules"] == result
+    assert len(record["targets"]) == 2
+    assert len(record["patient_summary"]["findings"]) == 2
+    assert "Морфология дисков не оценена." in record["patient_summary"]["unassessed"]
+    report = json.loads((store.root / record["upload_id"] / "result.json").read_text())
+    assert report["modules"] == record["modules"]
+    assert "modules" not in store.list()["uploads"][0]
+
+
+def test_modules_rerun_reuses_dicom_and_preserves_central_results(store, monkeypatch):
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    original = await_record(store, accepted["upload_id"])
+    store.configuration["modules"] = {"disc_morphology": {"enabled": True}}
+    result = {"disc_morphology": {"status": "completed", "levels": []}}
+    calls = []
+
+    def run(directory, job, configuration):
+        calls.append(directory)
+        assert len(list(directory.glob("*.dcm"))) == 3
+        return result
+
+    def unexpected_inference(*args, **kwargs):
+        pytest.fail("Existing stenosis estimates should be reused")
+
+    monkeypatch.setattr(module, "run_analysis_modules", run)
+    store.runner = unexpected_inference
+    assert store.run_modules(original["upload_id"])["status"] == "queued"
+    record = await_record(store, original["upload_id"])
+    assert len(calls) == 1
+    assert record["targets"] == original["targets"]
+    assert record["modules"] == result
+    assert record["status"] == "completed"
+    assert record["modules_available"] is True
+
+
+def test_modules_http_requires_origin_before_enqueuing(server):
+    route = server.prefix + "api/uploads/upload-" + "1" * 32 + "/modules"
+    assert request(server, route, "POST", b"")[0] == 403
+    headers = {"Origin": "https://review.example", "X-Upload-Intent": "dicom-series"}
+    assert request(server, route, "POST", b"", headers)[0] == 503
+    headers["Origin"] = "https://elsewhere.example"
+    assert request(server, route, "POST", b"", headers)[0] == 403
+
+
+def test_old_records_get_summary_without_rewriting_sources(store):
+    identifier = "upload-" + "a" * 32
+    job = store.root / identifier
+    job.mkdir()
+    saved = {"upload_id": identifier, "status": "completed", "targets": []}
+    path = job / "record.json"
+    path.write_text(json.dumps(saved))
+    before = path.read_bytes()
+    record = store.get(identifier)
+    assert record["modules"] == {}
+    assert record["patient_summary"]["findings"] == []
+    assert len(record["patient_summary"]["unassessed"]) == 3
+    assert path.read_bytes() == before
+
+
+def test_uncaught_module_error_keeps_primary_model_result(store, monkeypatch):
+    def fail(*args):
+        raise RuntimeError("PRIVATE_MODEL_ERROR")
+
+    monkeypatch.setattr(module, "run_analysis_modules", fail)
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    record = await_record(store, accepted["upload_id"])
+    assert record["status"] == record["central_status"] == "completed"
+    assert len(record["targets"]) == 2
+    assert record["modules"]["disc_morphology"]["status"] == "failed"
+    assert "PRIVATE_MODEL_ERROR" not in json.dumps(record)
+    report = json.loads((store.root / record["upload_id"] / "result.json").read_text())
+    assert len(report["targets"]) == 2
+    assert report["modules"] == record["modules"]
+
+
+def test_primary_result_is_visible_while_optional_module_is_running(store, monkeypatch):
+    store.configuration["modules"] = {"disc_morphology": {"enabled": True}}
+    started, release = threading.Event(), threading.Event()
+
+    def pause(*args):
+        started.set()
+        assert release.wait(3)
+        return {"disc_morphology": {"status": "completed", "levels": []}}
+
+    monkeypatch.setattr(module, "run_analysis_modules", pause)
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    try:
+        assert started.wait(3)
+        record = store.get(accepted["upload_id"])
+        assert record["status"] == "processing"
+        assert record["central_status"] == "completed"
+        assert record["modules"]["disc_morphology"]["status"] == "processing"
+        assert len(record["targets"]) == 2 and record["report_url"]
+        assert len(record["patient_summary"]["findings"]) == 2
+    finally:
+        release.set()
+    assert await_record(store, accepted["upload_id"])["status"] == "completed"
+
+
+def test_restart_during_module_preserves_saved_primary_report(store):
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    original = await_record(store, accepted["upload_id"])
+    job = store.root / original["upload_id"]
+    module._update(job, status="processing", central_status="completed")
+    work = job / ".disc-morphology-incomplete"
+    work.mkdir()
+    (work / "raw-model.nii.gz").write_bytes(b"private-incomplete-output")
+    reopened = module.UploadStore(store.root)
+    try:
+        record = reopened.get(original["upload_id"])
+        assert record["status"] == "completed"
+        assert record["targets"] == original["targets"]
+        assert record["modules"]["disc_morphology"]["error_code"] == "interrupted"
+        assert not work.exists()
+        report = json.loads((job / "result.json").read_text())
+        assert report["modules"] == record["modules"]
+        assert len(report["targets"]) == 2
+    finally:
+        reopened.close()
+
+
+def test_module_queue_submission_failure_releases_slot_and_preserves_record(store, monkeypatch):
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    original = await_record(store, accepted["upload_id"])
+    store.configuration["modules"] = {"disc_morphology": {"enabled": True}}
+
+    def reject(*args, **kwargs):
+        raise RuntimeError("executor is closing")
+
+    monkeypatch.setattr(store.executor, "submit", reject)
+    with pytest.raises(module.UploadRejected, match="queue_unavailable"):
+        store.run_modules(original["upload_id"])
+    assert store.slots._value == module.MAX_PENDING
+    assert not store.reservations
+    record = store.get(original["upload_id"])
+    assert record["status"] == "completed" and record["targets"] == original["targets"]
+    assert record["modules"] == original["modules"]
+
+
+def test_module_run_requires_temporary_workspace_free_disk(store, monkeypatch):
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    original = await_record(store, accepted["upload_id"])
+    store.configuration["modules"] = {"disc_morphology": {"enabled": True}}
+    monkeypatch.setattr(
+        module.shutil, "disk_usage", lambda _: SimpleNamespace(free=module.MAX_WORK_BYTES - 1)
+    )
+    with pytest.raises(module.UploadRejected, match="storage_full"):
+        store.run_modules(original["upload_id"])
+    assert store.slots._value == module.MAX_PENDING
+    assert not store.reservations
+    assert store.get(original["upload_id"])["status"] == "completed"
+
+
+def test_outer_timeout_preserves_primary_result_and_marks_only_module_failed(store, monkeypatch):
+    raw = synthetic_zip()
+    accepted = store.receive(io.BytesIO(raw), len(raw))
+    original = await_record(store, accepted["upload_id"])
+    job = store.root / original["upload_id"]
+    module._update(job, status="queued", central_status="completed")
+    store.runner = None
+    assert store.slots.acquire(blocking=False)
+    stopped = []
+
+    class Running:
+        pid = 12345
+        done = False
+
+        def poll(self):
+            return -9 if self.done else None
+
+        def wait(self, timeout=None):
+            if timeout is not None:
+                raise module.subprocess.TimeoutExpired("test-worker", timeout)
+            self.done = True
+            return -9
+
+    process = Running()
+    monkeypatch.setattr(module.subprocess, "Popen", lambda *a, **kw: process)
+    monkeypatch.setattr(module, "terminate_process_tree", stopped.append)
+    monkeypatch.setattr(module.os, "killpg", lambda *args: None)
+    store._work(job, modules_only=True)
+    record = store.get(original["upload_id"])
+    assert record["status"] == "completed"
+    assert record["targets"] == original["targets"]
+    assert record["modules"]["disc_morphology"]["error_code"] == "timeout"
+    assert stopped == [12345] and store.slots._value == module.MAX_PENDING
+    report = json.loads((job / "result.json").read_text())
+    assert report["modules"] == record["modules"]
+
+
+@pytest.mark.parametrize(
+    "config",
+    [
+        [],
+        {"unknown_module": {}},
+        {"disc_morphology": "invalid"},
+        {"disc_morphology": {"enabled": "yes"}},
+        {"disc_morphology": {"enabled": True, "python": "relative", "model_home": "/models"}},
+        {
+            "disc_morphology": {
+                "enabled": True,
+                "python": "/python",
+                "model_home": "/models",
+                "timeout_seconds": -1,
+            }
+        },
+        {"disc_morphology": {"unexpected": True}},
+    ],
+)
+def test_invalid_module_configuration_fails_server_startup(tmp_path, config):
+    with pytest.raises(ValueError):
+        module.UploadStore(tmp_path / "uploads", modules=config)
+
+
+@pytest.mark.parametrize(
+    "morphology_status,expected",
+    [("completed", "partial"), ("disabled", "failed"), ("failed", "failed")],
+)
+def test_module_success_produces_partial_when_central_model_failed(
+    store, morphology_status, expected
+):
+    identifier = "upload-" + "b" * 32
+    job = store.root / identifier
+    job.mkdir()
+    targets = [
+        {"level": level, "status": "not_assessed", "prediction": None}
+        for level in ("L4-L5", "L5-S1")
+    ]
+    module._write_json(
+        job / "record.json",
+        {
+            "upload_id": identifier,
+            "status": "processing",
+            "central_status": "failed",
+            "targets": targets,
+        },
+    )
+    module._write_json(job / "result.json", {"status": "failed", "targets": targets})
+    modules = {"disc_morphology": {"status": morphology_status, "levels": []}}
+    module._finish_modules(job, modules)
+    record = store.get(identifier)
+    assert record["status"] == expected and record["central_status"] == "failed"
+    assert record["targets"] == targets and record["modules"] == modules
+    assert not record["patient_summary"]["findings"]

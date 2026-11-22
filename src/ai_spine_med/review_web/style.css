@@ -81,6 +81,12 @@ input::placeholder { color: #8a9695; }
 .badge.control { color: var(--green); }
 .badge.unassessed { color: #b5bcc7; }
 .case-grid { display: grid; grid-template-columns: minmax(0,1fr) 306px; gap: 28px; align-items: start; }
+.patient-summary { margin-bottom: 26px; padding: 20px 24px; border-left: 2px solid var(--accent); background: #1b2220; }
+.patient-summary h2 { margin-bottom: 8px; font-size: 18px; }
+.patient-summary > p { max-width: 980px; margin-bottom: 8px; color: #c2ccc5; font-size: 12px; }
+.patient-summary ul { margin: 12px 0; padding-left: 18px; }
+.patient-summary li { padding: 3px 0; color: #d5ddd5; font-size: 12px; line-height: 1.6; }
+.patient-summary .small-muted { margin-bottom: 0; color: var(--muted); font-size: 10px; }
 
 .viewer-card { min-width: 0; border: 1px solid var(--line); background: var(--surface); }
 .card-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 18px 0; }
@@ -99,6 +105,7 @@ select { width: 100%; min-width: 0; min-height: 36px; padding: 7px 28px 7px 10px
 .viewport { position: relative; height: clamp(390px, calc(100dvh - 366px), 790px); background: #050708; overflow: hidden; cursor: grab; user-select: none; touch-action: none; }
 .viewport.dragging { cursor: grabbing; }
 .viewport img { display: block; width: 100%; height: 100%; object-fit: contain; transform-origin: center; will-change: transform; }
+.viewport .morphology-overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transform-origin: center; pointer-events: none; }
 .image-message { position: absolute; inset: 0; display: grid; place-items: center; background: #050708; color: var(--muted); text-align: center; padding: 30px; font-size: 12px; }
 .viewer-bottom { padding: 16px 18px 19px; }
 .slice-navigation { display: flex; gap: 14px; align-items: center; }
@@ -162,6 +169,23 @@ input[type=range] { width: 100%; height: 2px; accent-color: var(--accent); curso
 .overview-card img { display: block; width: 100%; height: auto; }
 .overview-card p { margin: 12px 0 0; }
 .case-id { margin-top: 24px; color: #8b9993; font: 8px/1.8 var(--mono); overflow-wrap: anywhere; }
+.module-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.module-tab { padding: 7px 0; color: var(--muted); border: 0; border-bottom: 1px solid var(--line); background: transparent; font-size: 12px; text-align: left; }
+.module-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.morphology-levels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 17px; }
+.morphology-levels .level-focus-button { flex: 1 1 70px; min-width: 70px; padding: 7px 9px; font-size: 10px; }
+.module-status { margin-bottom: 7px; color: #d0d9d1; font-size: 13px; }
+.morphology-hypothesis { margin-bottom: 8px; font-size: 12px; color: var(--accent); }
+.morphology-slice-caption { margin: 20px 0 11px; font: 10px/1.6 var(--mono); color: #b5c2bb; }
+.morphology-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0 0 13px; border: 1px solid var(--line); background: var(--line); }
+.morphology-metric { min-width: 0; padding: 12px 11px; background: #1c2321; }
+.morphology-metric dt { color: var(--accent); font: 10px/1.5 var(--mono); }
+.morphology-metric dd { margin: 3px 0 1px; font: 17px/1.5 var(--mono); color: var(--ink); }
+.morphology-metric > span { color: var(--muted); font-size: 9px; }
+.morphology-quality { padding-left: 9px; border-left: 1px solid #a78762; }
+.morphology-actions { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0; }
+.morphology-actions .button { font-size: 9px; }
+.morphology-legend { margin-bottom: 0; }
 .loading-line { color: var(--muted); margin-bottom: 14px; font-size: 11px; }
 .fatal-error { padding: 28px; border: 1px solid #865a53; color: #e6b5aa; line-height: 1.7; }
 .source-tabs { display: flex; align-items: stretch; align-self: stretch; gap: 28px; }

@@ -26,6 +26,13 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
+from .analysis_modules import (
+    MAX_WORK_BYTES,
+    patient_summary,
+    run_analysis_modules,
+    terminate_process_tree,
+)
+
 MAX_UPLOAD_BYTES = 256 * 1024 * 1024
 MAX_EXPANDED_BYTES = 256 * 1024 * 1024
 MAX_MEMBER_BYTES = 32 * 1024 * 1024
@@ -35,6 +42,7 @@ MAX_UPLOADS = 100
 MAX_PENDING = 4
 MAX_PIXELS = 32 * 1024 * 1024
 JOB_TIMEOUT_SECONDS = 900
+MODULE_RESULT_BYTES = 32 * 1024 * 1024
 UPLOAD_ID = re.compile(r"^upload-[0-9a-f]{32}$")
 MODEL_NAME = "SpineNet · frozen-head v1 · ансамбль 3 запусков"
 _ASSETS = re.compile(
@@ -70,7 +78,119 @@ def _update(job: Path, **fields):
 
 
 def _size(root: Path):
-    return sum(p.stat().st_size for p in root.rglob("*") if p.is_file())
+    total = 0
+    for path in root.rglob("*"):
+        try:
+            if path.is_file():
+                total += path.stat().st_size
+        except FileNotFoundError:
+            # Another worker can atomically replace a record during accounting.
+            continue
+    return total
+
+
+def _module_configuration(value):
+    if value is None:
+        return {}
+    if not isinstance(value, dict) or set(value) - {"disc_morphology"}:
+        raise ValueError("Unknown analysis module")
+    for configuration in value.values():
+        if not isinstance(configuration, dict) or set(configuration) - {
+            "enabled",
+            "python",
+            "model_home",
+            "timeout_seconds",
+            "threads",
+            "device",
+        }:
+            raise ValueError("Invalid analysis module configuration")
+        if type(configuration.get("enabled", False)) is not bool:
+            raise ValueError("Module enabled flag must be boolean")
+        if configuration.get("enabled"):
+            if any(
+                not isinstance(configuration.get(key), str)
+                or not Path(configuration[key]).is_absolute()
+                for key in ("python", "model_home")
+            ):
+                raise ValueError("Module runtime and models require absolute paths")
+            for key, default, limit in (("timeout_seconds", 3600, 7200), ("threads", 2, 16)):
+                number = configuration.get(key, default)
+                if type(number) is not int or not 1 <= number <= limit:
+                    raise ValueError("Invalid module resource limit")
+            if configuration.get("device", "cpu") not in {"cpu", "cuda"}:
+                raise ValueError("Invalid module device")
+    return json.loads(json.dumps(value))
+
+
+def _pending_modules(configuration, status="processing"):
+    if configuration.get("modules", {}).get("disc_morphology", {}).get("enabled"):
+        return {
+            "disc_morphology": {
+                "module_id": "disc_morphology",
+                "status": status,
+                "message": "Морфология дисков обрабатывается."
+                if status == "processing"
+                else "Модуль морфологии в очереди.",
+                "levels": [],
+            }
+        }
+    return {}
+
+
+def _module_failure(code, message):
+    return {
+        "disc_morphology": {
+            "module_id": "disc_morphology",
+            "status": "failed",
+            "error_code": code,
+            "message": message,
+            "clinical_status": "indeterminate",
+            "levels": [],
+        }
+    }
+
+
+def _finish_modules(job, modules):
+    record = json.loads((job / "record.json").read_text())
+    summary = patient_summary(record.get("targets", []), modules)
+    report_path = job / "result.json"
+    report = json.loads(report_path.read_text()) if report_path.is_file() else {}
+    report.update(modules=modules, patient_summary=summary)
+    _write_json(report_path, report)
+    status = record.get("central_status", "failed")
+    if status == "failed" and any(value.get("status") == "completed" for value in modules.values()):
+        status = "partial"
+    return _update(
+        job,
+        status=status,
+        modules=modules,
+        patient_summary=summary,
+        message="Обработка завершена. Оценки стеноза и статус модулей доступны в карточке.",
+        report_url=f"api/uploads/{job.name}/result.json",
+        completed_at_utc=_now(),
+    )
+
+
+def _finish_failure(job, code, message):
+    for work in job.glob(".disc-morphology-*"):
+        shutil.rmtree(work, ignore_errors=True)
+    record = json.loads((job / "record.json").read_text())
+    if record.get("central_status") in {"completed", "partial", "failed"}:
+        return _finish_modules(job, _module_failure(code, message))
+    return _update(job, status="failed", error_code=code, message=message, completed_at_utc=_now())
+
+
+def _stop_worker(process):
+    if process is None or process.poll() is not None:
+        return
+    try:
+        terminate_process_tree(process.pid)
+    finally:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.wait()
 
 
 def _rejected(
@@ -344,20 +464,19 @@ def _process_job(job: Path, configuration: dict, runner=None):
                 }
             )
         status = {"ok": "completed", "partial": "partial"}.get(report["status"], "failed")
-        messages = {
-            "completed": "Анализ завершён: доступны оценки L4–L5 и L5–S1.",
-            "partial": "Анализ завершён частично: один из уровней не удалось оценить.",
-            "failed": "Модель не смогла оценить уровни. Это не означает отсутствие стеноза.",
-        }
+        report["modules"] = _pending_modules(configuration)
+        report["patient_summary"] = patient_summary(targets, report["modules"])
         _write_json(job / "result.json", report)
         _update(
             job,
-            status=status,
             targets=targets,
-            message=messages[status],
+            central_status=status,
+            modules=report["modules"],
+            patient_summary=report["patient_summary"],
             report_url=f"api/uploads/{job.name}/result.json",
-            completed_at_utc=_now(),
+            message="Оценка центрального стеноза сохранена. Обрабатываю подключённые модули…",
         )
+        _process_modules(job, configuration)
     except UploadRejected as error:
         _update(
             job,
@@ -367,20 +486,34 @@ def _process_job(job: Path, configuration: dict, runner=None):
             completed_at_utc=_now(),
         )
     except Exception:
-        _update(
+        _finish_failure(
             job,
-            status="failed",
-            error_code="processing_failed",
-            message="Обработка не завершилась. Проверьте формат серии; технические подробности не публикуются.",
-            completed_at_utc=_now(),
+            "processing_failed",
+            "Обработка не завершилась. Проверьте формат серии; технические подробности не публикуются.",
         )
+
+
+def _process_modules(job: Path, configuration: dict):
+    try:
+        modules = run_analysis_modules(job / "dicom", job, configuration)
+        _finish_modules(job, modules)
+    except Exception:
+        _finish_failure(job, "module_failed", "Модуль морфологии не завершил обработку серии.")
 
 
 class UploadStore:
     """One running CPU job; bounded queue and private, persistent disk storage."""
 
     def __init__(
-        self, root: Path, *, heads=(), cache=Path(".cache"), device="cpu", threads=1, runner=None
+        self,
+        root: Path,
+        *,
+        heads=(),
+        cache=Path(".cache"),
+        device="cpu",
+        threads=1,
+        runner=None,
+        modules=None,
     ):
         self.root = Path(root).resolve()
         self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -390,6 +523,7 @@ class UploadStore:
             "cache": str(Path(cache).resolve()),
             "device": device,
             "threads": threads,
+            "modules": _module_configuration(modules),
         }
         self.configured = (
             len(heads) == 3 and all(Path(p).is_file() for p in heads) and Path(cache).is_dir()
@@ -408,11 +542,10 @@ class UploadStore:
                     "processing",
                     "receiving",
                 }:
-                    _update(
+                    _finish_failure(
                         path.parent,
-                        status="failed",
-                        error_code="interrupted",
-                        message="Обработка прервалась при перезапуске сервера. Загрузите серию повторно.",
+                        "interrupted",
+                        "Обработка прервалась при перезапуске сервера. Повторите анализ модуля.",
                     )
             except (ValueError, OSError):
                 pass
@@ -423,7 +556,9 @@ class UploadStore:
             try:
                 record = json.loads(path.read_text())
                 if record.get("status") != "receiving":
-                    records.append({k: v for k, v in record.items() if k != "patient"})
+                    records.append(
+                        {k: v for k, v in record.items() if k not in {"patient", "modules"}}
+                    )
             except (ValueError, OSError):
                 pass
         return {
@@ -431,6 +566,10 @@ class UploadStore:
             "uploads": sorted(records, key=lambda r: r["created_at_utc"], reverse=True),
             "limits": {"max_upload_bytes": MAX_UPLOAD_BYTES, "max_files": MAX_FILES},
             "model": {"name": MODEL_NAME, "configured": self.configured},
+            "modules": {
+                name: {"enabled": value.get("enabled") is True}
+                for name, value in self.configuration["modules"].items()
+            },
         }
 
     def get(self, identifier):
@@ -439,6 +578,13 @@ class UploadStore:
         path = self.root / identifier / "record.json"
         try:
             record = json.loads(path.read_text())
+            record.setdefault("modules", {})
+            record.setdefault(
+                "patient_summary", patient_summary(record.get("targets", []), record["modules"])
+            )
+            record["modules_available"] = (
+                self.configuration["modules"].get("disc_morphology", {}).get("enabled") is True
+            )
             return record if record.get("status") != "receiving" else None
         except (ValueError, OSError):
             return None
@@ -462,10 +608,12 @@ class UploadStore:
                     max(0, size - _size(self.root / identifier))
                     for identifier, size in self.reservations.items()
                 )
+                module_workspace = MAX_WORK_BYTES if _pending_modules(self.configuration) else 0
                 if (
                     len(list(self.root.glob("upload-*/record.json"))) >= MAX_UPLOADS
                     or _size(self.root) + reserved_remaining + reservation > MAX_STORED_BYTES
-                    or shutil.disk_usage(self.root).free < reservation + 128 * 1024 * 1024
+                    or shutil.disk_usage(self.root).free
+                    < reserved_remaining + reservation + module_workspace + 128 * 1024 * 1024
                 ):
                     raise UploadRejected(
                         "storage_full", "На сервере недостаточно места для новой серии.", 507
@@ -508,11 +656,67 @@ class UploadStore:
             self.slots.release()
             raise
 
-    def _work(self, job):
+    def run_modules(self, identifier):
+        if not self.configuration["modules"].get("disc_morphology", {}).get("enabled"):
+            raise UploadRejected("module_unavailable", "Модуль морфологии пока не подключён.", 503)
+        with self.lock:
+            record = self.get(identifier)
+            if record is None or not (self.root / identifier / "dicom").is_dir():
+                raise UploadRejected("missing_series", "Исходная серия не найдена.", 404)
+            if record["status"] in {"queued", "processing", "receiving"}:
+                raise UploadRejected("already_processing", "Исследование уже обрабатывается.", 409)
+            if not record.get("patient"):
+                raise UploadRejected("invalid_series", "Серия не прошла проверку DICOM.", 400)
+            reserved_remaining = sum(
+                max(0, size - _size(self.root / name)) for name, size in self.reservations.items()
+            )
+            if (
+                _size(self.root) + reserved_remaining + MODULE_RESULT_BYTES > MAX_STORED_BYTES
+                or shutil.disk_usage(self.root).free
+                < reserved_remaining + MODULE_RESULT_BYTES + MAX_WORK_BYTES + 128 * 1024 * 1024
+            ):
+                raise UploadRejected(
+                    "storage_full", "Недостаточно места для анализа морфологии.", 507
+                )
+            if not self.slots.acquire(blocking=False):
+                raise UploadRejected("queue_full", "Очередь анализа заполнена.", 429)
+            job = self.root / identifier
+            self.reservations[identifier] = _size(job) + MODULE_RESULT_BYTES
+            try:
+                pending = _pending_modules(self.configuration, "queued")
+                result = _update(
+                    job,
+                    status="queued",
+                    central_status=record.get("central_status", record["status"]),
+                    modules=pending,
+                    patient_summary=patient_summary(record.get("targets", []), pending),
+                    message="Модуль морфологии в очереди.",
+                )
+                self.executor.submit(self._work, job, modules_only=True)
+                return result
+            except Exception:
+                _write_json(job / "record.json", record)
+                self.reservations.pop(identifier, None)
+                self.slots.release()
+                raise UploadRejected(
+                    "queue_unavailable", "Очередь анализа временно недоступна.", 503
+                ) from None
+
+    def _work(self, job, modules_only=False):
+        process = None
         try:
-            _update(job, status="processing", message="Проверяю DICOM-серию…")
+            fields = {"status": "processing", "message": "Проверяю DICOM-серию…"}
+            if modules_only:
+                fields.update(
+                    modules=_pending_modules(self.configuration),
+                    message="Модуль морфологии обрабатывает серию…",
+                )
+            _update(job, **fields)
             if self.runner is not None:
-                _process_job(job, self.configuration, self.runner)
+                if modules_only:
+                    _process_modules(job, self.configuration)
+                else:
+                    _process_job(job, self.configuration, self.runner)
                 return
             command = [
                 sys.executable,
@@ -523,6 +727,8 @@ class UploadStore:
                 "--config",
                 str(self.config_path),
             ]
+            if modules_only:
+                command.append("--modules-only")
             environment = dict(
                 os.environ, OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1"
             )
@@ -535,36 +741,31 @@ class UploadStore:
                 start_new_session=True,
             )
             try:
-                code = process.wait(timeout=JOB_TIMEOUT_SECONDS)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
-                process.wait()
-                _update(
-                    job,
-                    status="failed",
-                    error_code="timeout",
-                    message="Анализ превысил лимит времени. Результат не получен.",
+                extra = sum(
+                    (
+                        c.get("timeout_seconds", 3600) + 120
+                        for c in self.configuration["modules"].values()
+                        if c.get("enabled")
+                    ),
                 )
+                code = process.wait(timeout=JOB_TIMEOUT_SECONDS + extra)
+            except subprocess.TimeoutExpired:
+                _stop_worker(process)
+                _finish_failure(job, "timeout", "Анализ превысил лимит времени.")
                 return
             record = self.get(job.name)
             if code != 0 or record is None or record["status"] in {"queued", "processing"}:
-                _update(
-                    job,
-                    status="failed",
-                    error_code="worker_failed",
-                    message="Обработка остановлена сервером. Результат не получен.",
-                )
+                _finish_failure(job, "worker_failed", "Обработка остановлена сервером.")
         except Exception:
-            _update(
-                job,
-                status="failed",
-                error_code="worker_failed",
-                message="Обработка остановлена сервером. Результат не получен.",
-            )
+            _stop_worker(process)
+            _finish_failure(job, "worker_failed", "Обработка остановлена сервером.")
         finally:
-            with self.lock:
-                self.reservations.pop(job.name, None)
-            self.slots.release()
+            try:
+                _stop_worker(process)
+            finally:
+                with self.lock:
+                    self.reservations.pop(job.name, None)
+                self.slots.release()
 
     def asset(self, identifier, relative):
         if not UPLOAD_ID.fullmatch(identifier) or not _ASSETS.fullmatch(relative):
@@ -581,10 +782,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--job", type=Path, required=True)
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument("--modules-only", action="store_true")
     args = parser.parse_args()
     os.umask(0o077)
     try:
-        _process_job(args.job.resolve(), json.loads(args.config.read_text()))
+        configuration = json.loads(args.config.read_text())
+        if args.modules_only:
+            _process_modules(args.job.resolve(), configuration)
+        else:
+            _process_job(args.job.resolve(), configuration)
         return 0
     except Exception:
         return 1
