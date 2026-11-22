@@ -328,6 +328,30 @@ def _workspace_bytes(root):
     return sum(p.stat().st_size for p in root.rglob("*") if p.is_file())
 
 
+def _retain_inference_log(work: Path, job: Path):
+    """Keep a bounded private failure trace before discarding model outputs."""
+    source = work / "inference.log"
+    target = job / "disc-morphology-inference.log"
+    temporary = target.with_suffix(".log.tmp")
+    try:
+        if source.is_symlink() or not source.is_file():
+            return
+        with source.open("rb") as stream:
+            stream.seek(0, os.SEEK_END)
+            stream.seek(max(0, stream.tell() - MAX_LOG_BYTES))
+            tail = stream.read(MAX_LOG_BYTES)
+        with temporary.open("wb") as stream:
+            temporary.chmod(0o600)
+            stream.write(tail)
+        temporary.replace(target)
+    except OSError:
+        # Diagnostic I/O must not replace the analysis result or prevent cleanup.
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+
 def _host_memory_bytes(meminfo=Path("/proc/meminfo")):
     """Combined host RAM/swap headroom; container limits remain separate."""
     if not sys.platform.startswith("linux"):
@@ -364,6 +388,11 @@ def run_disc_morphology(directory: Path, job: Path, config: dict):
         }
     work = job / (".disc-morphology-" + uuid.uuid4().hex)
     process = None
+    completed = False
+    try:
+        (job / "disc-morphology-inference.log").unlink(missing_ok=True)
+    except OSError:
+        pass
     try:
         python = Path(config["python"])
         home = Path(config["model_home"])
@@ -455,7 +484,9 @@ def run_disc_morphology(directory: Path, job: Path, config: dict):
             raise ValueError("Nonfinite JSON number")
 
         payload = json.loads(result.read_text(), parse_constant=reject_constant)
-        return normalize_disc_result(payload, sources)
+        public_result = normalize_disc_result(payload, sources)
+        completed = True
+        return public_result
     except (OSError, ValueError, KeyError, TypeError, AttributeError, IndexError):
         return _failed(
             "module_unavailable",
@@ -465,6 +496,8 @@ def run_disc_morphology(directory: Path, job: Path, config: dict):
         if process is not None and process.poll() is None:
             terminate_process_tree(process.pid)
             process.wait()
+        if not completed:
+            _retain_inference_log(work, job)
         shutil.rmtree(work, ignore_errors=True)
 
 

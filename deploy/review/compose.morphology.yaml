@@ -1,8 +1,9 @@
 services:
   review:
     image: ai-spine-review:disc-v17
+    shm_size: 512m
     environment:
-      REVIEW_ANALYSIS_MODULES: '{"disc_morphology":{"enabled":true,"python":"/opt/disc-cli/bin/python","model_home":"/disc-models","device":"cpu","threads":1,"timeout_seconds":900}}'
+      REVIEW_ANALYSIS_MODULES: '{"disc_morphology":{"enabled":true,"python":"/opt/disc-cli/bin/python","model_home":"/disc-models","device":"cpu","threads":2,"timeout_seconds":3600}}'
     volumes:
       - ./disc-models:/disc-models:ro
 

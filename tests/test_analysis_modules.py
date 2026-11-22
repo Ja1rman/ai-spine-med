@@ -185,6 +185,18 @@ def test_optional_module_failure_does_not_fabricate_findings(tmp_path):
     assert any("Морфология дисков не оценена" in s for s in summary["unassessed"])
 
 
+def test_new_attempt_removes_stale_inference_trace_even_if_configuration_fails(tmp_path):
+    stale = tmp_path / "disc-morphology-inference.log"
+    stale.write_bytes(b"outdated model failure")
+    result = module.run_disc_morphology(
+        tmp_path,
+        tmp_path,
+        {"enabled": True, "python": "/nonexistent/python", "model_home": "/nonexistent/models"},
+    )
+    assert result["error_code"] == "module_unavailable"
+    assert not stale.exists()
+
+
 @pytest.mark.parametrize("missing_modality", [False, True])
 def test_success_uses_pinned_isolated_cli_and_removes_raw_private_outputs(
     tmp_path, monkeypatch, missing_modality
@@ -273,6 +285,92 @@ def test_timeout_terminates_model_descendants_and_returns_unknown(tmp_path, monk
     assert result["error_code"] == "timeout"
     assert result["levels"] == [] and killed == [12345]
     assert not list(tmp_path.glob(".disc-morphology-*"))
+
+
+@pytest.mark.parametrize("failure", ["inference_failed", "module_unavailable", "timeout"])
+def test_failure_retains_only_bounded_private_inner_log(tmp_path, monkeypatch, failure):
+    _, sources = payload_fixture()
+    models = tmp_path / "models"
+    models.mkdir()
+    (models / "config.json").write_text("{}")
+    monkeypatch.setattr(module, "_source_slices", lambda _: (sources, "PRIVATE_SERIES_UID"))
+    monkeypatch.setattr(module, "_host_memory_bytes", lambda: None)
+    monkeypatch.setattr(module, "MAX_LOG_BYTES", 64)
+    trace = b"private model details\n" * 20 + b"SECRET_TECHNICAL_TRACE\n"
+
+    class Process:
+        pid = 12345
+        returncode = 1 if failure == "inference_failed" else 0
+        done = failure != "timeout"
+
+        def poll(self):
+            return self.returncode if self.done else None
+
+        def wait(self):
+            self.done = True
+
+    def launch(command, **kwargs):
+        work = Path(command[command.index("--output") + 1])
+        work.mkdir()
+        (work / "inference.log").write_bytes(trace)
+        (work / "result.json").write_text("invalid model result")
+        (work / "private-mask.nii.gz").write_bytes(b"SECRET_IMAGE_BYTES")
+        return Process()
+
+    monkeypatch.setattr(module.subprocess, "Popen", launch)
+    monkeypatch.setattr(module, "terminate_process_tree", lambda _: None)
+    if failure == "timeout":
+        clock = iter([0, 4000])
+        monkeypatch.setattr(module.time, "monotonic", lambda: next(clock))
+    result = module.run_disc_morphology(
+        tmp_path,
+        tmp_path,
+        {
+            "enabled": True,
+            "python": sys.executable,
+            "model_home": str(models),
+            "timeout_seconds": 60,
+        },
+    )
+    assert result["error_code"] == failure
+    assert "SECRET" not in json.dumps(result)
+    retained = tmp_path / "disc-morphology-inference.log"
+    assert retained.read_bytes() == trace[-64:]
+    assert retained.stat().st_mode & 0o777 == 0o600
+    assert not list(tmp_path.glob(".disc-morphology-*"))
+
+
+def test_diagnostic_copy_error_does_not_replace_model_failure(tmp_path, monkeypatch):
+    _, sources = payload_fixture()
+    models = tmp_path / "models"
+    models.mkdir()
+    (models / "config.json").write_text("{}")
+    monkeypatch.setattr(module, "_source_slices", lambda _: (sources, "PRIVATE_SERIES_UID"))
+    monkeypatch.setattr(module, "_host_memory_bytes", lambda: None)
+
+    class Failed:
+        returncode = 1
+
+        def poll(self):
+            return 1
+
+    def launch(command, **kwargs):
+        work = Path(command[command.index("--output") + 1])
+        work.mkdir()
+        (work / "inference.log").write_bytes(b"technical details")
+        # Simulate a destination which cannot be replaced with the log file.
+        (tmp_path / "disc-morphology-inference.log").mkdir()
+        return Failed()
+
+    monkeypatch.setattr(module.subprocess, "Popen", launch)
+    result = module.run_disc_morphology(
+        tmp_path,
+        tmp_path,
+        {"enabled": True, "python": sys.executable, "model_home": str(models)},
+    )
+    assert result["error_code"] == "inference_failed"
+    assert not list(tmp_path.glob(".disc-morphology-*"))
+    assert not (tmp_path / "disc-morphology-inference.log.tmp").exists()
 
 
 def test_linux_host_memory_reads_combined_available_ram_and_swap(tmp_path, monkeypatch):
