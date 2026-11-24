@@ -695,6 +695,122 @@ def test_invalid_module_configuration_fails_server_startup(tmp_path, config):
         module.UploadStore(tmp_path / "uploads", modules=config)
 
 
+def test_delete_removes_images_originals_reports_and_is_idempotent(store):
+    raw = synthetic_zip()
+    created = store.receive(io.BytesIO(raw), len(raw))
+    record = await_record(store, created["upload_id"])
+    identifier = record["upload_id"]
+    job = store.root / identifier
+    (job / "disc-morphology-inference.log").write_text("private diagnostic fixture")
+    assert store.delete(identifier) == {"deleted": identifier}
+    assert not job.exists()
+    assert not (store.root / (".deleting-" + identifier)).exists()
+    assert store.get(identifier) is None
+    assert store.list()["uploads"] == []
+    assert store.asset(identifier, "series.zip") is None
+    assert store.delete(identifier) == {"deleted": identifier}
+    assert store.config_path.is_file()
+
+
+@pytest.mark.parametrize("status", ["receiving", "queued", "processing"])
+def test_delete_rejects_inflight_jobs(store, status):
+    identifier = "upload-" + "d" * 32
+    job = store.root / identifier
+    job.mkdir()
+    (job / "record.json").write_text(json.dumps({"status": status}))
+    with pytest.raises(module.UploadRejected) as exc:
+        store.delete(identifier)
+    assert exc.value.status == 409
+    assert job.is_dir()
+
+
+def test_delete_waits_for_worker_cleanup_reservation(store):
+    identifier = "upload-" + "d" * 32
+    store.reservations[identifier] = 10
+    try:
+        with pytest.raises(module.UploadRejected) as exc:
+            store.delete(identifier)
+        assert exc.value.status == 409
+    finally:
+        store.reservations.clear()
+
+
+@pytest.mark.parametrize("identifier", ["../models", "worker-config.json", "upload-abc"])
+def test_delete_rejects_non_upload_paths(store, identifier):
+    with pytest.raises(module.UploadRejected) as exc:
+        store.delete(identifier)
+    assert exc.value.status == 404
+    assert store.config_path.is_file()
+
+
+def test_delete_refuses_symlink_to_other_storage(store, tmp_path):
+    protected = tmp_path / "protected"
+    protected.mkdir()
+    (protected / "keep").write_text("keep")
+    identifier = "upload-" + "e" * 32
+    (store.root / identifier).symlink_to(protected, target_is_directory=True)
+    with pytest.raises(module.UploadRejected):
+        store.delete(identifier)
+    assert (protected / "keep").read_text() == "keep"
+
+
+def test_delete_failure_hides_files_and_retry_finishes_cleanup(store, monkeypatch):
+    identifier = "upload-" + "e" * 32
+    job = store.root / identifier
+    job.mkdir()
+    (job / "record.json").write_text(
+        json.dumps({"status": "failed", "created_at_utc": "2026-11-24"})
+    )
+    (job / "source.zip").write_bytes(b"private fixture")
+    real_remove = module.shutil.rmtree
+
+    def fail_delete(*args, **kwargs):
+        raise OSError("fixture")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(module.shutil, "rmtree", fail_delete)
+        with pytest.raises(module.UploadRejected) as exc:
+            store.delete(identifier)
+        assert exc.value.status == 503
+    assert not job.exists()
+    assert store.get(identifier) is None
+    assert store.list()["uploads"] == []
+    assert (store.root / (".deleting-" + identifier)).is_dir()
+    store.delete(identifier)
+    assert not (store.root / (".deleting-" + identifier)).exists()
+    assert module.shutil.rmtree is real_remove
+
+
+def test_restart_finishes_interrupted_deletion(tmp_path):
+    root = tmp_path / "uploads"
+    hidden = root / (".deleting-upload-" + "b" * 32)
+    hidden.mkdir(parents=True)
+    (hidden / "series.zip").write_bytes(b"private fixture")
+    reopened = module.UploadStore(root)
+    try:
+        assert not hidden.exists()
+    finally:
+        reopened.close()
+
+
+def test_http_delete_requires_origin_removes_assets_and_can_retry(server):
+    raw = synthetic_zip()
+    created = server.uploads.receive(io.BytesIO(raw), len(raw))
+    record = await_record(server.uploads, created["upload_id"])
+    route = server.prefix + "api/uploads/" + record["upload_id"]
+    assert request(server, route, "DELETE", b"")[0] == 403
+    headers = {"Origin": "https://review.example", "X-Upload-Intent": "dicom-series"}
+    assert request(server, route, "DELETE", b"x", headers)[0] == 400
+    assert server.uploads.get(record["upload_id"]) is not None
+    status, _, content = request(server, route, "DELETE", b"", headers)
+    assert status == 200
+    assert json.loads(content) == {"deleted": record["upload_id"]}
+    assert request(server, route)[0] == 404
+    assert request(server, route + "/series.zip")[0] == 404
+    assert request(server, route + "/result.json")[0] == 404
+    assert request(server, route, "DELETE", b"", headers)[0] == 200
+
+
 @pytest.mark.parametrize(
     "morphology_status,expected",
     [("completed", "partial"), ("disabled", "failed"), ("failed", "failed")],

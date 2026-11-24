@@ -17,6 +17,8 @@
   let showMorphologyContour = true;
   let activeAnalysisModule = null;
   let moduleSubmitting = false;
+  let deletingUpload = null;
+  const deletedUploads = new Set();
 
   function safeURL(relative) {
     const value = new URL(relative, root);
@@ -360,7 +362,7 @@
     const available = Object.entries(moduleRenderers).filter(([id]) => item.modules?.[id]);
     $("analysis-modules").hidden = !available.length && !item.modules_available;
     $("run-analysis-modules").hidden = !item.modules_available;
-    $("run-analysis-modules").disabled = moduleSubmitting || pending(item) || !item.patient?.series?.some((series) => series.slices?.length);
+    $("run-analysis-modules").disabled = moduleSubmitting || !!deletingUpload || pending(item) || !item.patient?.series?.some((series) => series.slices?.length);
     $("run-analysis-modules").textContent = item.modules?.disc_morphology?.status === "completed" ? "Повторить анализ морфологии" : "Оценить морфологию";
     if (!available.length) {
       $("module-content").replaceChildren(...(item.modules_available ? [node("p", "small-muted", "Морфология этого исследования ещё не оценена. Можно запустить подключённый модуль отдельно.")] : []));
@@ -382,10 +384,11 @@
 
   async function runAnalysisModules() {
     const item = state.activeUpload;
-    if (state.mode !== "uploads" || !item?.modules_available || moduleSubmitting || pending(item)) return;
+    if (state.mode !== "uploads" || !item?.modules_available || moduleSubmitting || deletingUpload || pending(item)) return;
     const id = item.upload_id;
     const navigation = state.navigation;
     moduleSubmitting = true;
+    updateDeleteButton();
     $("run-analysis-modules").disabled = true;
     $("module-feedback").hidden = false;
     $("module-feedback").textContent = "Добавляю анализ в очередь…";
@@ -413,6 +416,7 @@
     } finally {
       clearTimeout(timer);
       moduleSubmitting = false;
+      updateDeleteButton();
       if (state.mode === "uploads" && state.activeUpload) renderAnalysisModules(state.activeUpload);
     }
   }
@@ -640,6 +644,11 @@
     return Number.isNaN(date.getTime()) ? "" : date.toLocaleString("ru", {day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"});
   }
 
+  function availableUploadID(preferred) {
+    if (preferred && !deletedUploads.has(preferred) && (!state.apiAvailable || state.uploads.some((item) => item.upload_id === preferred))) return preferred;
+    return state.uploads[0]?.upload_id;
+  }
+
   function filteredUploads() {
     const needle = state.search.trim().toLocaleLowerCase("ru");
     return state.uploads.filter((item) => !needle || `${uploadName(item)} ${item.upload_id} ${uploadDate(item)} ${statusNames[item.status] || ""} ${item.message || ""}`.toLocaleLowerCase("ru").includes(needle));
@@ -685,6 +694,8 @@
     $("search").value = "";
     $("search").placeholder = mode === "uploads" ? "Поиск по номеру или дате" : "Поиск по номеру или уровню";
     $("case-content").hidden = true;
+    $("delete-upload").hidden = true;
+    $("delete-upload-feedback").hidden = true;
     $("fatal-error").hidden = true;
     $("upload-panel").hidden = mode !== "uploads";
     $("filters").hidden = mode === "uploads";
@@ -712,7 +723,8 @@
     const limit = state.api?.limits?.max_upload_bytes || 256 * 1024 * 1024;
     const valid = file && /\.zip$/i.test(file.name) && file.size > 0 && file.size <= limit;
     $("upload-file-name").textContent = file ? `${file.name} · ${(file.size / 1048576).toLocaleString("ru", {maximumFractionDigits: 1})} МБ` : "Файл не выбран";
-    $("upload-submit").disabled = state.sending || !valid || !state.apiAvailable || !state.api?.model?.configured || !$("upload-consent").checked;
+    $("upload-submit").disabled = state.sending || !!deletingUpload || !valid || !state.apiAvailable || !state.api?.model?.configured || !$("upload-consent").checked;
+    updateDeleteButton();
     if (file && !valid) showUploadFeedback(`Нужен непустой ZIP размером не более ${Math.floor(limit / 1048576)} МБ.`, true);
   }
 
@@ -724,14 +736,20 @@
       if (!Array.isArray(data.uploads)) throw new Error("Invalid upload library");
       state.api = data;
       state.apiAvailable = true;
-      state.uploads = data.uploads;
-      $("uploads-total").textContent = String(data.uploads.length);
+      state.uploads = data.uploads.filter((item) => !deletedUploads.has(item.upload_id));
+      $("uploads-total").textContent = String(state.uploads.length);
       $("upload-limits").textContent = data.model?.configured ? `До ${Math.floor((data.limits?.max_upload_bytes || 268435456) / 1048576)} МБ · одна сагиттальная T2-серия` : "Модель временно недоступна. Загрузка отключена.";
       checkUploadFile();
       if (state.mode === "uploads") {
         renderUploadsList();
         $("upload-empty").hidden = state.uploads.length > 0;
-        if (refreshActive && state.activeUpload && !state.detailLoading) await activateUpload(state.activeUpload.upload_id, {history: "none", refresh: true});
+        if (state.activeUpload && !state.uploads.some((item) => item.upload_id === state.activeUpload.upload_id)) {
+          ++state.request;
+          ++state.navigation;
+          clearUploadSelection();
+          updateHistory({history: "replace"});
+          if (refreshActive && state.uploads.length) await activateUpload(state.uploads[0].upload_id, {history: "replace"});
+        } else if (refreshActive && state.activeUpload && !state.detailLoading) await activateUpload(state.activeUpload.upload_id, {history: "none", refresh: true});
       }
       schedulePoll();
       return true;
@@ -764,6 +782,13 @@
 
   async function activateUpload(id, options = {}) {
     if (state.mode !== "uploads") return;
+    if (deletedUploads.has(id)) {
+      const next = state.uploads.find((item) => !deletedUploads.has(item.upload_id));
+      if (next) return activateUpload(next.upload_id, {...options, history: "replace"});
+      clearUploadSelection();
+      updateHistory({history: "replace"});
+      return;
+    }
     if (!options.refresh) ++state.navigation;
     const request = ++state.request;
     state.detailLoading = true;
@@ -780,6 +805,8 @@
       $("series-picker").disabled = true;
       disableDownloads();
       $("case-content").hidden = true;
+      $("delete-upload").hidden = true;
+      $("delete-upload-feedback").hidden = true;
       $("workspace").setAttribute("aria-busy", "true");
       updateHistory(options);
     }
@@ -788,7 +815,7 @@
     renderUploadsList();
     try {
       const item = await fetchJSON(`api/uploads/${encodeURIComponent(id)}`);
-      if (request !== state.request || state.mode !== "uploads") return;
+      if (request !== state.request || state.mode !== "uploads" || deletedUploads.has(id)) return;
       if (item.upload_id !== id) throw new Error("Invalid upload index");
       state.detailRetry = false;
       state.activeUpload = item;
@@ -803,6 +830,7 @@
       $("overview-card").hidden = true;
       $("quick-links").hidden = true;
       $("upload-status").hidden = false;
+      updateDeleteButton();
       $("upload-status-label").textContent = statusNames[item.status] || "Статус неизвестен";
       $("upload-status").classList.toggle("is-pending", pending(item));
       $("upload-status-message").textContent = item.message || (pending(item) ? "Исследование обрабатывается. Статус обновляется автоматически; страницу можно закрыть и вернуться позже." : "");
@@ -845,6 +873,104 @@
         state.detailLoading = false;
         $("workspace").setAttribute("aria-busy", "false");
       }
+    }
+  }
+
+  function updateDeleteButton() {
+    const button = $("delete-upload");
+    button.hidden = state.mode !== "uploads" || !state.activeUpload || $("case-content").hidden;
+    button.disabled = !!deletingUpload || state.sending || moduleSubmitting;
+    button.textContent = deletingUpload === state.activeUpload?.upload_id ? "Удаляю…" : "Удалить исследование";
+  }
+
+  function clearUploadSelection() {
+    state.activeUpload = null;
+    state.series = null;
+    state.patient = null;
+    state.detailLoading = false;
+    state.detailRetry = false;
+    state.pointer = null;
+    clearAnalysisModules();
+    disableDownloads();
+    $("series-picker").replaceChildren();
+    $("series-picker").disabled = true;
+    $("slice-image").onload = null;
+    $("slice-image").onerror = null;
+    $("slice-image").removeAttribute("src");
+    $("download-report").hidden = true;
+    $("download-report").removeAttribute("href");
+    $("predictions").replaceChildren();
+    $("case-title").textContent = "";
+    $("case-id").textContent = "";
+    $("case-content").hidden = true;
+    $("case-grid").hidden = true;
+    $("viewer-card").hidden = true;
+    $("upload-status").hidden = true;
+    $("delete-upload").hidden = true;
+    $("delete-upload-feedback").hidden = true;
+    $("case-loading").hidden = true;
+    $("fatal-error").hidden = true;
+    $("upload-empty").hidden = state.uploads.length > 0;
+    $("workspace").setAttribute("aria-busy", "false");
+  }
+
+  async function deleteActiveUpload() {
+    const item = state.activeUpload;
+    if (state.mode !== "uploads" || !item || deletingUpload || state.sending || moduleSubmitting || $("delete-upload").disabled) return;
+    if (!window.confirm("Удалить исследование вместе со снимками и результатами?")) return;
+    const id = item.upload_id;
+    const index = filteredUploads().findIndex((value) => value.upload_id === id);
+    deletingUpload = id;
+    updateDeleteButton();
+    checkUploadFile();
+    renderAnalysisModules(item);
+    $("delete-upload-feedback").hidden = false;
+    $("delete-upload-feedback").textContent = "Удаляю исследование…";
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    let rejection = "";
+    try {
+      const response = await fetch(safeURL(`api/uploads/${encodeURIComponent(id)}`), {method: "DELETE", headers: {"X-Upload-Intent": "dicom-series"}, body: "", credentials: "same-origin", referrerPolicy: "no-referrer", signal: controller.signal});
+      const result = await response.json();
+      if (!response.ok) {
+        rejection = typeof result.message === "string" ? result.message : "Сервер не подтвердил удаление. Обновите список и попробуйте ещё раз.";
+        throw new Error("Deletion rejected");
+      }
+      if (result.deleted !== id) throw new Error("Invalid deletion response");
+      deletedUploads.add(id);
+      ++state.listRequest;
+      clearTimeout(state.poll);
+      state.uploads = state.uploads.filter((value) => value.upload_id !== id);
+      $("uploads-total").textContent = String(state.uploads.length);
+      const selected = state.activeUpload?.upload_id === id;
+      if (selected) {
+        ++state.request;
+        ++state.navigation;
+        if (state.mode === "uploads") {
+          clearUploadSelection();
+          updateHistory({history: "replace"});
+        } else state.activeUpload = null;
+      }
+      const navigation = state.navigation;
+      renderList();
+      if (state.mode === "uploads") showUploadFeedback("Исследование удалено вместе со снимками и результатами.");
+      await refreshUploads({quiet: true});
+      if (selected && navigation === state.navigation && state.mode === "uploads" && !state.activeUpload) {
+        const next = filteredUploads()[Math.min(Math.max(index, 0), filteredUploads().length - 1)];
+        if (next) await activateUpload(next.upload_id, {history: "replace"});
+      }
+      schedulePoll();
+    } catch (_) {
+      const message = rejection || "Не удалось подтвердить удаление. Обновите список перед повторной попыткой: запрос мог успеть выполниться.";
+      if (state.mode === "uploads" && state.activeUpload?.upload_id === id) {
+        $("delete-upload-feedback").hidden = false;
+        $("delete-upload-feedback").textContent = message;
+      } else if (state.mode === "uploads") showUploadFeedback(message, true);
+    } finally {
+      clearTimeout(timer);
+      deletingUpload = null;
+      checkUploadFile();
+      if (state.mode === "uploads" && state.activeUpload) renderAnalysisModules(state.activeUpload);
     }
   }
 
@@ -912,10 +1038,11 @@
       const navigation = state.navigation;
       updateHistory({history: "push"});
       await refreshUploads();
-      if (navigation === state.navigation && state.mode === "uploads" && state.uploads.length) activateUpload(state.activeUpload?.upload_id || state.uploads[0].upload_id, {history: "replace"});
+      if (navigation === state.navigation && state.mode === "uploads" && state.uploads.length) activateUpload(availableUploadID(state.activeUpload?.upload_id), {history: "replace"});
     });
     $("refresh-uploads").addEventListener("click", () => refreshUploads({refreshActive: true}));
     $("run-analysis-modules").addEventListener("click", runAnalysisModules);
+    $("delete-upload").addEventListener("click", deleteActiveUpload);
     $("upload-file").addEventListener("change", checkUploadFile);
     $("upload-consent").addEventListener("change", checkUploadFile);
     $("upload-form").addEventListener("submit", submitUpload);
@@ -970,7 +1097,11 @@
       const navigation = state.navigation;
       if (uploads) {
         await refreshUploads({quiet: true});
-        if (navigation === state.navigation && state.mode === "uploads" && query.get("upload")) activateUpload(query.get("upload"), {series: query.get("series"), slice: query.get("slice"), history: "none"});
+        if (navigation === state.navigation && state.mode === "uploads") {
+          const id = availableUploadID(query.get("upload"));
+          if (id) activateUpload(id, {series: query.get("series"), slice: query.get("slice"), history: id === query.get("upload") ? "none" : "replace"});
+          else updateHistory({history: "replace"});
+        }
       } else if (state.index?.cases.length) {
         activateCase(state.cases.has(query.get("case")) ? query.get("case") : state.index.cases[0].case_id, {series: query.get("series"), slice: query.get("slice"), history: "none"});
       }
@@ -1004,8 +1135,9 @@
       if (uploads) {
         await library;
         if (navigation !== state.navigation || state.mode !== "uploads") return;
-        const initial = query.get("upload") || state.uploads[0]?.upload_id;
+        const initial = availableUploadID(query.get("upload"));
         if (initial) await activateUpload(initial, {series: query.get("series"), slice: query.get("slice"), history: "replace"});
+        else updateHistory({history: "replace"});
       } else {
         const initial = state.cases.has(query.get("case")) ? query.get("case") : index.cases[0].case_id;
         await activateCase(initial, {series: query.get("series"), slice: query.get("slice"), history: "replace"});
@@ -1021,8 +1153,9 @@
       } else {
         await library;
         if (navigation !== state.navigation || state.mode !== "uploads") return;
-        const initial = query.get("upload") || state.uploads[0]?.upload_id;
+        const initial = availableUploadID(query.get("upload"));
         if (initial) await activateUpload(initial, {history: "replace"});
+        else updateHistory({history: "replace"});
       }
     }
   }

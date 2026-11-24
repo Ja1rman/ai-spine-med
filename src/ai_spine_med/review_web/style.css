@@ -216,6 +216,11 @@ input[type=range] { width: 100%; height: 2px; accent-color: var(--accent); curso
 .status-label { color: var(--accent); font: 10px/1.5 var(--mono); }
 .upload-status p { margin: 8px 0 0; max-width: 700px; color: #b5c1b8; font-size: 11px; line-height: 1.7; }
 .upload-status .button { margin-top: 13px; }
+.upload-record-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.button-delete { color: #e6a7a5; border-color: #765352; background: transparent; }
+.button-delete:hover { color: #ffd4d1; background: #3b2929; border-color: #b17b77; }
+.button-delete:disabled { opacity: .45; cursor: wait; }
+.upload-status .delete-feedback { color: #e6a7a5; }
 .upload-status.is-pending .status-label::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 9px; background: var(--accent); border-radius: 50%; animation: processing-pulse 1.5s infinite ease-in-out; }
 .upload-empty { padding: 50px 22px; border: 1px solid var(--line); font-size: 12px; line-height: 1.8; }
 .review-column:has(#reference-card[hidden]) { display: block; }

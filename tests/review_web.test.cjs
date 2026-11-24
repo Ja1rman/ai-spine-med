@@ -43,7 +43,7 @@ class Element {
   append(...children) { this.children.push(...children); }
   replaceChildren(...children) { this._text = ""; this.children = children; }
   setAttribute(name, value) { this.attributes[name] = String(value); }
-  removeAttribute(name) { delete this.attributes[name]; if (name === "href") delete this.href; }
+  removeAttribute(name) { delete this.attributes[name]; if (["href", "src"].includes(name)) delete this[name]; }
   getContext() {
     this.canvasCalls ||= [];
     return Object.fromEntries(["clearRect", "beginPath", "moveTo", "lineTo", "closePath", "stroke", "setLineDash", "fillText"].map((name) => [name, (...args) => this.canvasCalls.push([name, ...args])]));
@@ -96,7 +96,8 @@ function harness(routes, href = "https://review.example/r/private-token/") {
   }
   const timers = new Set();
   const requests = [];
-  const window = {location: {href}, addEventListener() {}, history: {pushState(_state, _title, url) { window.location.href = String(url); }, replaceState(_state, _title, url) { window.location.href = String(url); }}};
+  const confirmations = [];
+  const window = {location: {href}, confirm(message) { confirmations.push(message); return true; }, addEventListener() {}, history: {pushState(_state, _title, url) { window.location.href = String(url); }, replaceState(_state, _title, url) { window.location.href = String(url); }}};
   const context = {
     URL, AbortController, console, window,
     document: {getElementById: (id) => elements.get(id), createElement: (tag) => new Element(tag), addEventListener() {}},
@@ -107,11 +108,11 @@ function harness(routes, href = "https://review.example/r/private-token/") {
       requests.push({resource, ...options});
       if (!(resource in routes)) throw new Error(`Unexpected resource ${resource}`);
       const value = await (typeof routes[resource] === "function" ? routes[resource](options) : routes[resource]);
-      return {ok: true, json: async () => value};
+      return {ok: value?.httpStatus ? value.httpStatus >= 200 && value.httpStatus < 300 : true, status: value?.httpStatus || 200, json: async () => value?.httpStatus ? value.body : value};
     }
   };
   vm.runInNewContext(source, context, {filename: "app.js"});
-  return {elements, window, requests, close: () => timers.forEach(clearTimeout)};
+  return {elements, window, requests, confirmations, close: () => timers.forEach(clearTimeout)};
 }
 
 test("delayed full cohort cannot reopen itself after switching to uploads", async () => {
@@ -520,4 +521,164 @@ test("failed module requests surface uncertainty and unsupported old uploads hav
     await settle();
     assert.equal(old.elements.get("run-analysis-modules").hidden, true);
   } finally { old.close(); }
+});
+
+test("deleting the final upload clears images, analysis, downloads and the deep link", async () => {
+  const record = morphologyUpload();
+  let records = [record];
+  const app = moduleHarness(record, {
+    "api/uploads": () => ({...library, uploads: records}),
+    "api/uploads/upload-module": (options) => {
+      if (options.method === "DELETE") { records = []; return {deleted: record.upload_id}; }
+      return record;
+    }
+  });
+  try {
+    await settle();
+    assert.equal(app.elements.get("delete-upload").hidden, false);
+    assert.ok(app.elements.get("slice-image").src);
+    await app.elements.get("delete-upload").fire("click");
+    assert.deepEqual(app.confirmations, ["Удалить исследование вместе со снимками и результатами?"]);
+    const request = app.requests.find((item) => item.method === "DELETE");
+    assert.equal(request.resource, "api/uploads/upload-module");
+    assert.equal(request.headers["X-Upload-Intent"], "dicom-series");
+    assert.equal(request.body, "");
+    assert.equal(request.credentials, "same-origin");
+    assert.equal(app.elements.get("case-content").hidden, true);
+    assert.equal(app.elements.get("upload-empty").hidden, false);
+    assert.equal(app.elements.get("slice-image").src, undefined);
+    assert.equal(app.elements.get("download-dicom").href, undefined);
+    assert.equal(app.elements.get("download-report").href, undefined);
+    assert.equal(app.elements.get("analysis-modules").hidden, true);
+    assert.equal(app.elements.get("patient-summary").hidden, true);
+    assert.equal(app.elements.get("predictions").textContent, "");
+    assert.match(app.elements.get("upload-feedback").textContent, /Исследование удалено/);
+    const query = new URL(app.window.location.href).searchParams;
+    assert.equal(query.get("view"), "uploads");
+    assert.equal(query.get("upload"), null);
+    assert.equal(query.get("series"), null);
+    assert.equal(query.get("slice"), null);
+  } finally { app.close(); }
+});
+
+test("cancelling deletion leaves the upload intact and sends no request", async () => {
+  const record = morphologyUpload();
+  const app = moduleHarness(record);
+  try {
+    await settle();
+    app.window.confirm = () => false;
+    const image = app.elements.get("slice-image").src;
+    await app.elements.get("delete-upload").fire("click");
+    assert.equal(app.requests.some((request) => request.method === "DELETE"), false);
+    assert.equal(app.elements.get("slice-image").src, image);
+    assert.equal(app.elements.get("case-content").hidden, false);
+  } finally { app.close(); }
+});
+
+test("a busy upload rejection remains visible without clearing its saved results", async () => {
+  const record = {...morphologyUpload(), status: "processing"};
+  const app = moduleHarness(record, {"api/uploads/upload-module": (options) => options.method === "DELETE" ? {httpStatus: 409, body: {message: "Исследование обрабатывается. Дождитесь завершения."}} : record});
+  try {
+    await settle();
+    assert.equal(app.elements.get("delete-upload").disabled, false);
+    const image = app.elements.get("slice-image").src;
+    await app.elements.get("delete-upload").fire("click");
+    assert.match(app.elements.get("delete-upload-feedback").textContent, /Дождитесь завершения/);
+    assert.equal(app.elements.get("delete-upload").disabled, false);
+    assert.equal(app.elements.get("slice-image").src, image);
+    assert.equal(app.elements.get("case-content").hidden, false);
+    assert.match(app.elements.get("predictions").textContent, /Умеренный стеноз/);
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), record.upload_id);
+  } finally { app.close(); }
+});
+
+test("deleting a selected upload opens the next one and prevents a stale list from restoring it", async () => {
+  const first = morphologyUpload();
+  const second = {...first, upload_id: "upload-second", patient: patient("second")};
+  let records = [first, second], listCalls = 0;
+  const staleList = deferred();
+  const app = moduleHarness(first, {
+    "api/uploads": () => ++listCalls === 2 ? staleList.promise : {...library, uploads: records},
+    "api/uploads/upload-module": (options) => {
+      if (options.method === "DELETE") { records = [second]; return {deleted: first.upload_id}; }
+      return first;
+    },
+    "api/uploads/upload-second": second
+  });
+  try {
+    await settle();
+    const refresh = app.elements.get("refresh-uploads").fire("click");
+    await settle();
+    await app.elements.get("delete-upload").fire("click");
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), second.upload_id);
+    staleList.resolve({...library, uploads: [first, second]});
+    await refresh;
+    await settle();
+    assert.equal(app.elements.get("case-list").children.length, 1);
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), second.upload_id);
+    assert.match(app.elements.get("case-id").textContent, /upload-second/);
+    assert.equal(app.elements.get("case-content").hidden, false);
+  } finally { app.close(); }
+});
+
+test("an old detail response cannot restore the upload after deletion", async () => {
+  const record = morphologyUpload();
+  const staleDetail = deferred();
+  let deleted = false, details = 0;
+  const app = moduleHarness(record, {
+    "api/uploads": () => ({...library, uploads: deleted ? [] : [record]}),
+    "api/uploads/upload-module": (options) => {
+      if (options.method === "DELETE") { deleted = true; return {deleted: record.upload_id}; }
+      return ++details === 2 ? staleDetail.promise : record;
+    }
+  });
+  try {
+    await settle();
+    const refresh = app.elements.get("refresh-uploads").fire("click");
+    await settle();
+    await app.elements.get("delete-upload").fire("click");
+    staleDetail.resolve(record);
+    await refresh;
+    await settle();
+    assert.equal(app.elements.get("case-content").hidden, true);
+    assert.equal(app.elements.get("slice-image").src, undefined);
+    assert.equal(app.elements.get("analysis-modules").hidden, true);
+    assert.equal(new URL(app.window.location.href).searchParams.has("upload"), false);
+  } finally { app.close(); }
+});
+
+test("a pending deletion does not navigate back when the reader selects another upload", async () => {
+  const first = morphologyUpload();
+  const second = {...first, upload_id: "upload-second", patient: patient("second")};
+  let records = [first, second];
+  const deletionReply = deferred();
+  const app = moduleHarness(first, {
+    "api/uploads": () => ({...library, uploads: records}),
+    "api/uploads/upload-module": (options) => options.method === "DELETE" ? deletionReply.promise : first,
+    "api/uploads/upload-second": second
+  });
+  try {
+    await settle();
+    const deletion = app.elements.get("delete-upload").fire("click");
+    await settle();
+    await app.elements.get("case-list").children[1].fire("click");
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), second.upload_id);
+    records = [second];
+    deletionReply.resolve({deleted: first.upload_id});
+    await deletion;
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), second.upload_id);
+    assert.equal(app.elements.get("case-content").hidden, false);
+    assert.equal(app.elements.get("delete-upload").disabled, false);
+  } finally { app.close(); }
+});
+
+test("a deleted deep link opens a remaining upload after a fresh page load", async () => {
+  const remaining = {...morphologyUpload(), upload_id: "upload-remaining"};
+  const app = harness({"data/index.json": pairedCollection(), "api/uploads": {...library, uploads: [remaining]}, "api/uploads/upload-remaining": remaining}, "https://review.example/r/private-token/?view=uploads&upload=upload-deleted");
+  try {
+    await settle();
+    assert.equal(new URL(app.window.location.href).searchParams.get("upload"), remaining.upload_id);
+    assert.equal(app.requests.some((request) => request.resource === "api/uploads/upload-deleted"), false);
+    assert.equal(app.elements.get("case-content").hidden, false);
+  } finally { app.close(); }
 });

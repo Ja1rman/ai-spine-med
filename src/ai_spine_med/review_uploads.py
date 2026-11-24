@@ -535,6 +535,9 @@ class UploadStore:
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="private-mri")
         self.config_path = self.root / "worker-config.json"
         _write_json(self.config_path, self.configuration)
+        for path in self.root.glob(".deleting-upload-*"):
+            if UPLOAD_ID.fullmatch(path.name.removeprefix(".deleting-")) and not path.is_symlink():
+                shutil.rmtree(path, ignore_errors=True)
         for path in self.root.glob("upload-*/record.json"):
             try:
                 if json.loads(path.read_text()).get("status") in {
@@ -655,6 +658,39 @@ class UploadStore:
                     self.reservations.pop(job.name, None)
             self.slots.release()
             raise
+
+    def delete(self, identifier):
+        if not UPLOAD_ID.fullmatch(identifier):
+            raise UploadRejected("not_found", "Исследование не найдено.", 404)
+        with self.lock:
+            job = self.root / identifier
+            tombstone = self.root / (".deleting-" + identifier)
+            if job.is_symlink() or tombstone.is_symlink():
+                raise UploadRejected("not_found", "Исследование не найдено.", 404)
+            try:
+                record = json.loads((job / "record.json").read_text())
+            except (OSError, ValueError):
+                record = {}
+            if not isinstance(record, dict):
+                record = {}
+            if identifier in self.reservations or (
+                record and record.get("status") in {"receiving", "queued", "processing"}
+            ):
+                raise UploadRejected(
+                    "analysis_running",
+                    "Исследование ещё обрабатывается. Дождитесь завершения анализа и повторите удаление.",
+                    409,
+                )
+            try:
+                if job.exists():
+                    job.rename(tombstone)
+                if tombstone.exists():
+                    shutil.rmtree(tombstone)
+            except OSError:
+                raise UploadRejected(
+                    "delete_failed", "Не удалось завершить удаление. Повторите попытку.", 503
+                ) from None
+            return {"deleted": identifier}
 
     def run_modules(self, identifier):
         if not self.configuration["modules"].get("disc_morphology", {}).get("enabled"):

@@ -249,7 +249,6 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
     do_PUT = _method_not_allowed
     do_PATCH = _method_not_allowed
-    do_DELETE = _method_not_allowed
     do_OPTIONS = _method_not_allowed
     do_TRACE = _method_not_allowed
     do_CONNECT = _method_not_allowed
@@ -324,6 +323,44 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self._json(
                 400, {"error": "upload_failed", "message": "Не удалось завершить загрузку файла."}
             )
+
+    def do_DELETE(self):
+        self.close_connection = True
+        parsed = self._relative_path()
+        if parsed is None:
+            return
+        relative, _ = parsed
+        route = re.fullmatch(r"api/uploads/(upload-[0-9a-f]{32})", relative)
+        if route is None or self.server.uploads is None:
+            self._error(405)
+            return
+        if (
+            self.headers.get("Origin") != self.server.public_origin
+            or self.headers.get("X-Upload-Intent") != "dicom-series"
+            or self.headers.get("Sec-Fetch-Site", "same-origin") != "same-origin"
+        ):
+            self._json(
+                403,
+                {
+                    "error": "origin_rejected",
+                    "message": "Удаление разрешено только со страницы этого сайта.",
+                },
+            )
+            return
+        if (
+            len(self.headers.get_all("Content-Length", [])) > 1
+            or self.headers.get("Content-Length", "0") != "0"
+            or self.headers.get("Transfer-Encoding")
+        ):
+            self._json(
+                400,
+                {"error": "invalid_request", "message": "Запрос удаления должен быть без тела."},
+            )
+            return
+        try:
+            self._json(200, self.server.uploads.delete(route[1]))
+        except UploadRejected as error:
+            self._json(error.status, {"error": error.code, "message": error.message})
 
     def do_GET(self):
         self._serve()
