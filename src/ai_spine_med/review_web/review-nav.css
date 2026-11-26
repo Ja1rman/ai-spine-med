@@ -1,53 +1,101 @@
+:root {
+  color-scheme: dark;
+  --atlas-paper: #131a23;
+  --atlas-sheet: #1c2733;
+  --atlas-substrate: #17212c;
+  --atlas-ink: #eee8dc;
+  --atlas-muted: #afb9c2;
+  --atlas-line: #405060;
+  --atlas-rust: #f0ae91;
+  --atlas-rust-soft: #3b2a29;
+  --atlas-blue: #aed3d9;
+  --atlas-blue-soft: #243941;
+  --atlas-action: #e9dfcd;
+  --atlas-action-ink: #16202a;
+  --atlas-serif: Georgia, "Times New Roman", serif;
+  --atlas-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --atlas-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --atlas-header-height: 64px;
+}
+
 .review-topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
-  height: 60px;
-  padding: 0 28px;
-  border-bottom: 1px solid var(--line);
-  background: var(--page);
+  height: var(--atlas-header-height);
+  padding: 0 clamp(16px, 2.4vw, 36px);
+  border-top: 4px solid var(--atlas-rust);
+  border-bottom: 1px solid var(--atlas-line);
+  background: var(--atlas-paper);
 }
 
 .review-topbar .source-tabs {
   display: flex;
   align-items: stretch;
   align-self: stretch;
-  gap: 28px;
+  border-left: 1px solid var(--atlas-line);
 }
 
 .review-topbar .source-tab {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 9px;
-  padding: 0;
+  padding: 0 clamp(11px, 1.7vw, 24px);
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-right: 1px solid var(--atlas-line);
+  border-bottom: 3px solid transparent;
   background: none;
-  color: var(--muted);
-  font: 12px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--atlas-ink);
+  font: 600 13px/1.3 var(--atlas-sans);
+  text-decoration: none;
   white-space: nowrap;
 }
 
-.review-topbar .source-tab:hover { color: var(--ink); }
-.review-topbar .source-tab.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
+.review-topbar .source-tab:hover { background: var(--atlas-substrate); }
+
+.review-topbar .source-tab:focus-visible {
+  outline: 2px solid var(--atlas-blue);
+  outline-offset: -4px;
 }
 
-.review-topbar .source-tab span { font: 9px/1 var(--mono); color: #8d9993; }
-.review-topbar .source-tab.active span { color: #c9aa85; }
-.review-topbar .navigation-status { color: #c4cbca; font: 11px/1.4 var(--mono); }
+.review-topbar .source-tab.active {
+  color: var(--atlas-rust);
+  border-bottom-color: var(--atlas-rust);
+  background: var(--atlas-sheet);
+}
+
+.review-topbar .source-tab span {
+  color: var(--atlas-muted);
+  font: 10px/1 var(--atlas-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-topbar .source-tab.active span { color: var(--atlas-rust); }
+
+.review-topbar .navigation-status {
+  padding-left: 14px;
+  border-left: 1px solid var(--atlas-line);
+  color: var(--atlas-muted);
+  font: 11px/1.4 var(--atlas-mono);
+}
 
 @media (max-width: 640px) {
+  :root { --atlas-header-height: 88px; }
+
   .review-topbar {
-    height: 86px;
-    padding: 0 17px;
     flex-wrap: wrap;
-    align-content: center;
+    align-content: start;
     gap: 0;
   }
 
-  .review-topbar .source-tabs { width: 100%; height: 43px; gap: 26px; }
-  .review-topbar .navigation-status { padding: 8px 0; font-size: 9px; }
+  .review-topbar .source-tabs { height: 54px; }
+  .review-topbar .source-tab { gap: 6px; padding-inline: 10px; font-size: 12px; }
+  .review-topbar .navigation-status {
+    width: 100%;
+    padding: 8px 0 5px;
+    border: 0;
+    font-size: 10px;
+  }
 }

@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#summary">PSP <span>Клинические данные</span></a>
+    <a class="demo-home" href="#demo">Пример PSP</a>
     <nav aria-label="Разделы примера">
       <a href="#summary">Сводка</a>
       <a href="#complaints">Жалобы</a>
@@ -24,22 +24,24 @@
     <p id="loading" class="loading" role="status">Загружаю сводку…</p>
     <div id="demo" hidden>
       <header class="intro">
-        <span class="eyebrow">Пример обследования</span>
         <h1 id="title">Пример сводки обследования</h1>
         <p id="context">Жалобы, отметки на карте и результаты осмотра вымышлены. МРТ показано в виде результатов исследовательского анализа.</p>
       </header>
       <div class="overview">
         <section id="summary" class="panel summary" aria-labelledby="summary-title">
           <h2 id="summary-title">Общая сводка</h2>
-          <ul id="summary-list" class="findings"></ul>
+          <ul id="summary-list" class="findings" role="list"></ul>
         </section>
         <section id="mri" class="panel mri" aria-labelledby="mri-heading">
           <span class="eyebrow">Результат модели</span>
           <h2 id="mri-heading">МРТ поясничного отдела</h2>
           <p id="mri-title" class="muted" hidden></p>
           <ul id="mri-findings" class="findings"></ul>
-          <ul id="mri-unassessed" class="findings muted" hidden></ul>
-          <p class="muted">Источник серии — <a href="https://www.kaggle.com/competitions/rsna-2024-lumbar-spine-degenerative-classification">RSNA 2024 Lumbar Spine Degenerative Classification Challenge</a>.</p>
+          <details class="report-details">
+            <summary>Что не удалось оценить</summary>
+            <ul id="mri-unassessed" class="findings muted" hidden></ul>
+          </details>
+          <p class="source-note">Источник серии — <a href="https://www.kaggle.com/competitions/rsna-2024-lumbar-spine-degenerative-classification">RSNA 2024 Lumbar Spine Degenerative Classification Challenge</a>.</p>
         </section>
       </div>
       <div class="details">
@@ -61,7 +63,6 @@
         </section>
       </div>
       <section id="exam" class="panel" aria-labelledby="exam-title">
-        <span class="eyebrow">Ручной ввод</span>
         <h2 id="exam-title">Неврологический осмотр</h2>
         <table>
           <thead><tr><th scope="col">Проба</th><th scope="col">Слева</th><th scope="col">Справа</th></tr></thead>
