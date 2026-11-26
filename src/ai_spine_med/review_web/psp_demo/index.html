@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="referrer" content="no-referrer">
+  <title>Пример сводки · PSP</title>
+  <link rel="stylesheet" href="demo.css">
+  <script src="demo.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#summary">PSP <span>Клинические данные</span></a>
+    <nav aria-label="Разделы примера">
+      <a href="#summary">Сводка</a>
+      <a href="#complaints">Жалобы</a>
+      <a href="#map">Карта</a>
+      <a href="#exam">Осмотр</a>
+      <a href="#mri">МРТ</a>
+    </nav>
+  </header>
+  <main>
+    <p id="loading" class="loading" role="status">Загружаю сводку…</p>
+    <div id="demo" hidden>
+      <header class="intro">
+        <span class="eyebrow">Пример обследования</span>
+        <h1 id="title">Пример сводки обследования</h1>
+        <p id="context">Жалобы, отметки на карте и результаты осмотра вымышлены. МРТ показано в виде результатов исследовательского анализа.</p>
+      </header>
+      <div class="overview">
+        <section id="summary" class="panel summary" aria-labelledby="summary-title">
+          <h2 id="summary-title">Общая сводка</h2>
+          <ul id="summary-list" class="findings"></ul>
+        </section>
+        <section id="mri" class="panel mri" aria-labelledby="mri-heading">
+          <span class="eyebrow">Результат модели</span>
+          <h2 id="mri-heading">МРТ поясничного отдела</h2>
+          <p id="mri-title" class="muted" hidden></p>
+          <ul id="mri-findings" class="findings"></ul>
+          <ul id="mri-unassessed" class="findings muted" hidden></ul>
+          <p class="muted">Источник серии — <a href="https://www.kaggle.com/competitions/rsna-2024-lumbar-spine-degenerative-classification">RSNA 2024 Lumbar Spine Degenerative Classification Challenge</a>.</p>
+        </section>
+      </div>
+      <div class="details">
+        <section id="complaints" class="panel" aria-labelledby="complaints-title">
+          <span class="eyebrow">Со слов пациента</span>
+          <h2 id="complaints-title">Жалобы и анамнез</h2>
+          <dl id="complaints-list"></dl>
+        </section>
+        <section id="map" class="panel" aria-labelledby="map-title">
+          <span class="eyebrow">Отметки пациента</span>
+          <h2 id="map-title">Карта симптомов</h2>
+          <div id="body-views" class="body-views"></div>
+          <ul class="map-legend" aria-label="Обозначения карты">
+            <li class="pain">Боль</li>
+            <li class="numbness">Онемение</li>
+            <li class="weakness">Субъективная слабость</li>
+          </ul>
+          <ul id="map-list" class="findings compact" aria-label="Отметки на карте"></ul>
+        </section>
+      </div>
+      <section id="exam" class="panel" aria-labelledby="exam-title">
+        <span class="eyebrow">Ручной ввод</span>
+        <h2 id="exam-title">Неврологический осмотр</h2>
+        <table>
+          <thead><tr><th scope="col">Проба</th><th scope="col">Слева</th><th scope="col">Справа</th></tr></thead>
+          <tbody id="exam-rows"></tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
