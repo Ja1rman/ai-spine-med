@@ -824,6 +824,7 @@
       $("case-context").textContent = uploadDate(item);
       $("case-title").textContent = uploadName(item);
       $("case-id").textContent = `Идентификатор исследования: ${id}`;
+      $("open-psp").href = safeURL(`psp.html?upload=${encodeURIComponent(id)}`).href;
       $("case-badges").replaceChildren(node("span", `badge ${item.status === "completed" ? "control" : item.status === "failed" ? "error" : "unassessed"}`, statusNames[item.status] || "Статус неизвестен"));
       $("reference-card").hidden = true;
       $("level-focus-panel").hidden = true;

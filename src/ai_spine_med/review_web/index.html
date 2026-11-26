@@ -13,6 +13,7 @@
 <body>
   <header class="topbar">
     <nav class="source-tabs" aria-label="Разделы"><button id="tab-cohort" class="source-tab active" type="button" aria-pressed="true">Выборка RSNA <span id="cohort-total"></span></button><button id="tab-uploads" class="source-tab" type="button" aria-pressed="false">Загрузки <span id="uploads-total"></span></button></nav>
+    <a class="source-tab" href="psp.html">PSP · анкета и осмотр ↗</a>
     <span id="collection-count" class="collection-count">Загрузка подборки…</span>
   </header>
   <main class="shell">
@@ -53,7 +54,7 @@
           <div><div id="case-context" class="section-eyebrow"></div><h1 id="case-title"></h1><div id="case-badges" class="badges"></div></div>
           <div class="case-step"><button id="previous-case" type="button" class="icon-button" aria-label="Предыдущий случай">↑</button><button id="next-case" type="button" class="icon-button" aria-label="Следующий случай">↓</button></div>
         </header>
-        <section id="upload-status" class="upload-status" aria-live="polite" hidden><span id="upload-status-label" class="status-label"></span><p id="upload-status-message"></p><div class="upload-record-actions"><a id="download-report" class="button button-quiet" download hidden>Результат · JSON ↓</a><button id="delete-upload" type="button" class="button button-delete" hidden>Удалить исследование</button></div><p id="delete-upload-feedback" class="delete-feedback" role="status" hidden></p></section>
+        <section id="upload-status" class="upload-status" aria-live="polite" hidden><span id="upload-status-label" class="status-label"></span><p id="upload-status-message"></p><div class="upload-record-actions"><a id="open-psp" class="button button-quiet" href="psp.html">Анкета и осмотр · PSP ↗</a><a id="download-report" class="button button-quiet" download hidden>Результат · JSON ↓</a><button id="delete-upload" type="button" class="button button-delete" hidden>Удалить исследование</button></div><p id="delete-upload-feedback" class="delete-feedback" role="status" hidden></p></section>
         <div id="case-loading" class="loading-line" role="status" hidden>Загружаю серии пациента…</div>
         <section id="patient-summary" class="patient-summary" aria-labelledby="patient-summary-title" hidden><div class="section-eyebrow">По результатам анализа</div><h2 id="patient-summary-title">Сводка исследования</h2><p id="patient-summary-text"></p><ul id="patient-summary-findings"></ul><p id="patient-summary-unassessed" class="small-muted"></p></section>
         <div id="case-grid" class="case-grid">

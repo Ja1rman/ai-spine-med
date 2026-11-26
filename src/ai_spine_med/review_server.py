@@ -15,6 +15,7 @@ import json
 import os
 import re
 import shutil
+import sqlite3
 import sys
 import threading
 import zipfile
@@ -22,6 +23,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
 
+from .psp import PSPError, PSPStore
 from .review_uploads import UploadRejected, UploadStore
 
 MIMES = {
@@ -76,6 +78,7 @@ class ReviewServer(ThreadingHTTPServer):
         port: int = 8768,
         *,
         uploads: UploadStore | None = None,
+        psp: PSPStore | None = None,
         public_origin: str = "",
         host: str = "127.0.0.1",
         max_http_connections: int = 24,
@@ -95,6 +98,8 @@ class ReviewServer(ThreadingHTTPServer):
         self.prefix = "/r/" + token + "/"
         if uploads is not None and uploads.root.is_relative_to(self.site_root):
             raise ValueError("Uploads must be outside the static site")
+        if psp is not None and psp.root.resolve().is_relative_to(self.site_root):
+            raise ValueError("PSP records must be outside the static site")
         if public_origin:
             parsed_origin = urlsplit(public_origin)
             if (
@@ -106,9 +111,10 @@ class ReviewServer(ThreadingHTTPServer):
             ):
                 raise ValueError("REVIEW_ORIGIN must be one exact origin")
             public_origin = f"{parsed_origin.scheme}://{parsed_origin.netloc}"
-        if uploads is not None and not public_origin:
-            raise ValueError("An exact public origin is required for uploads")
+        if (uploads is not None or psp is not None) and not public_origin:
+            raise ValueError("An exact public origin is required for writes")
         self.uploads, self.public_origin = uploads, public_origin
+        self.psp = psp
         source = json.loads(
             (self.package_root / "private-source-index.json").read_text(),
             object_pairs_hook=_unique_object,
@@ -266,6 +272,9 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if parsed is None:
             return
         relative, _ = parsed
+        if relative.startswith("api/psp/"):
+            self._psp_api(relative, write=True)
+            return
         module_route = re.fullmatch(r"api/uploads/(upload-[0-9a-f]{32})/modules", relative)
         if (relative != "api/uploads" and not module_route) or self.server.uploads is None:
             self._error(405)
@@ -412,6 +421,9 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self._error(500)
 
     def _api(self, relative):
+        if relative.startswith("api/psp/"):
+            self._psp_api(relative)
+            return
         store = self.server.uploads
         if store is None:
             self._error(404)
@@ -446,6 +458,121 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self._headers(200, os.fstat(stream.fileno()).st_size, mime, extra)
             if self.command != "HEAD":
                 shutil.copyfileobj(stream, self.wfile, 128 * 1024)
+
+    def _psp_api(self, relative, *, write=False):
+        store = self.server.psp
+        if store is None:
+            self._error(404)
+            return
+        route = relative.removeprefix("api/psp/")
+        episode = re.fullmatch(r"episodes/(episode-[0-9a-f]{32})(/export)?", route)
+        if route not in {"catalog", "episodes"} and episode is None:
+            self._error(404)
+            return
+        if write and (route == "catalog" or episode and episode[2]):
+            self._error(405)
+            return
+        try:
+            if not write:
+                if route == "catalog":
+                    result = store.catalog()
+                elif route == "episodes":
+                    result = store.list_episodes()
+                else:
+                    result = store.export(episode[1]) if episode[2] else store.get(episode[1])
+                    if result is None:
+                        self._error(404)
+                        return
+                self._json(200, self._psp_mri(result))
+                return
+            if (
+                self.headers.get("Origin") != self.server.public_origin
+                or self.headers.get("X-PSP-Intent") != "clinical-record"
+                or self.headers.get("Sec-Fetch-Site", "same-origin") != "same-origin"
+            ):
+                self._json(
+                    403,
+                    {"error": "origin_rejected", "message": "Сохранение доступно со страницы PSP."},
+                )
+                return
+            if (
+                self.headers.get("Transfer-Encoding")
+                or self.headers.get_content_type() != "application/json"
+            ):
+                self._json(415, {"error": "unsupported_type", "message": "Ожидаются данные JSON."})
+                return
+            lengths = self.headers.get_all("Content-Length", [])
+            if len(lengths) != 1:
+                self._json(
+                    411, {"error": "length_required", "message": "Не указан размер запроса."}
+                )
+                return
+            try:
+                length = int(lengths[0])
+            except ValueError:
+                length = 0
+            if not 0 < length <= 512 * 1024:
+                self._json(
+                    413, {"error": "request_limit", "message": "Запрос слишком большой или пустой."}
+                )
+                return
+            content = self.rfile.read(length)
+            if len(content) != length:
+                raise ValueError("Incomplete JSON")
+            payload = json.loads(
+                content,
+                object_pairs_hook=_unique_object,
+                parse_constant=lambda _: (_ for _ in ()).throw(ValueError("Nonfinite JSON")),
+            )
+            if not isinstance(payload, dict):
+                raise ValueError("Expected object")
+            upload = payload.get("upload_id")
+            if upload is not None:
+                previous_upload = store.get(episode[1]).get("upload_id") if episode else None
+                if not isinstance(upload, str) or (
+                    upload != previous_upload
+                    and (self.server.uploads is None or self.server.uploads.get(upload) is None)
+                ):
+                    self._json(
+                        422,
+                        {
+                            "error": "unknown_upload",
+                            "message": "Выбранная МРТ-загрузка не найдена.",
+                        },
+                    )
+                    return
+            result = (
+                store.create(payload) if route == "episodes" else store.save(episode[1], payload)
+            )
+            self._json(201 if route == "episodes" else 200, self._psp_mri(result))
+        except PSPError as error:
+            self._json(error.status, {"error": error.code, "message": error.message})
+        except (ValueError, UnicodeError):
+            self._json(
+                400, {"error": "invalid_json", "message": "Не удалось прочитать данные JSON."}
+            )
+        except (OSError, TimeoutError, sqlite3.Error):
+            self._json(
+                503,
+                {"error": "psp_unavailable", "message": "Данные не сохранены. Повторите попытку."},
+            )
+
+    def _psp_mri(self, result):
+        if not isinstance(result, dict) or not result.get("upload_id"):
+            return result
+        identifier = result["upload_id"]
+        record = self.server.uploads.get(identifier) if self.server.uploads is not None else None
+        return {
+            **result,
+            "mri": {
+                "upload_id": identifier,
+                "available": record is not None,
+                "status": record.get("status") if record else "unavailable",
+                "targets": record.get("targets", []) if record else [],
+                "patient_summary": record.get("patient_summary", {}) if record else {},
+                "viewer_url": f"./?view=uploads&upload={identifier}",
+            },
+        }
 
     def _dicom(self, entry):
         with zipfile.ZipFile(entry["archive"]) as zipped:
@@ -493,11 +620,16 @@ def main():
                 threads=int(os.environ.get("REVIEW_INFERENCE_THREADS", "1")),
                 modules=json.loads(os.environ.get("REVIEW_ANALYSIS_MODULES", "{}")),
             )
+        psp_root = os.environ.get("REVIEW_PSP_ROOT")
+        if psp_root is None and upload_root:
+            psp_root = str(Path(upload_root) / ".psp")
+        psp = PSPStore(Path(psp_root)) if psp_root else None
         server = ReviewServer(
             root,
             os.environ.get("REVIEW_TOKEN", ""),
             args.port,
             uploads=uploads,
+            psp=psp,
             public_origin=os.environ.get("REVIEW_ORIGIN", ""),
             host=args.host,
         )
