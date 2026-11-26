@@ -8,12 +8,18 @@
   <meta name="color-scheme" content="dark">
   <title>Клинические данные · PSP</title>
   <link rel="stylesheet" href="psp.css">
+  <link rel="stylesheet" href="review-nav.css">
+  <script src="review-nav.js" defer></script>
   <script src="psp.js" defer></script>
 </head>
 <body>
-  <header class="topbar">
-    <nav aria-label="Разделы сайта"><a href="./">МРТ</a><span class="active">Клинические данные <small>PSP</small></span></nav>
-    <span id="connection-status" class="meta" role="status">Подключаю хранилище…</span>
+  <header class="review-topbar">
+    <nav class="source-tabs" aria-label="Разделы">
+      <a class="source-tab" href="./">Выборка RSNA <span id="cohort-total"></span></a>
+      <a class="source-tab" href="./?view=uploads">Загрузки <span id="uploads-total"></span></a>
+      <a class="source-tab active" href="psp.html" aria-current="page">PSP</a>
+    </nav>
+    <span id="connection-status" class="navigation-status" role="status">Подключаю хранилище…</span>
   </header>
   <div class="layout">
     <aside class="sidebar" aria-label="Эпизоды обследования">
@@ -42,7 +48,69 @@
         <section id="panel-intake" class="module-panel"><div class="section-heading"><div><span class="eyebrow">PSP-01 / Со слов пациента</span><h2>Жалобы и анамнез</h2></div><span id="intake-status" class="status-chip"></span></div><p class="section-description">Выберите явный ответ. Пропущенный вопрос сохраняется как неизвестный; «нет» нужно отметить отдельно. Изменения сохраняются автоматически.</p><form id="intake-form" novalidate><div id="question-list"></div><div class="form-footer"><label class="check-line"><input id="intake-confirmation" type="checkbox"><span>Ответы просмотрены вместе с пациентом.</span></label><button id="submit-intake" class="button" type="button">Зафиксировать анкету</button></div></form></section>
         <section id="panel-map" class="module-panel" hidden><div class="section-heading"><div><span class="eyebrow">PSP-01 / Субъективная карта</span><h2>Где ощущаются симптомы</h2></div><span id="map-count" class="status-chip"></span></div><p class="section-description">Выберите вид симптома и отметьте область на теле. Стороны указаны относительно пациента. Эта карта отражает его ощущения.</p><div class="map-layout"><div class="map-stage"><div class="body-views" role="group" aria-label="Вид тела"><button id="map-front" class="active" type="button" aria-pressed="true">Спереди</button><button id="map-back" type="button" aria-pressed="false">Сзади</button></div><div class="body-caption"><span id="map-screen-left">Правая сторона</span><span id="map-screen-right">Левая сторона</span></div><svg id="body-map" viewBox="0 0 300 600" role="img" aria-label="Карта тела. Нажмите на область симптома или используйте выбор области рядом."><g class="body-outline"><circle cx="150" cy="48" r="28"></circle><path d="M134 77 L134 93 L111 99 Q96 101 91 121 L70 212 L57 273 Q55 286 65 289 Q75 291 80 277 L102 215 L112 176 L110 264 Q108 283 116 302 L110 408 L105 526 L96 558 Q93 569 108 571 L128 571 Q136 570 136 559 L141 417 L150 320 L159 417 L164 559 Q164 570 172 571 L192 571 Q207 569 204 558 L195 526 L190 408 L184 302 Q192 283 190 264 L188 176 L198 215 L220 277 Q225 291 235 289 Q245 286 243 273 L230 212 L209 121 Q204 101 189 99 L166 93 L166 77"></path><path class="body-detail" d="M150 102 L150 275 M115 271 Q150 285 185 271 M119 307 Q150 294 181 307 M116 413 L138 413 M162 413 L184 413"></path></g><g id="map-marks"></g></svg><p class="map-hint">Каждое нажатие добавляет отдельную отметку.</p></div><div class="map-controls"><label class="field"><span>Симптом</span><select id="map-type"><option value="pain">Боль</option><option value="numbness">Онемение / покалывание</option><option value="weakness">Субъективная слабость</option></select></label><label class="field"><span>Интенсивность, 0–10</span><input id="map-intensity" type="number" min="0" max="10" step="1" value="5"></label><div class="map-legend"><span class="legend-pain">Боль</span><span class="legend-numbness">Онемение</span><span class="legend-weakness">Слабость</span></div><details class="region-fallback"><summary>Указать область без карты</summary><label class="field"><span>Область</span><select id="map-region"><option value="lumbar">Поясница</option><option value="buttock">Ягодица</option><option value="thigh">Бедро</option><option value="shin">Голень</option><option value="foot">Стопа</option></select></label><label class="field"><span>Сторона пациента</span><select id="map-side"><option value="left">Левая</option><option value="right">Правая</option><option value="midline">По центру</option><option value="bilateral">Обе стороны</option></select></label><button id="add-region" class="button quiet" type="button">Добавить область</button></details><div class="map-actions"><button id="undo-map" class="button quiet" type="button">Убрать последнюю</button><button id="clear-map" class="text-button" type="button">Очистить карту</button></div><div id="map-mark-list" class="map-mark-list"></div></div></div></section>
         <section id="panel-exam" class="module-panel" hidden><div class="section-heading"><div><span class="eyebrow">PSP-02 / Ввод специалистом</span><h2>Неврологический осмотр</h2></div><span id="exam-status" class="status-chip"></span></div><p class="section-description">Записывайте выполненные пробы и ограничения. Сила MRC и сила в ньютонах — отдельные величины. Пустое поле не означает норму.</p><form id="exam-form" novalidate><label class="field clinician-field"><span>Кто выполнил осмотр</span><input id="exam-clinician" type="text" maxlength="120" autocomplete="off" placeholder="Код или имя специалиста"></label><details class="exam-safety"><summary>Новые тревожные симптомы во время осмотра</summary><div id="exam-safety-questions"></div></details><div id="exam-notes"></div><div id="exam-test-list"></div><div class="form-footer"><label class="check-line"><input id="exam-confirmation" type="checkbox"><span>Проверены результаты и причины невыполненных проб.</span></label><button id="review-exam" class="button" type="button">Зафиксировать проверку осмотра</button><p class="meta">Фиксируются указанный специалист, дата и версия записи. Это отметка проверки в исследовательском прототипе.</p></div></form></section>
-        <section id="panel-summary" class="module-panel" hidden><div class="section-heading"><div><span class="eyebrow">Собранные факты / Все источники</span><h2>Сводка эпизода</h2></div><button id="export-record" class="button quiet" type="button">Скачать JSON ↓</button></div><section class="summary-card"><h3>Со слов пациента и по осмотру</h3><ul id="summary-findings"></ul></section><section class="summary-card"><details class="summary-details"><summary id="missing-caption">Незаполненные вопросы</summary><ul id="summary-missing"></ul></details><details class="summary-details"><summary id="unperformed-caption">Невыполненные пробы</summary><ul id="summary-unperformed"></ul></details><ul id="summary-limitations" class="meta"></ul></section><section class="summary-card"><h3>Связанное МРТ</h3><label class="field"><span>Исследование из загрузок</span><select id="episode-upload"><option value="">Не связано</option></select></label><div id="mri-summary"></div></section><details class="history-details"><summary>История изменений</summary><div id="episode-history"></div></details></section>
+        <section id="panel-summary" class="module-panel" aria-labelledby="episode-summary-title" hidden>
+          <div class="section-heading summary-heading">
+            <h2 id="episode-summary-title">Сводка эпизода</h2>
+            <button id="export-record" class="button quiet" type="button">Скачать JSON ↓</button>
+          </div>
+          <p id="summary-notice" class="summary-notice" hidden>Показана последняя сохранённая версия.</p>
+          <div id="summary-metrics" class="summary-overview" aria-label="Показатели со слов пациента"></div>
+
+          <div class="summary-grid">
+            <section class="episode-summary-card" aria-labelledby="summary-complaints-title">
+              <div class="summary-card-header"><h3 id="summary-complaints-title">Со слов пациента</h3></div>
+              <div id="summary-complaints"></div>
+            </section>
+            <section class="episode-summary-card" aria-labelledby="summary-map-title">
+              <div class="summary-card-header">
+                <h3 id="summary-map-title">Карта симптомов</h3>
+                <button id="summary-open-map" class="text-button" type="button">Открыть карту ↗</button>
+              </div>
+              <div id="summary-map-preview"></div>
+            </section>
+          </div>
+
+          <section class="episode-summary-card summary-mri-card" aria-labelledby="summary-mri-title">
+            <div class="summary-card-header">
+              <h3 id="summary-mri-title">Анализ МРТ</h3>
+              <a id="summary-open-mri" class="text-button" hidden>Открыть снимки ↗</a>
+            </div>
+            <label id="summary-upload-field" class="field"><span>Исследование из загрузок</span><select id="episode-upload"><option value="">Не связано</option></select></label>
+            <div id="mri-summary">
+              <p id="summary-mri-status" class="meta"></p>
+              <div id="summary-mri-levels" class="summary-mri-grid" hidden></div>
+              <details id="summary-mri-details" class="summary-mri-details" hidden>
+                <summary>Подробности анализа</summary>
+                <ul id="summary-mri-findings"></ul>
+                <ul id="summary-mri-unassessed" class="meta"></ul>
+              </details>
+            </div>
+          </section>
+
+          <details id="summary-exam" class="summary-disclosure">
+            <summary><span>Неврологический осмотр</span><small id="summary-exam-count"></small></summary>
+            <div id="summary-exam-results" class="summary-disclosure-body"></div>
+          </details>
+          <details id="summary-answers" class="summary-disclosure">
+            <summary><span>Ответы анкеты</span><small id="summary-answers-count"></small></summary>
+            <div id="summary-question-groups" class="summary-disclosure-body summary-question-groups"></div>
+          </details>
+
+          <div class="summary-secondary">
+            <details id="summary-missing-details" class="summary-disclosure">
+              <summary><span>Незаполненные вопросы</span><small id="missing-caption"></small></summary><div class="summary-disclosure-body"><ul id="summary-missing"></ul></div>
+            </details>
+            <details id="summary-unperformed-details" class="summary-disclosure">
+              <summary><span>Невыполненные пробы</span><small id="unperformed-caption"></small></summary><div class="summary-disclosure-body"><ul id="summary-unperformed"></ul></div>
+            </details>
+            <details id="summary-limitations-details" class="summary-disclosure">
+              <summary><span>Ограничения данных</span></summary><div class="summary-disclosure-body"><ul id="summary-limitations"></ul></div>
+            </details>
+            <details class="summary-disclosure">
+              <summary><span>История изменений</span></summary><div id="episode-history" class="summary-disclosure-body"></div>
+            </details>
+          </div>
+        </section>
       </section>
     </main>
   </div>

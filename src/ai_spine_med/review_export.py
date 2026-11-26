@@ -796,6 +796,7 @@ def export_review(root, output, previous_root):
         "preview_note": "Полные доступные поясничные серии. Вход классификатора — ROI9, а не все срезы серии.",
     }
     atomic_json(output / "site/data/index.json", index)
+    atomic_json(output / "site/data/nav-counts.json", {"cohort": len(final_cases)})
     atomic_json(
         output / "private-source-index.json",
         {

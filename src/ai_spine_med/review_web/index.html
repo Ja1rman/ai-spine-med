@@ -8,16 +8,17 @@
   <meta name="color-scheme" content="dark">
   <title>Исследования · МРТ</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="review-nav.css">
   <script src="app.js" defer></script>
 </head>
 <body>
-  <header class="topbar">
+  <header class="review-topbar">
     <nav class="source-tabs" aria-label="Разделы">
       <button id="tab-cohort" class="source-tab active" type="button" aria-pressed="true">Выборка RSNA <span id="cohort-total"></span></button>
       <button id="tab-uploads" class="source-tab" type="button" aria-pressed="false">Загрузки <span id="uploads-total"></span></button>
       <a class="source-tab" href="psp.html">PSP</a>
     </nav>
-    <span id="collection-count" class="collection-count">Загрузка подборки…</span>
+    <span id="collection-count" class="navigation-status">Загрузка подборки…</span>
   </header>
   <main class="shell">
     <aside class="sidebar" aria-label="Случаи для разбора">

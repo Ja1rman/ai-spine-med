@@ -37,10 +37,6 @@ h3 { margin-bottom: 12px; font-size: 11px; font-weight: 500; }
 p { margin-bottom: 12px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
-.topbar { height: 60px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 0 28px; border-bottom: 1px solid var(--line); background: var(--page); }
-.collection-meta { display: flex; align-items: center; gap: 25px; min-width: 0; }
-.collection-label { color: var(--accent); font: 10px/1 var(--mono); text-transform: uppercase; letter-spacing: 1.8px; }
-.collection-count { color: #c4cbca; font: 11px/1.4 var(--mono); }
 .shell { display: grid; grid-template-columns: 248px minmax(0,1fr); height: calc(100dvh - 60px); }
 .sidebar { min-height: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--surface); }
 .sidebar-tools { padding: 24px 20px 0; }
@@ -188,12 +184,6 @@ input[type=range] { width: 100%; height: 2px; accent-color: var(--accent); curso
 .morphology-legend { margin-bottom: 0; }
 .loading-line { color: var(--muted); margin-bottom: 14px; font-size: 11px; }
 .fatal-error { padding: 28px; border: 1px solid #865a53; color: #e6b5aa; line-height: 1.7; }
-.source-tabs { display: flex; align-items: stretch; align-self: stretch; gap: 28px; }
-.source-tab { display: flex; align-items: center; gap: 9px; padding: 0; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font-size: 12px; white-space: nowrap; }
-.source-tab:hover { color: var(--ink); }
-.source-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-.source-tab span { font: 9px/1 var(--mono); color: #8d9993; }
-.source-tab.active span { color: #c9aa85; }
 .model-name { color: var(--muted); font-size: 10px; line-height: 1.7; margin-bottom: 22px; }
 .upload-panel { max-width: 880px; padding-bottom: 28px; margin-bottom: 30px; border-bottom: 1px solid var(--line); }
 .upload-panel h1 { margin-top: 12px; margin-bottom: 18px; }
@@ -266,14 +256,6 @@ input[type=range] { width: 100%; height: 2px; accent-color: var(--accent); curso
   .reference-grade { font-size: 30px; }
 }
 @media (max-width: 640px) {
-  .topbar { height: 63px; padding: 0 17px; gap: 12px; }
-  .collection-meta { flex-direction: column; align-items: flex-start; gap: 5px; }
-  .collection-label { font-size: 8px; }
-  .collection-count { font-size: 9px; }
-  .topbar { height: 86px; flex-wrap: wrap; gap: 0; align-content: center; }
-  .source-tabs { width: 100%; height: 43px; gap: 26px; }
-  .source-tab { font-size: 12px; }
-  .topbar .collection-count { display: block; padding: 8px 0; font-size: 9px; }
   .upload-panel { margin-bottom: 22px; }
   .upload-panel h1 { font-size: 27px; }
   .upload-file { padding: 17px; }

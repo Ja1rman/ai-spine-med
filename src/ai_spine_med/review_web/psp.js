@@ -65,6 +65,7 @@
     captureSignals();
     stash();
     setSaveState();
+    $("summary-notice").hidden = false;
     renderSafety();
     clearTimeout(state.timer);
     state.timer = setTimeout(() => save().catch(() => {}),immediate ? 0 : 650);
@@ -441,6 +442,18 @@
     invalidateIntakeReview();
     changed();renderMap();
   }
+  function bodyMark(mark) {
+    const namespace = "http://www.w3.org/2000/svg";
+    const circle = document.createElementNS(namespace, "circle");
+    circle.setAttribute("cx", mark.x * 300);
+    circle.setAttribute("cy", mark.y * 600);
+    circle.setAttribute("r", 11);
+    circle.setAttribute("class", "map-mark " + mark.type);
+    const title = document.createElementNS(namespace, "title");
+    title.textContent = [symptomNames[mark.type], mark.region, sideNames[mark.side], mark.intensity + "/10"].filter(Boolean).join(" · ");
+    circle.append(title);
+    return circle;
+  }
   function renderMap() {
     const marks=$("map-marks"),list=$("map-mark-list");marks.replaceChildren();list.replaceChildren();
     $("map-count").textContent=state.draft.pain_map.length + " отметок";
@@ -448,9 +461,7 @@
     $("map-front").setAttribute("aria-pressed",String(state.view === "front"));$("map-back").setAttribute("aria-pressed",String(state.view === "back"));
     $("map-screen-left").textContent=state.view === "front" ? "Правая сторона" : "Левая сторона";$("map-screen-right").textContent=state.view === "front" ? "Левая сторона" : "Правая сторона";
     for(const [index,mark] of state.draft.pain_map.entries()) {
-      if(mark.view === state.view) {
-        const circle=document.createElementNS("http://www.w3.org/2000/svg","circle");circle.setAttribute("cx",mark.x*300);circle.setAttribute("cy",mark.y*600);circle.setAttribute("r",11);circle.setAttribute("class","map-mark " + mark.type);const title=document.createElementNS("http://www.w3.org/2000/svg","title");title.textContent=symptomNames[mark.type] + " · " + sideNames[mark.side] + " · " + mark.intensity + "/10";circle.append(title);marks.append(circle);
-      }
+      if(mark.view === state.view) marks.append(bodyMark(mark));
       const row=element("div","mark-row"),text=element("span","",(index+1) + ". " + symptomNames[mark.type] + " · " + sideNames[mark.side] + " · " + (mark.view === "front" ? "спереди" : "сзади") + " · " + mark.intensity + "/10"),remove=element("button","text-button","Убрать");remove.type="button";remove.setAttribute("aria-label","Убрать отметку " + (index+1));remove.addEventListener("click",() => {state.draft.pain_map=state.draft.pain_map.filter(item => item.id !== mark.id);invalidateIntakeReview();changed();renderMap();});row.append(text,remove);list.append(row);
     }
     $("undo-map").disabled=!state.draft.pain_map.length;$("clear-map").disabled=!state.draft.pain_map.length;
@@ -458,25 +469,228 @@
   function listText(id,items,empty) {
     const list=$(id);list.replaceChildren();for(const item of items || [])list.append(element("li","",typeof item === "string" ? item : JSON.stringify(item)));if(!list.children.length && empty)list.append(element("li","",empty));
   }
+  function displayField(field, value) {
+    if (value == null || value === "") return "";
+    if (Array.isArray(value)) return value.map(item => displayField(field, item)).filter(Boolean).join(", ");
+    if (typeof value === "boolean") return value ? "Да" : "Нет";
+    return field?.options?.find(option => option.value === value)?.label ?? String(value);
+  }
+  function keyValues(items) {
+    const list = element("dl", "summary-key-values");
+    for (const [label, value] of items) {
+      if (!value) continue;
+      const row = element("div");
+      row.append(element("dt", "", label), element("dd", "", value));
+      list.append(row);
+    }
+    return list;
+  }
+  function renderSummaryIntake(answers) {
+    const scale = answers.Q06 || {};
+    const metrics = $("summary-metrics");
+    metrics.replaceChildren();
+    for (const [label, value, unit] of [
+      ["Боль сейчас", scale.current, "/ 10"],
+      ["Пик за 7 дней", scale.worst, "/ 10"],
+      ["Обычная боль", scale.typical, "/ 10"],
+      ["До остановки при ходьбе", answers.Q14?.distance_m, "м"]
+    ]) {
+      const tile = element("div", "summary-metric");
+      const hasValue = Number.isFinite(value);
+      const shown = element("strong", "summary-metric-value", hasValue ? String(value) : "—");
+      if (hasValue) shown.append(element("span", "summary-metric-unit", unit));
+      else shown.setAttribute("aria-label", "Не указано");
+      tile.append(element("span", "summary-metric-label", label), shown);
+      metrics.append(tile);
+    }
+
+    const question = id => state.catalog.questions.find(item => item.id === id);
+    const answer = (id, key) => displayField(question(id)?.fields.find(field => field.key === key), answers[id]?.[key]);
+    const complaints = $("summary-complaints");
+    const main = answer("Q01", "details") || answer("Q05", "value") || answer("Q01", "value");
+    const rows = keyValues([
+      ["Начало", answer("Q02", "date")],
+      ["Сторона боли", answer("Q05", "side")],
+      ["Характер боли", answer("Q07", "value")],
+      ["Усиливает", answer("Q09", "worsens")],
+      ["Облегчает", answer("Q09", "relieves")]
+    ]);
+    complaints.replaceChildren();
+    if (main) complaints.append(element("p", "summary-primary-text", main));
+    if (rows.children.length) complaints.append(rows);
+    if (!complaints.children.length) complaints.append(element("p", "meta", "Жалобы пока не записаны."));
+
+    const groups = new Map();
+    const container = $("summary-question-groups");
+    container.replaceChildren();
+    let total = 0;
+    for (const item of state.catalog.questions) {
+      if (!answers[item.id]) continue;
+      const values = keyValues(item.fields.map(field => [field.label, displayField(field, answers[item.id][field.key])]));
+      if (!values.children.length) continue;
+      if (!groups.has(item.section)) {
+        const group = element("section", "summary-question-group");
+        group.append(element("h4", "", item.section));
+        groups.set(item.section, group);
+        container.append(group);
+      }
+      const row = element("div", "summary-question-row");
+      row.append(element("h5", "", item.title), values);
+      groups.get(item.section).append(row);
+      total += 1;
+    }
+    if (!total) container.append(element("p", "meta", "Ответы пока не записаны."));
+    $("summary-answers-count").textContent = total || "";
+  }
+  function renderSummaryMap(marks) {
+    const panel = $("summary-map-preview");
+    panel.replaceChildren();
+    if (!marks.length) {
+      panel.append(element("p", "meta", "На карте пока нет отметок."));
+      return;
+    }
+    const views = element("div", "summary-body-views");
+    for (const [view, caption] of [["front", "Спереди"], ["back", "Сзади"]]) {
+      const figure = element("figure");
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("viewBox", $("body-map").getAttribute("viewBox"));
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", `Карта тела · ${caption.toLowerCase()}`);
+      svg.append($("body-map").querySelector(".body-outline").cloneNode(true));
+      for (const mark of marks) if (mark.view === view) svg.append(bodyMark(mark));
+      figure.append(svg, element("figcaption", "", caption));
+      views.append(figure);
+    }
+    const zones = element("div", "summary-map-zones");
+    for (const [kind, label] of Object.entries(symptomNames)) {
+      const count = marks.filter(mark => mark.type === kind).length;
+      if (count) zones.append(element("span", "summary-map-zone " + kind, `${label} · ${count}`));
+    }
+    panel.append(views, zones);
+  }
+  function observationCell(test, observation) {
+    const cell = element("td");
+    if (observation?.status !== "observed") {
+      const label = observationStatuses.find(status => status.value === observation?.status)?.label || "Не записано";
+      cell.append(element("span", "summary-exam-aside", label));
+      if (observation?.reason) cell.append(element("span", "summary-exam-aside", observation.reason));
+      return cell;
+    }
+    for (const field of test.fields) {
+      const raw = observation[field.key];
+      if (raw == null || raw === "" || (field.key === "pain_limited" && raw === false)) continue;
+      let label = displayField(field, raw);
+      if (field.key === "mrc") label += "/5 по MRC";
+      if (field.key === "force_n") label += " Н";
+      if (field.key === "angle") label += "°";
+      if (field.key === "value" && /^R\d/.test(test.id) && raw > 0) label += "+";
+      if (field.key === "pain_limited") label = "Ограничено болью";
+      if (field.key === "typical_symptoms") {
+        if (raw === "yes") label = "Привычная боль";
+        else if (raw === "no") label = "Без привычной боли";
+        else label = field.label + " · " + label;
+      }
+      const secondary = ["pain_limited", "symptom_area", "modality"].includes(field.key);
+      cell.append(element(secondary ? "span" : "strong", secondary ? "summary-exam-aside" : "", label));
+    }
+    if (!cell.children.length) cell.append(element("span", "summary-exam-aside", "Результат не записан"));
+    if (observation.quality === "limited") cell.append(element("span", "summary-exam-aside", "С ограничениями"));
+    for (const note of [observation.reason, observation.note]) if (note) cell.append(element("span", "summary-exam-aside", note));
+    return cell;
+  }
+  function renderSummaryExam(exam) {
+    const results = $("summary-exam-results");
+    results.replaceChildren();
+    const observations = exam.observations || {};
+    const visible = state.catalog.tests.filter(test => test.sides.some(side => observations[test.id + "_" + side]));
+    const observed = Object.values(observations).filter(item => item.status === "observed").length;
+    const total = state.catalog.tests.reduce((count, test) => count + test.sides.length, 0);
+    $("summary-exam-count").textContent = visible.length ? `${observed} / ${total}` : "";
+    if (!visible.length) {
+      results.append(element("p", "meta", "Результаты осмотра пока не записаны."));
+      return;
+    }
+    const table = element("table", "summary-exam-table");
+    const head = table.createTHead().insertRow();
+    for (const label of ["Проба", "Слева", "Справа"]) {
+      const cell = element("th", "", label);
+      cell.scope = "col";
+      head.append(cell);
+    }
+    let category, group;
+    for (const test of visible) {
+      if (test.category !== category) {
+        category = test.category;
+        group = table.createTBody();
+        const heading = element("th", "", category);
+        heading.scope = "rowgroup";
+        heading.colSpan = 3;
+        const row = group.insertRow();
+        row.className = "summary-exam-group";
+        row.append(heading);
+      }
+      const row = group.insertRow();
+      const name = element("th", "", test.title);
+      name.scope = "row";
+      row.append(name, ...["left", "right"].map(side => observationCell(test, observations[test.id + "_" + side])));
+    }
+    if (exam.clinician) results.append(element("p", "meta", exam.clinician));
+    results.append(table);
+  }
+  function renderSummaryMri(record) {
+    const data = record.mri;
+    const attached = Boolean(record.upload_id);
+    const available = attached && data?.available && data.upload_id === record.upload_id;
+    const status = $("summary-mri-status");
+    status.textContent = available ? "Оценка модели по связанному исследованию" : attached ? "Связанное исследование недоступно." : "МРТ ещё не связано с эпизодом.";
+    $("summary-upload-field").hidden = attached;
+    const levels = $("summary-mri-levels");
+    levels.replaceChildren();
+    levels.hidden = !available;
+    const details = $("summary-mri-details");
+    const findings = available ? data.patient_summary?.findings || [] : [];
+    const unassessed = available ? data.patient_summary?.unassessed || [] : [];
+    details.hidden = !findings.length && !unassessed.length;
+    listText("summary-mri-findings", findings);
+    listText("summary-mri-unassessed", unassessed);
+    $("summary-mri-findings").hidden = !findings.length;
+    $("summary-mri-unassessed").hidden = !unassessed.length;
+    const link = $("summary-open-mri");
+    link.hidden = true;
+    link.removeAttribute("href");
+    if (!available) return;
+
+    const grades = ["Норма / лёгкая степень", "Умеренный стеноз", "Тяжёлый стеноз"];
+    for (const [level, label] of [["L4-L5", "L4–L5"], ["L5-S1", "L5–S1"]]) {
+      const target = data.targets?.find(item => item.level === level);
+      const grade = target?.status === "ok" && Number.isInteger(target.prediction) ? grades[target.prediction] : null;
+      const tile = element("div", "summary-mri-tile" + (grade && target.prediction > 0 ? " has-finding" : ""));
+      tile.append(element("span", "", label), element("strong", "", grade || "Не оценено"));
+      levels.append(tile);
+    }
+    const url = new URL(data.viewer_url || "./?view=uploads&upload=" + encodeURIComponent(data.upload_id), root);
+    if (url.origin === root.origin && url.pathname.startsWith(root.pathname)) {
+      link.href = url.href;
+      link.hidden = false;
+    }
+  }
   function renderSummary() {
     if(!state.record)return;
-    const summary=state.record.summary || {};
-    const missing=(summary.missing || []).map(value => {const question=state.catalog.questions.find(item => item.id === value);return question ? question.id + " · " + question.title : value;});
-    listText("summary-findings",summary.findings,"В сводке пока нет сохранённых наблюдений.");listText("summary-missing",missing,"Список незаполненных полей пуст.");listText("summary-unperformed",summary.unperformed,"Невыполненные пробы не записаны.");listText("summary-limitations",summary.limitations,"");
-    $("missing-caption").textContent="Незаполненные вопросы · " + missing.length;
-    $("unperformed-caption").textContent="Невыполненные пробы · " + (summary.unperformed || []).length;
-    if(isDirty())$("summary-limitations").prepend(element("li","","Сводка относится к последней серверной версии. Сохраните изменения для обновления."));
-    const mri=$("mri-summary");mri.replaceChildren();
-    const data=state.record.mri;
-    if(!state.draft.upload_id) mri.append(element("p","meta","МРТ не связано. Анкета и осмотр доступны без него."));
-    else if(data && data.available && data.upload_id === state.draft.upload_id) {
-      const box=element("div","mri-findings");box.append(element("p","","Источник: исследовательский анализ МРТ"));
-      const findings=data.patient_summary?.findings || [];const list=element("ul");findings.forEach(text => list.append(element("li","",text)));box.append(list);
-      const link=element("a","","Открыть снимки и результаты МРТ ↗");
-      const url=new URL(data.viewer_url || "./?view=uploads&upload=" + encodeURIComponent(data.upload_id),root);
-      if(url.origin === root.origin && url.pathname.startsWith(root.pathname)) link.href=url.href;
-      box.append(link);mri.append(box);
-    } else mri.append(element("p","meta","Связанное МРТ недоступно или ещё не загружено. Клинические данные сохранены отдельно."));
+    const record = state.record;
+    const summary = record.summary || {};
+    renderSummaryIntake(record.answers || {});
+    renderSummaryMap(record.pain_map || []);
+    renderSummaryExam(record.exam || {});
+    renderSummaryMri(record);
+    $("summary-notice").hidden = !isDirty();
+    const missing = (summary.missing || []).map(id => state.catalog.questions.find(question => question.id === id)?.title || id);
+    const unperformed = summary.unperformed || [];
+    listText("summary-missing", missing, "Все вопросы заполнены.");
+    listText("summary-unperformed", unperformed, "Пропуски с указанием причины отсутствуют.");
+    listText("summary-limitations", summary.limitations);
+    $("missing-caption").textContent = missing.length;
+    $("unperformed-caption").textContent = unperformed.length;
+    $("summary-limitations-details").hidden = !summary.limitations?.length;
     const historyList=$("episode-history");historyList.replaceChildren();
     for(const item of state.record.history || []) {
       const row=element("div","history-row","Версия " + (item.revision ?? "—") + " · " + (item.action || "изменение"));row.append(element("p","meta",date(item.recorded_at || item.occurred_at || item.created_at || item.timestamp)));historyList.append(row);
@@ -487,8 +701,9 @@
     try {
       const bytes=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(root.pathname));
       state.storageKey="psp-draft-" + Array.from(new Uint8Array(bytes)).map(b => b.toString(16).padStart(2,"0")).join("").slice(0,24);
-      const [catalog,uploads]=await Promise.all([api("api/psp/catalog"),api("api/uploads").catch(() => ({uploads:[]}))]);
+      const [catalog,uploads]=await Promise.all([api("api/psp/catalog"),api("api/uploads").catch(() => ({}))]);
       state.catalog=catalog;state.uploads=uploads.uploads || [];
+      if (Array.isArray(uploads.uploads)) $("uploads-total").textContent = state.uploads.length;
       fillUploads($("create-upload"),new URLSearchParams(location.search).get("upload"));
       await refreshList();
       const id=new URLSearchParams(location.search).get("episode");
@@ -509,6 +724,10 @@
   });
   $("save-record").addEventListener("click",() => save().catch(error => feedback(error.message,true)));
   $("module-tabs").addEventListener("click",event => {const button=event.target.closest("button[data-panel]");if(button)showTab(button.dataset.panel);});
+  $("summary-open-map").addEventListener("click", () => {
+    showTab("map");
+    $("module-tabs").querySelector('[data-panel="map"]').focus();
+  });
   $("intake-confirmation").addEventListener("change",() => {state.draft.answers.Q29={value:$("intake-confirmation").checked ? "yes" : "no"};changed();});
   $("submit-intake").addEventListener("click",async () => {if(!$("intake-confirmation").checked){feedback("Сначала просмотрите ответы и отметьте подтверждение.",true);return;}try{await save("submit_intake");}catch(error){feedback(error.message,true);}});
   $("exam-clinician").addEventListener("input",() => {state.draft.exam.clinician=$("exam-clinician").value;changed();});
